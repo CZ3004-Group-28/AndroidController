@@ -4,6 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/QixyQ/Documents/Projects/AndroidController/app/src/main/res/layout/activity_main.xml" value="0.2115036231884058" />
+        <entry key="..\:/Users/QixyQ/Documents/Projects/AndroidController/app/src/main/res/layout/fragment_bluetooth.xml" value="0.17572463768115942" />
+        <entry key="..\:/Users/QixyQ/Documents/Projects/AndroidController/app/src/main/res/layout/fragment_home.xml" value="0.2115036231884058" />
+        <entry key="..\:/Users/QixyQ/Documents/Projects/AndroidController/app/src/main/res/menu/bottom_nav_menu.xml" value="0.32135416666666666" />
       </map>
     </option>
   </component>
