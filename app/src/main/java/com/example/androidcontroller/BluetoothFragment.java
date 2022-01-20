@@ -129,7 +129,8 @@ public class BluetoothFragment extends Fragment {
             if (bluetoothAdapter.isDiscovering()) {
                 bluetoothAdapter.cancelDiscovery();
             }
-            checkBluetoothPermission();
+            //checkBluetoothPermission();
+            checkLocationPermission();
             bluetoothAdapter.startDiscovery();
 
             IntentFilter filter = new IntentFilter();
@@ -173,6 +174,7 @@ public class BluetoothFragment extends Fragment {
             btnSearchBluetooth.setEnabled(true);
         } else {
             btnToggleBluetooth.setText("Bluetooth: OFF");
+            btnSearchBluetooth.setEnabled(false);
         }
     }
 
@@ -213,7 +215,29 @@ public class BluetoothFragment extends Fragment {
         }
     });
 
-    public void checkBluetoothPermission() {
+    public void checkLocationPermission(){
+        if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            Toast.makeText(getActivity(), "location permissions given ",Toast.LENGTH_LONG).show();
+
+        }else{
+            Toast.makeText(getActivity(), "not given, asking now! ",Toast.LENGTH_LONG).show();
+
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
+        }
+    }
+
+    private ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    Toast.makeText(getActivity(), "location permissions req and GRANTED ",Toast.LENGTH_LONG).show();
+
+                } else {
+                }
+            });
+
+    /*public void checkBluetoothPermission() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int permissionCheck = ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
@@ -238,5 +262,5 @@ public class BluetoothFragment extends Fragment {
             });
 
         }
-    }
+    }*/
 }
