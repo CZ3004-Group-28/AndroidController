@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,11 +45,13 @@ public class BluetoothFragment extends Fragment {
     private Button btnToggleBluetooth;
     private Button btnSearchBluetooth;
     private BluetoothDeviceListViewAdapter discoveredDevicesAdapter;
+    private List<BluetoothLVItem> discoverdDevicesAdapterData;
     private BluetoothDeviceListViewAdapter pairedDevicesAdapter;
+    private List<BluetoothLVItem> pairedDevicesAdapterData;
 
     //Data
-    private ArrayList<BluetoothDevice> pairedDevices;
-    private ArrayList<BluetoothDevice> discoveredDevices;
+    private HashMap<String, BluetoothDevice> pairedDevices;
+    private HashMap<String, BluetoothDevice> discoveredDevices;
 
     public BluetoothFragment() {
         bluetoothOn = false;
@@ -57,8 +60,10 @@ public class BluetoothFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        discoveredDevices = new ArrayList<>();
-        pairedDevices = new ArrayList<>();
+        discoveredDevices = new HashMap<String, BluetoothDevice>();
+        discoverdDevicesAdapterData = new ArrayList<>();
+        pairedDevices = new HashMap<String, BluetoothDevice>();
+        pairedDevicesAdapterData = new ArrayList<>();
     }
 
     @Override
@@ -78,7 +83,7 @@ public class BluetoothFragment extends Fragment {
         initializeBluetooth();
 
         ListView discoveredDevicesListView = (ListView) rootView.findViewById(R.id.bluetooth_device_list);
-        discoveredDevicesAdapter = new BluetoothDeviceListViewAdapter(getContext(), R.layout.bt_device_list_layout, discoveredDevices);
+        discoveredDevicesAdapter = new BluetoothDeviceListViewAdapter(getContext(), R.layout.bt_device_list_layout, discoverdDevicesAdapterData);
         discoveredDevicesListView.setAdapter(discoveredDevicesAdapter);
 
         // Inflate the layout for this fragment
@@ -160,10 +165,16 @@ public class BluetoothFragment extends Fragment {
             } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 //bluetooth device found
                 BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if(device != null){
-                    discoveredDevices.add(device);
-                    discoveredDevicesAdapter.add(device);
-                    discoveredDevicesAdapter.notifyDataSetChanged();
+                if (device != null) {
+                    String deviceName = device.getName();
+                    String deviceAddress = device.getAddress();
+
+                    //Do not add if device previously discovered
+                    if (discoveredDevices.containsKey(deviceAddress)) return;
+
+                    discoveredDevices.put(deviceAddress, device);
+                    discoverdDevicesAdapterData.add(new BluetoothLVItem(deviceName,deviceAddress));
+                    discoveredDevicesAdapter.updateList(discoverdDevicesAdapterData);
                     Log.d(TAG, "Found device: " + device.getName() + ", " + device.getAddress());
                     Toast.makeText(getActivity(), "Found Device " + device.getName(), Toast.LENGTH_SHORT).show();
                 }
@@ -182,10 +193,17 @@ public class BluetoothFragment extends Fragment {
         }
     }
 
-    private class BluetoothDeviceListViewAdapter extends ArrayAdapter<BluetoothDevice> {
+    private class BluetoothDeviceListViewAdapter extends ArrayAdapter<BluetoothLVItem> {
+        private List<BluetoothLVItem> items;
 
-        public BluetoothDeviceListViewAdapter(@NonNull Context context, int resource, @NonNull List<BluetoothDevice> objects) {
+        public BluetoothDeviceListViewAdapter(@NonNull Context context, int resource, @NonNull List<BluetoothLVItem> objects) {
             super(context, resource, objects);
+            items=objects;
+        }
+
+        public void updateList(List<BluetoothLVItem> list){
+            items = list;
+            this.notifyDataSetChanged();
         }
 
         @NonNull
@@ -193,8 +211,8 @@ public class BluetoothFragment extends Fragment {
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.bt_device_list_layout, parent, false);
 
-            String deviceName = getItem(position).getName();
-            String deviceMAC = getItem(position).getAddress();
+            String deviceName = items.get(position).getName();
+            String deviceMAC = items.get(position).getAddress();
 
             if (deviceName == null || deviceName.isEmpty()) {
                 deviceName = "Unnamed Device";
@@ -213,19 +231,37 @@ public class BluetoothFragment extends Fragment {
         }
     }
 
+    private class BluetoothLVItem {
+        private String name;
+        private String address;
+
+        public BluetoothLVItem(String name, String address) {
+            this.name = name;
+            this.address = address;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+    }
+
     private ActivityResultLauncher<String[]> requestMultiplePermissions = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
         for (String key : isGranted.keySet()) {
             Log.d(TAG, "Permission: " + key + " Granted: " + isGranted.get(key));
         }
     });
 
-    public void checkLocationPermission(){
-        if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            Toast.makeText(getActivity(), "location permissions given ",Toast.LENGTH_LONG).show();
+    public void checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(getActivity(), "location permissions given ", Toast.LENGTH_LONG).show();
 
-        }else{
-            Toast.makeText(getActivity(), "not given, asking now! ",Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getActivity(), "not given, asking now! ", Toast.LENGTH_LONG).show();
 
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
@@ -235,7 +271,7 @@ public class BluetoothFragment extends Fragment {
     private ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
-                    Toast.makeText(getActivity(), "location permissions req and GRANTED ",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "location permissions req and GRANTED ", Toast.LENGTH_LONG).show();
 
                 } else {
                 }
