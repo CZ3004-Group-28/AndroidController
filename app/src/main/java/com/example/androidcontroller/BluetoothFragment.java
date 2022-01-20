@@ -214,6 +214,11 @@ public class BluetoothFragment extends Fragment {
         }
     }
 
+    private void connectBluetooth(String macAddress){
+        //TODO: Logic to connect bluetooth
+        Toast.makeText(getActivity(), "Connect to: "+macAddress, Toast.LENGTH_SHORT).show();
+    }
+
     private ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
@@ -255,10 +260,13 @@ public class BluetoothFragment extends Fragment {
 
             TextView btDeviceTitleTxt = (TextView) convertView.findViewById(R.id.bt_list_title);
             TextView btDeviceMACTxt = (TextView) convertView.findViewById(R.id.bt_list_macaddr);
+            Button btnConnect = (Button) convertView.findViewById(R.id.bluetooth_pair_btn);
 
             btDeviceTitleTxt.setText(deviceName);
             btDeviceMACTxt.setText(deviceMAC);
-
+            btnConnect.setOnClickListener(v->{
+                connectBluetooth(items.get(position).getAddress());
+            });
             return convertView;
         }
     }
