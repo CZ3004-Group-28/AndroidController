@@ -14,7 +14,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <Button
@@ -24,7 +24,7 @@
                 android:layout_weight="1"
                 android:allowClickWhenDisabled="false"
                 android:enabled="false"
-                android:text="No Bluetooth"/>
+                android:text="No Bluetooth" />
 
             <Button
                 android:id="@+id/bluetooth_btn_search"
@@ -39,8 +39,8 @@
         <ListView
             android:id="@+id/bluetooth_device_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
+            android:layout_height="500dp" />
+
     </LinearLayout>
 
 

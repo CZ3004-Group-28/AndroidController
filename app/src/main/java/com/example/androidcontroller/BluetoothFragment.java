@@ -209,7 +209,9 @@ public class BluetoothFragment extends Fragment {
         @NonNull
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.bt_device_list_layout, parent, false);
+            if(convertView == null){
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.bt_device_list_layout, parent, false);
+            }
 
             String deviceName = items.get(position).getName();
             String deviceMAC = items.get(position).getAddress();
