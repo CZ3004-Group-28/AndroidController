@@ -6,9 +6,42 @@
     tools:context=".BluetoothFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="BLUETOOTH FRAGMENT" />
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/bluetooth_btn_toggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:allowClickWhenDisabled="false"
+                android:enabled="false"
+                android:text="No Bluetooth"/>
+
+            <Button
+                android:id="@+id/bluetooth_btn_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:allowClickWhenDisabled="false"
+                android:enabled="false"
+                android:text="Search" />
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/bluetooth_device_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </LinearLayout>
+
 
 </FrameLayout>
