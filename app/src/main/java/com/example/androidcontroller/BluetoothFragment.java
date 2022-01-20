@@ -130,7 +130,7 @@ public class BluetoothFragment extends Fragment {
                 bluetoothAdapter.cancelDiscovery();
             }
             checkBluetoothPermission();
-            bluetoothAdapter.startDiscovery();
+            boolean started = bluetoothAdapter.startDiscovery();
 
             IntentFilter filter = new IntentFilter();
             filter.addAction(BluetoothDevice.ACTION_FOUND);
@@ -157,11 +157,13 @@ public class BluetoothFragment extends Fragment {
             } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 //bluetooth device found
                 BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                discoveredDevices.add(device);
-                discoveredDevicesAdapter.add(device);
-                discoveredDevicesAdapter.notifyDataSetChanged();
-                Log.d(TAG, "Found device: " + device.getName() + ", " + device.getAddress());
-                Toast.makeText(getActivity(), "Found Device " + device.getName(), Toast.LENGTH_SHORT).show();
+                if(device != null){
+                    discoveredDevices.add(device);
+                    discoveredDevicesAdapter.add(device);
+                    discoveredDevicesAdapter.notifyDataSetChanged();
+                    Log.d(TAG, "Found device: " + device.getName() + ", " + device.getAddress());
+                    Toast.makeText(getActivity(), "Found Device " + device.getName(), Toast.LENGTH_SHORT).show();
+                }
             }
         }
     };
