@@ -10,23 +10,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="100"
+        android:weightSum="10"
         tools:layout_editor_absoluteX="1dp"
         tools:layout_editor_absoluteY="1dp">
 
         <ImageView
             android:id="@+id/bt_list_icon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
             android:layout_weight="1"
             app:srcCompat="@drawable/ic_baseline_devices_other_24" />
 
         <LinearLayout
             android:id="@+id/bt_list_detail_layout"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="7"
             android:orientation="vertical">
-
 
             <TextView
                 android:id="@+id/bt_list_title"
@@ -40,5 +40,13 @@
                 android:layout_height="wrap_content"
                 android:text="TextView" />
         </LinearLayout>
+
+        <Button
+            android:id="@+id/bluetooth_pair_btn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:text="Pair" />
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

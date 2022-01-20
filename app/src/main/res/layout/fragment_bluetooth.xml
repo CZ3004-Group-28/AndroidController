@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="5dp"
     tools:context=".BluetoothFragment">
 
     <!-- TODO: Update blank fragment layout -->
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,12 +15,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="2">
 
             <Button
                 android:id="@+id/bluetooth_btn_toggle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="2dp"
                 android:layout_weight="1"
                 android:allowClickWhenDisabled="false"
                 android:enabled="false"
@@ -28,18 +30,32 @@
 
             <Button
                 android:id="@+id/bluetooth_btn_search"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
                 android:layout_weight="1"
                 android:allowClickWhenDisabled="false"
                 android:enabled="false"
                 android:text="Search" />
         </LinearLayout>
-
+        <TextView
+            android:id="@+id/txt_paired_devices"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Paired Devices" />
+        <ListView
+            android:id="@+id/paired_device_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/txt_discovered_devices"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Discovered Devices" />
         <ListView
             android:id="@+id/bluetooth_device_list"
             android:layout_width="match_parent"
-            android:layout_height="500dp" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
