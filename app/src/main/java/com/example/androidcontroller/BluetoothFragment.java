@@ -314,7 +314,7 @@ public class BluetoothFragment extends Fragment {
             btDeviceTitleTxt.setText(deviceName);
             btDeviceMACTxt.setText(deviceMAC);
             btnConnect.setOnClickListener(v -> {
-                connectBluetooth(items.get(position).getAddress());
+                pairBluetooth(items.get(position).getAddress());
             });
             return convertView;
         }
