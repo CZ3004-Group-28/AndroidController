@@ -15,7 +15,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -31,7 +30,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -64,6 +62,9 @@ public class BluetoothFragment extends Fragment {
         discoverdDevicesAdapterData = new ArrayList<>();
         pairedDevices = new HashMap<String, BluetoothDevice>();
         pairedDevicesAdapterData = new ArrayList<>();
+
+        IntentFilter btPairingFilter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        getActivity().registerReceiver(btPairingReceiver, btPairingFilter);
     }
 
     @Override
@@ -96,14 +97,15 @@ public class BluetoothFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        getActivity().unregisterReceiver(mReceiver);
         super.onDestroy();
+        getActivity().unregisterReceiver(btDiscoveryReceiver);
+        getActivity().unregisterReceiver(btPairingReceiver);
     }
 
     private void initializeBluetooth() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
-            Toast.makeText(getActivity(), "Bluetooth not supported", Toast.LENGTH_LONG).show();
+            showShortToast("Bluetooth not supported");
             return;
         }
 
@@ -152,23 +154,24 @@ public class BluetoothFragment extends Fragment {
             filter.addAction(BluetoothDevice.ACTION_FOUND);
             filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
             filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-            getContext().registerReceiver(mReceiver, filter);
+            getContext().registerReceiver(btDiscoveryReceiver, filter);
         } else {
-            Toast.makeText(getActivity(), "Enable bluetooth first", Toast.LENGTH_LONG).show();
+            showShortToast("Enable bluetooth first");
+            Log.d(TAG, "Tried to discover wtihout bluetooth enabled");
         }
     }
 
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver btDiscoveryReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
 
             if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
                 //discovery starts, we can show progress dialog or perform other tasks
-                Toast.makeText(getActivity(), "Discovering Devices..", Toast.LENGTH_SHORT).show();
+                showShortToast("Discovering Devices");
 
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 //discovery finishes, dismis progress dialog
-                Toast.makeText(getActivity(), "Discovery ended", Toast.LENGTH_SHORT).show();
+                showShortToast("Discovery Ended");
 
             } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 //bluetooth device found
@@ -189,6 +192,30 @@ public class BluetoothFragment extends Fragment {
         }
     };
 
+    private final BroadcastReceiver btPairingReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+
+            if (action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
+                BluetoothDevice mDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                //3 cases:
+                //case1: bonded already
+                if (mDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
+                    Log.d(TAG, "BroadcastReceiver: BOND_BONDED.");
+                }
+                //case2: creating a bone
+                if (mDevice.getBondState() == BluetoothDevice.BOND_BONDING) {
+                    Log.d(TAG, "BroadcastReceiver: BOND_BONDING.");
+                }
+                //case3: breaking a bond
+                if (mDevice.getBondState() == BluetoothDevice.BOND_NONE) {
+                    Log.d(TAG, "BroadcastReceiver: BOND_NONE.");
+                }
+            }
+        }
+    };
+
 
     private void updateBluetoothControlButtons() {
         if (bluetoothOn) {
@@ -204,26 +231,48 @@ public class BluetoothFragment extends Fragment {
     public void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(getActivity(), "location permissions given ", Toast.LENGTH_LONG).show();
-
-        } else {
-            Toast.makeText(getActivity(), "not given, asking now! ", Toast.LENGTH_LONG).show();
-
-            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
-            requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
+            return;
         }
+        showShortToast("Please grant locations permissions first!");
+
+        requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+        requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
     }
 
-    private void connectBluetooth(String macAddress){
+    private void connectBluetooth(String macAddress) {
         //TODO: Logic to connect bluetooth
-        Toast.makeText(getActivity(), "Connect to: "+macAddress, Toast.LENGTH_SHORT).show();
+        showShortToast("Connect to: "+macAddress);
+    }
+
+    private void pairBluetooth(String macAddress) {
+        try {
+            if (pairedDevices.containsKey(macAddress)) {
+                Log.d(TAG, "Pair bluetooth: Device " + macAddress + " is already paired");
+                return;
+            }
+            BluetoothDevice device = discoveredDevices.get(macAddress);
+            if (device == null) {
+                Log.d(TAG, "Pair bluetooth: Device " + macAddress + " is not found");
+                return;
+            }
+
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                Log.d(TAG, "Trying to pair with " + macAddress);
+                boolean bonded = device.createBond();
+                if (!bonded) {
+
+                    Log.e(TAG, "An error occured while trying to pair with device " + macAddress);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
-                    Toast.makeText(getActivity(), "location permissions req and GRANTED ", Toast.LENGTH_LONG).show();
-
+                    showShortToast("Location permissions granted");
                 } else {
                 }
             });
@@ -264,7 +313,7 @@ public class BluetoothFragment extends Fragment {
 
             btDeviceTitleTxt.setText(deviceName);
             btDeviceMACTxt.setText(deviceMAC);
-            btnConnect.setOnClickListener(v->{
+            btnConnect.setOnClickListener(v -> {
                 connectBluetooth(items.get(position).getAddress());
             });
             return convertView;
@@ -287,5 +336,13 @@ public class BluetoothFragment extends Fragment {
         public String getAddress() {
             return address;
         }
+    }
+
+    private void showShortToast(String msg) {
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+    }
+
+    private void showLongToast(String msg) {
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
 }
