@@ -81,7 +81,6 @@ public class BluetoothFragment extends Fragment {
         btnSearchBluetooth.setOnClickListener(v -> {
             searchBluetooth();
         });
-        initializeBluetooth();
 
         ListView discoveredDevicesListView = (ListView) rootView.findViewById(R.id.bluetooth_device_list);
         discoveredDevicesAdapter = new BluetoothDeviceListViewAdapter(getContext(), R.layout.bt_device_list_layout, discoverdDevicesAdapterData);
@@ -91,7 +90,7 @@ public class BluetoothFragment extends Fragment {
         pairedDevicesAdapter = new BluetoothDeviceListViewAdapter(getContext(), R.layout.bt_device_list_layout, pairedDevicesAdapterData);
         pairedDevicesListView.setAdapter(pairedDevicesAdapter);
 
-        // Inflate the layout for this fragment
+        initializeBluetooth();
         return rootView;
     }
 
@@ -241,7 +240,7 @@ public class BluetoothFragment extends Fragment {
 
     private void connectBluetooth(String macAddress) {
         //TODO: Logic to connect bluetooth
-        showShortToast("Connect to: "+macAddress);
+        showShortToast("Connect to: " + macAddress);
     }
 
     private void pairBluetooth(String macAddress) {
