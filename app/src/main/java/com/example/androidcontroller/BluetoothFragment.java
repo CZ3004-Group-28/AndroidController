@@ -181,6 +181,8 @@ public class BluetoothFragment extends Fragment {
 
                     //Do not add if device previously discovered
                     if (discoveredDevices.containsKey(deviceAddress)) return;
+                    //Do not add if device paired
+                    if(pairedDevices.containsKey(deviceAddress)) return;
 
                     discoveredDevices.put(deviceAddress, device);
                     discoverdDevicesAdapterData.add(new BluetoothLVItem(deviceName, deviceAddress));
@@ -238,13 +240,14 @@ public class BluetoothFragment extends Fragment {
         requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
     }
 
-    private void connectBluetooth(String macAddress) {
+    private void connectBluetooth(BluetoothLVItem btDeviceLVItem) {
         //TODO: Logic to connect bluetooth
-        showShortToast("Connect to: " + macAddress);
+        showShortToast("Connect to: " + btDeviceLVItem.getAddress());
     }
 
-    private void pairBluetooth(String macAddress) {
+    private void pairBluetooth(BluetoothLVItem btDeviceLVItem) {
         try {
+            String macAddress = btDeviceLVItem.getAddress();
             if (pairedDevices.containsKey(macAddress)) {
                 Log.d(TAG, "Pair bluetooth: Device " + macAddress + " is already paired");
                 return;
@@ -259,7 +262,6 @@ public class BluetoothFragment extends Fragment {
                 Log.d(TAG, "Trying to pair with " + macAddress);
                 boolean bonded = device.createBond();
                 if (!bonded) {
-
                     Log.e(TAG, "An error occured while trying to pair with device " + macAddress);
                 }
             }
@@ -313,7 +315,7 @@ public class BluetoothFragment extends Fragment {
             btDeviceTitleTxt.setText(deviceName);
             btDeviceMACTxt.setText(deviceMAC);
             btnConnect.setOnClickListener(v -> {
-                pairBluetooth(items.get(position).getAddress());
+                pairBluetooth(items.get(position));
             });
             return convertView;
         }
