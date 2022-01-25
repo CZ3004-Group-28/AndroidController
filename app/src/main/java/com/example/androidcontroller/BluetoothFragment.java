@@ -42,10 +42,10 @@ public class BluetoothFragment extends Fragment {
     //ui
     private Button btnToggleBluetooth;
     private Button btnSearchBluetooth;
-    private BluetoothDeviceListViewAdapter discoveredDevicesAdapter;
-    private List<BluetoothLVItem> discoverdDevicesAdapterData;
-    private BluetoothDeviceListViewAdapter pairedDevicesAdapter;
-    private List<BluetoothLVItem> pairedDevicesAdapterData;
+    private BluetoothDiscoveredListViewAdapter discoveredDevicesAdapter;
+    private List<String> discoveredDevicesAdapterData;
+    private BluetoothPairedListViewAdapter pairedDevicesAdapter;
+    private List<String> pairedDevicesAdapterData;
 
     //Data
     private HashMap<String, BluetoothDevice> pairedDevices;
@@ -59,7 +59,7 @@ public class BluetoothFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         discoveredDevices = new HashMap<String, BluetoothDevice>();
-        discoverdDevicesAdapterData = new ArrayList<>();
+        discoveredDevicesAdapterData = new ArrayList<>();
         pairedDevices = new HashMap<String, BluetoothDevice>();
         pairedDevicesAdapterData = new ArrayList<>();
 
@@ -83,11 +83,11 @@ public class BluetoothFragment extends Fragment {
         });
 
         ListView discoveredDevicesListView = (ListView) rootView.findViewById(R.id.bluetooth_device_list);
-        discoveredDevicesAdapter = new BluetoothDeviceListViewAdapter(getContext(), R.layout.bt_device_list_layout, discoverdDevicesAdapterData);
+        discoveredDevicesAdapter = new BluetoothDiscoveredListViewAdapter(getContext(), R.layout.bt_device_list_layout, discoveredDevicesAdapterData);
         discoveredDevicesListView.setAdapter(discoveredDevicesAdapter);
 
         ListView pairedDevicesListView = (ListView) rootView.findViewById(R.id.paired_device_list);
-        pairedDevicesAdapter = new BluetoothDeviceListViewAdapter(getContext(), R.layout.bt_device_list_layout, pairedDevicesAdapterData);
+        pairedDevicesAdapter = new BluetoothPairedListViewAdapter(getContext(), R.layout.bt_paired_device_list_layout, pairedDevicesAdapterData);
         pairedDevicesListView.setAdapter(pairedDevicesAdapter);
 
         initializeBluetooth();
@@ -117,7 +117,7 @@ public class BluetoothFragment extends Fragment {
         for (BluetoothDevice device : paired) {
             if (!pairedDevices.containsKey(device.getAddress())) {
                 pairedDevices.put(device.getAddress(), device);
-                pairedDevicesAdapterData.add(new BluetoothLVItem(device.getName(), device.getAddress()));
+                pairedDevicesAdapterData.add(device.getAddress());
                 pairedDevicesAdapter.updateList(pairedDevicesAdapterData);
             }
         }
@@ -185,8 +185,8 @@ public class BluetoothFragment extends Fragment {
                     if(pairedDevices.containsKey(deviceAddress)) return;
 
                     discoveredDevices.put(deviceAddress, device);
-                    discoverdDevicesAdapterData.add(new BluetoothLVItem(deviceName, deviceAddress));
-                    discoveredDevicesAdapter.updateList(discoverdDevicesAdapterData);
+                    discoveredDevicesAdapterData.add(deviceAddress);
+                    discoveredDevicesAdapter.updateList(discoveredDevicesAdapterData);
                     Log.d(TAG, "Found device: " + device.getName() + ", " + device.getAddress());
                 }
             }
@@ -204,6 +204,7 @@ public class BluetoothFragment extends Fragment {
                 //case1: bonded already
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
                     Log.d(TAG, "BroadcastReceiver: BOND_BONDED.");
+                    setPaired(mDevice);
                 }
                 //case2: creating a bone
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDING) {
@@ -240,14 +241,14 @@ public class BluetoothFragment extends Fragment {
         requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
     }
 
-    private void connectBluetooth(BluetoothLVItem btDeviceLVItem) {
+    private void connectBluetooth(String macAddress) {
         //TODO: Logic to connect bluetooth
-        showShortToast("Connect to: " + btDeviceLVItem.getAddress());
+        showShortToast("Connect to: " + macAddress);
     }
 
-    private void pairBluetooth(BluetoothLVItem btDeviceLVItem) {
+    private void pairBluetooth(String macAddress) {
         try {
-            String macAddress = btDeviceLVItem.getAddress();
+//            String macAddress = btDeviceLVItem.getAddress();
             if (pairedDevices.containsKey(macAddress)) {
                 Log.d(TAG, "Pair bluetooth: Device " + macAddress + " is already paired");
                 return;
@@ -278,15 +279,15 @@ public class BluetoothFragment extends Fragment {
                 }
             });
 
-    private class BluetoothDeviceListViewAdapter extends ArrayAdapter<BluetoothLVItem> {
-        private List<BluetoothLVItem> items;
+    private class BluetoothDiscoveredListViewAdapter extends ArrayAdapter<String> {
+        private List<String> items;
 
-        public BluetoothDeviceListViewAdapter(@NonNull Context context, int resource, @NonNull List<BluetoothLVItem> objects) {
+        public BluetoothDiscoveredListViewAdapter(@NonNull Context context, int resource, @NonNull List<String> objects) {
             super(context, resource, objects);
             items = objects;
         }
 
-        public void updateList(List<BluetoothLVItem> list) {
+        public void updateList(List<String> list) {
             items = list;
             this.notifyDataSetChanged();
         }
@@ -297,9 +298,10 @@ public class BluetoothFragment extends Fragment {
             if (convertView == null) {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.bt_device_list_layout, parent, false);
             }
+            BluetoothDevice btDevice = discoveredDevices.get(items.get(position));
 
-            String deviceName = items.get(position).getName();
-            String deviceMAC = items.get(position).getAddress();
+            String deviceName = btDevice.getName();
+            String deviceMAC = btDevice.getAddress();
 
             if (deviceName == null || deviceName.isEmpty()) {
                 deviceName = "Unnamed Device";
@@ -321,22 +323,60 @@ public class BluetoothFragment extends Fragment {
         }
     }
 
-    private class BluetoothLVItem {
-        private String name;
-        private String address;
+    private class BluetoothPairedListViewAdapter extends ArrayAdapter<String> {
+        private List<String> items;
 
-        public BluetoothLVItem(String name, String address) {
-            this.name = name;
-            this.address = address;
+        public BluetoothPairedListViewAdapter(@NonNull Context context, int resource, @NonNull List<String> objects) {
+            super(context, resource, objects);
+            items = objects;
         }
 
-        public String getName() {
-            return name;
+        public void updateList(List<String> list) {
+            items = list;
+            this.notifyDataSetChanged();
         }
 
-        public String getAddress() {
-            return address;
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.bt_paired_device_list_layout, parent, false);
+            }
+            BluetoothDevice btDevice = pairedDevices.get(items.get(position));
+
+            String deviceName = btDevice.getName();
+            String deviceMAC = btDevice.getAddress();
+
+            if (deviceName == null || deviceName.isEmpty()) {
+                deviceName = "Unnamed Device";
+            }
+            if (deviceMAC == null || deviceMAC.isEmpty()) {
+                deviceMAC = "No address found";
+            }
+
+            TextView btDeviceTitleTxt = (TextView) convertView.findViewById(R.id.bt_list_paired_title);
+            TextView btDeviceMACTxt = (TextView) convertView.findViewById(R.id.bt_list_paired_macaddr);
+            Button btnConnect = (Button) convertView.findViewById(R.id.bluetooth_connect_btn);
+
+            btDeviceTitleTxt.setText(deviceName);
+            btDeviceMACTxt.setText(deviceMAC);
+            btnConnect.setOnClickListener(v -> {
+                connectBluetooth(items.get(position));
+            });
+            return convertView;
         }
+    }
+
+    private void setPaired(BluetoothDevice pairedDevice){
+        String pairedAddress = pairedDevice.getAddress();
+        pairedDevices.put(pairedAddress,pairedDevice);
+        pairedDevicesAdapterData.add(pairedAddress);
+
+        discoveredDevices.remove(pairedAddress);
+        discoveredDevicesAdapterData.remove(pairedAddress);
+
+        discoveredDevicesAdapter.updateList(discoveredDevicesAdapterData);
+        pairedDevicesAdapter.updateList(pairedDevicesAdapterData);
     }
 
     private void showShortToast(String msg) {
