@@ -287,7 +287,7 @@ public class BluetoothFragment extends Fragment {
             return false;
         }
         try{
-            bluetoothConnectionService.startClient(btDevice,MY_UUID_INSECURE);
+            bluetoothConnectionService.startClient(btDevice);
             return true;
         }catch(Exception e){
             showShortToast("An error occured while attempting to start connection");

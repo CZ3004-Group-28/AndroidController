@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
+import android.os.ParcelUuid;
 import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -96,47 +97,49 @@ public class BluetoothConnectionService {
     private class ConnectThread extends Thread {
         private BluetoothSocket bluetoothSocket;
 
-        public ConnectThread(BluetoothDevice device, UUID uuid) {
+        public ConnectThread(BluetoothDevice device) {
             Log.d(TAG, "ConnectThread: start");
             bluetoothDevice = device;
-            deviceUUID = uuid;
         }
 
         public void run(){
             BluetoothSocket tmp = null;
             Log.i(TAG, "ConnectThread: run");
 
-            // Get a BluetoothSocket for a connection with the
-            // given BluetoothDevice
-            try {
-                Log.d(TAG, "ConnectThread: Trying to create InsecureRfcommSocket using UUID: "
-                        +MY_UUID_INSECURE );
-                tmp = bluetoothDevice.createRfcommSocketToServiceRecord(deviceUUID);
-            } catch (IOException e) {
-                Log.e(TAG, "ConnectThread: Could not create InsecureRfcommSocket " + e.getMessage());
-            }
-
-            bluetoothSocket = tmp;
-
-            // Always cancel discovery because it will slow down a connection
-            bluetoothAdapter.cancelDiscovery();
-
-            // Make a connection to the BluetoothSocket
-            try {
-                // This is a blocking call and will only return on a
-                // successful connection or an exception
-                bluetoothSocket.connect();
-
-                Log.d(TAG, "run: ConnectThread connected.");
-            } catch (IOException e) {
-                // Close the socket
+            for(ParcelUuid uuid:bluetoothDevice.getUuids()){
+                deviceUUID = UUID.fromString(uuid.toString());
+                // Get a BluetoothSocket for a connection with the
+                // given BluetoothDevice
                 try {
-                    bluetoothSocket.close();
-                    Log.d(TAG, "run: Closed Socket.");
-                } catch (IOException e1) {
-                    Log.e(TAG, "mConnectThread: run: Unable to close connection in socket " + e1.getMessage());
+                    Log.d(TAG, "ConnectThread: Trying to create InsecureRfcommSocket using UUID: "
+                            +MY_UUID_INSECURE );
+                    tmp = bluetoothDevice.createRfcommSocketToServiceRecord(deviceUUID);
+                } catch (IOException e) {
+                    Log.e(TAG, "ConnectThread: Could not create InsecureRfcommSocket " + e.getMessage());
                 }
-                Log.d(TAG, "run: ConnectThread: Could not connect to UUID: " + MY_UUID_INSECURE );
+
+                bluetoothSocket = tmp;
+
+                // Always cancel discovery because it will slow down a connection
+                bluetoothAdapter.cancelDiscovery();
+
+                // Make a connection to the BluetoothSocket
+                try {
+                    // This is a blocking call and will only return on a
+                    // successful connection or an exception
+                    bluetoothSocket.connect();
+                    Log.d(TAG, "run: ConnectThread connected.");
+                    break;
+                } catch (IOException e) {
+                    // Close the socket
+                    try {
+                        bluetoothSocket.close();
+                        Log.d(TAG, "run: Closed Socket.");
+                    } catch (IOException e1) {
+                        Log.e(TAG, "mConnectThread: run: Unable to close connection in socket " + e1.getMessage());
+                    }
+                    Log.d(TAG, "run: ConnectThread: Could not connect to UUID: " + MY_UUID_INSECURE );
+                }
             }
 
             connected(bluetoothSocket,bluetoothDevice);
@@ -170,10 +173,10 @@ public class BluetoothConnectionService {
         //Accept Thread starts and waits for a connection
     }
 
-    public void startClient(BluetoothDevice device,UUID uuid){
+    public void startClient(BluetoothDevice device){
         Log.d(TAG, "startClient: Started.");
 
-        connectThread = new ConnectThread(device, uuid);
+        connectThread = new ConnectThread(device);
         connectThread.start();
     }
 
