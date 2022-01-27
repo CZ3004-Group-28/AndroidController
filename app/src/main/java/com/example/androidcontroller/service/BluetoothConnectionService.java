@@ -5,7 +5,10 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +20,7 @@ public class BluetoothConnectionService {
     public static final String TAG = "BtConnectionSvc";
     private static final String appName = "MAP-GRP28-CONTROLLER";
     private static final UUID MY_UUID_INSECURE =
-            UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
+            UUID.fromString("49930a2c-04f6-4fe6-beb7-688360fc5995");
 
     private final BluetoothAdapter bluetoothAdapter;
     Context context;
@@ -209,6 +212,10 @@ public class BluetoothConnectionService {
                     bytes = btInStream.read(buffer);
                     String incomingMessage = new String(buffer, 0, bytes);
                     Log.d(TAG, "InputStream: " + incomingMessage);
+
+                    Intent incomingMessageIntent = new Intent("incomingBTMessage");
+                    incomingMessageIntent.putExtra("msg",incomingMessage);
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(incomingMessageIntent);
                 } catch (IOException e) {
                     Log.e(TAG, "write: Error reading Input Stream. " + e.getMessage() );
                     break;
