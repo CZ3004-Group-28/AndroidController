@@ -7,4 +7,12 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="androidGreenColor">#3ddc84</color>
+    <color name="primaryLightGreenColor">#5ecb90</color>
+    <color name="colorBlack">#636363</color>
+    <color name="primaryColorGreen">#92ffc0</color>
+    <color name="red">#ff0000</color>
+
+
 </resources>

@@ -1,14 +1,783 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeFragment">
+    tools:context=".HomeFragment"
+    android:orientation="vertical"
+    android:padding="10dp">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="HOME FRAGMENT" />
+        android:layout_height="450dp"
+        android:orientation="vertical">
 
+        <view
+            android:id="@+id/mapView"
+            class="com.example.androidcontroller.GridMap"
+            android:layout_width="450dp"
+            android:layout_height="450dp"
+
+            android:layout_gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            tools:ignore="MissingConstraints" />
+
+<!--        <ToggleButton-->
+<!--            android:id="@+id/setStartPointToggleBtn"-->
+<!--            android:layout_width="155dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="15dp"-->
+<!--            android:layout_marginEnd="15dp"-->
+<!--            android:gravity="center_horizontal"-->
+<!--            android:textOff="SET STARTPOINT"-->
+<!--            android:textOn="CANCEL"-->
+<!--            android:textAlignment="center"-->
+<!--            android:textSize="18sp"-->
+<!--            app:layout_constraintLeft_toRightOf="@+id/mapView"-->
+<!--            tools:ignore="MissingConstraints"-->
+<!--            android:visibility="gone"/>-->
+
+<!--        <ToggleButton-->
+<!--            android:id="@+id/setWaypointToggleBtn"-->
+<!--            android:layout_width="150dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="15dp"-->
+<!--            android:layout_marginEnd="15dp"-->
+<!--            android:textAlignment="center"-->
+<!--            android:textOff="SET WAYPOINT"-->
+<!--            android:textOn="CANCEL"-->
+<!--            android:textSize="18sp"-->
+<!--            app:layout_constraintLeft_toRightOf="@+id/mapView"-->
+<!--            android:gravity="center_horizontal"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/setStartPointToggleBtn"-->
+<!--            android:visibility="gone"/>-->
+
+<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginEnd="10dp"-->
+<!--            android:layout_marginBottom="24dp"-->
+<!--            android:clickable="true"-->
+<!--            android:focusable="true"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            android:backgroundTint="@color/androidGreenColor"-->
+<!--            android:src="@drawable/setting"-->
+<!--            android:id="@+id/expandFAB"-->
+<!--            />-->
+
+<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginEnd="10dp"-->
+<!--            android:layout_marginBottom="10dp"-->
+<!--            android:clickable="true"-->
+<!--            android:focusable="true"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/expandFAB"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            android:backgroundTint="@color/primaryLightGreenColor"-->
+<!--            android:src="@drawable/triangle"-->
+<!--            android:scaleType="center"-->
+<!--            android:id="@+id/startingPointFAB"-->
+<!--            android:visibility="gone"-->
+<!--            />-->
+
+
+<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginEnd="10dp"-->
+<!--            android:layout_marginBottom="10dp"-->
+<!--            android:clickable="true"-->
+<!--            android:focusable="true"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/startingPointFAB"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            android:backgroundTint="@color/primaryLightGreenColor"-->
+<!--            android:src="@drawable/reset"-->
+<!--            android:scaleType="center"-->
+<!--            android:id="@+id/resetMapFAB"-->
+<!--            android:visibility="gone"-->
+<!--            />-->
+
+<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginEnd="10dp"-->
+<!--            android:layout_marginBottom="10dp"-->
+<!--            android:clickable="true"-->
+<!--            android:focusable="true"-->
+<!--            app:layout_constraintRight_toRightOf="parent"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/resetMapFAB"-->
+<!--            android:backgroundTint="@color/primaryLightGreenColor"-->
+<!--            android:src="@drawable/rpi"-->
+<!--            android:scaleType="center"-->
+<!--            android:id="@+id/sendToRPIFAB"-->
+<!--            android:visibility="gone"-->
+<!--            />-->
+
+<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginEnd="10dp"-->
+<!--            android:layout_marginBottom="10dp"-->
+<!--            android:clickable="true"-->
+<!--            android:focusable="true"-->
+<!--            app:layout_constraintRight_toRightOf="parent"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/sendToRPIFAB"-->
+<!--            android:backgroundTint="@color/primaryLightGreenColor"-->
+<!--            android:src="@drawable/image_rec"-->
+<!--            android:scaleType="center"-->
+<!--            android:id="@+id/imageRecFAP"-->
+<!--            android:visibility="gone"-->
+<!--            />-->
+
+<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginEnd="10dp"-->
+<!--            android:layout_marginBottom="10dp"-->
+<!--            android:clickable="true"-->
+<!--            android:focusable="true"-->
+<!--            app:layout_constraintRight_toRightOf="parent"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/imageRecFAP"-->
+<!--            android:backgroundTint="@color/primaryLightGreenColor"-->
+<!--            android:src="@drawable/fastest"-->
+<!--            android:scaleType="center"-->
+<!--            android:id="@+id/fastestFAP"-->
+<!--            android:visibility="gone"-->
+<!--            />-->
+
+<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+
+<!--        >-->
+<!--        <RelativeLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            >-->
+
+<!--            <RelativeLayout-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:padding="5dp"-->
+<!--                android:id="@+id/statusLayout"-->
+<!--                >-->
+
+<!--                <RelativeLayout-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:id="@+id/robotStatusLayout"-->
+<!--                    >-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/robotStatusTitleTextView"-->
+<!--                        android:layout_width="110dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginStart="8dp"-->
+<!--                        android:layout_marginEnd="8dp"-->
+<!--                        android:layout_marginBottom="5dp"-->
+<!--                        android:paddingTop="5dp"-->
+<!--                        android:paddingBottom="5dp"-->
+<!--                        android:background="@drawable/round_rec"-->
+<!--                        android:text="Robot Status"-->
+<!--                        android:textAlignment="center"-->
+<!--                        android:textSize="15sp"-->
+
+<!--                        android:textColor="@color/black"-->
+<!--                        android:gravity="center_horizontal"-->
+<!--                        android:elevation="5dp"-->
+<!--                        />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/robotStatusTextView"-->
+<!--                        android:layout_width="110dp"-->
+<!--                        android:layout_height="70dp"-->
+<!--                        android:layout_marginStart="8dp"-->
+<!--                        android:layout_marginEnd="8dp"-->
+<!--                        android:background="@drawable/round_rec"-->
+<!--                        android:gravity="center"-->
+<!--                        android:scrollbars="vertical"-->
+<!--                        android:text="Not Available"-->
+<!--                        android:textAlignment="center"-->
+<!--                        android:textSize="15sp"-->
+<!--                        android:layout_below="@+id/robotStatusTitleTextView"-->
+<!--                        android:elevation="5dp"-->
+<!--                        android:layout_marginBottom="5dp"-->
+<!--                        />-->
+
+<!--                </RelativeLayout>-->
+
+<!--                <RelativeLayout-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:id="@+id/directionLayout"-->
+<!--                    android:layout_toRightOf="@+id/robotStatusLayout"-->
+<!--                    >-->
+
+<!--                    <RelativeLayout-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:id="@+id/directionSubLayout"-->
+<!--                        android:background="@drawable/round_rec"-->
+<!--                        android:padding="5dp"-->
+<!--                        android:layout_marginBottom="5dp"-->
+<!--                        android:elevation="5dp"-->
+<!--                        >-->
+<!--                        <TextView-->
+<!--                            android:id="@+id/directionLabelTextView"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+
+
+<!--                            android:gravity="center"-->
+<!--                            android:text="Direction :"-->
+<!--                            android:textSize="15sp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            />-->
+
+<!--                        <TextView-->
+<!--                            android:id="@+id/directionAxisTextView"-->
+<!--                            android:layout_width="40dp"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_marginLeft="5dp"-->
+<!--                            android:gravity="center"-->
+<!--                            android:text="None"-->
+<!--                            android:textAlignment="center"-->
+<!--                            android:textSize="15sp"-->
+<!--                            android:layout_toRightOf="@+id/directionLabelTextView"/>-->
+
+<!--                    </RelativeLayout>-->
+
+<!--                    <RelativeLayout-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:id="@+id/directionXYLayout"-->
+<!--                        android:layout_below="@+id/directionSubLayout"-->
+<!--                        android:background="@drawable/round_rec"-->
+<!--                        android:padding="5dp"-->
+<!--                        android:elevation="5dp"-->
+<!--                        android:layout_marginBottom="10dp"-->
+<!--                        >-->
+<!--                        <TextView-->
+<!--                            android:id="@+id/xLabelTextView"-->
+<!--                            android:layout_width="30dp"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_marginStart="20dp"-->
+<!--                            android:layout_marginLeft="28dp"-->
+
+<!--                            android:layout_marginEnd="15dp"-->
+<!--                            android:gravity="center_horizontal"-->
+<!--                            android:text="X:"-->
+<!--                            android:textSize="15sp"-->
+<!--                            android:textStyle="bold"-->
+
+<!--                            />-->
+
+<!--                        <TextView-->
+<!--                            android:id="@+id/xAxisTextView"-->
+<!--                            android:layout_width="45dp"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="0"-->
+<!--                            android:textAlignment="center"-->
+<!--                            android:textColor="@color/colorBlack"-->
+<!--                            android:textSize="15sp"-->
+<!--                            android:layout_toRightOf="@id/xLabelTextView"-->
+
+<!--                            />-->
+
+<!--                        <TextView-->
+<!--                            android:id="@+id/yLabelTextView"-->
+<!--                            android:layout_width="30dp"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_marginStart="20dp"-->
+<!--                            android:layout_marginTop="8dp"-->
+<!--                            android:layout_marginLeft="28dp"-->
+<!--                            android:layout_marginEnd="15dp"-->
+<!--                            android:gravity="center_horizontal"-->
+<!--                            android:text="Y:"-->
+<!--                            android:textSize="15sp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            android:layout_below="@+id/xLabelTextView"-->
+<!--                            />-->
+
+<!--                        <TextView-->
+<!--                            android:id="@+id/yAxisTextView"-->
+<!--                            android:layout_width="45dp"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_marginTop="8dp"-->
+<!--                            android:text="0"-->
+<!--                            android:textAlignment="center"-->
+<!--                            android:textSize="15sp"-->
+<!--                            android:layout_toRightOf="@+id/yLabelTextView"-->
+<!--                            android:layout_below="@+id/xAxisTextView"-->
+<!--                            />-->
+<!--                    </RelativeLayout>-->
+
+<!--                </RelativeLayout>-->
+
+<!--                <RelativeLayout-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_toRightOf="@+id/directionLayout"-->
+
+<!--                    >-->
+
+<!--                    <TextView-->
+<!--                        android:layout_width="140dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:id="@+id/txtdirection"-->
+<!--                        android:padding="5dp"-->
+<!--                        android:layout_marginStart="10dp"-->
+<!--                        android:layout_marginEnd="15dp"-->
+<!--                        android:layout_marginBottom="5dp"-->
+<!--                        android:textAlignment="center"-->
+<!--                        android:text="Obstacle Direction"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:textSize="15sp"-->
+<!--                        android:gravity="center_horizontal"-->
+<!--                        android:background="@drawable/round_rec"-->
+<!--                        android:elevation="5dp"-->
+<!--                        />-->
+
+<!--                    <com.google.android.material.textfield.TextInputLayout-->
+<!--                        android:layout_width="140dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:id="@+id/txtDDL"-->
+<!--                        android:layout_marginStart="10dp"-->
+<!--                        android:layout_marginEnd="15dp"-->
+<!--                        android:layout_below="@+id/txtdirection"-->
+<!--                        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"-->
+<!--                        app:boxBackgroundColor="@color/primaryColorGreen"-->
+<!--                        android:elevation="5dp"-->
+<!--                        >-->
+
+<!--                        <AutoCompleteTextView-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:id="@+id/AC_dropdownlistDirection"-->
+<!--                            android:enabled="false"-->
+<!--                            android:inputType="none"-->
+<!--                            android:textSize="15sp"-->
+<!--                            android:padding="5dp"-->
+
+<!--                            />-->
+
+<!--                    </com.google.android.material.textfield.TextInputLayout>-->
+
+<!--                    <ToggleButton-->
+<!--                        android:id="@+id/setObstacleToggleBtn"-->
+<!--                        android:layout_width="150dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginLeft="5dp"-->
+<!--                        android:layout_marginBottom="5dp"-->
+<!--                        android:textAlignment="center"-->
+<!--                        android:textOff="SET OBSTACLE"-->
+<!--                        android:textOn="CANCEL"-->
+<!--                        android:textSize="15sp"-->
+
+
+<!--                        android:layout_toRightOf="@+id/txtDDL"-->
+
+<!--                        android:background="@drawable/android_round_btn"-->
+<!--                        android:elevation="10dp"-->
+<!--                        />-->
+
+<!--                    <ToggleButton-->
+<!--                        android:id="@+id/setObstacleDirectionToggleBtn"-->
+<!--                        android:layout_width="150dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_margin="5dp"-->
+<!--                        android:textAlignment="center"-->
+<!--                        android:textOff="SET OBSTACLE DIRECTION"-->
+<!--                        android:textOn="CANCEL"-->
+<!--                        android:textSize="15sp"-->
+
+<!--                        android:layout_below="@+id/setObstacleToggleBtn"-->
+<!--                        android:layout_toRightOf="@+id/txtdirection"-->
+<!--                        android:background="@drawable/android_round_btn"-->
+<!--                        android:elevation="10dp"-->
+<!--                        />-->
+
+<!--                </RelativeLayout>-->
+
+<!--                <RelativeLayout-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:id="@+id/exporeLayout"-->
+<!--                    android:layout_toRightOf="@+id/directionLayout"-->
+<!--                    android:visibility="gone"-->
+<!--                    >-->
+<!--                    <TextView-->
+<!--                        android:id="@+id/exploreTextView"-->
+<!--                        android:layout_width="132dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginStart="15dp"-->
+<!--                        android:layout_marginTop="10dp"-->
+<!--                        android:background="#4AFFCA28"-->
+<!--                        android:gravity="center"-->
+<!--                        android:text="Recognition Time"-->
+<!--                        android:textSize="15sp"-->
+<!--                        android:textStyle="italic"-->
+<!--                        app:layout_constraintHorizontal_bias="1.0"-->
+<!--                        app:layout_constraintTop_toTopOf="parent"-->
+<!--                        tools:ignore="MissingConstraints" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/exploreTimeTextView"-->
+<!--                        android:layout_width="132dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_below="@+id/exploreTextView"-->
+<!--                        android:layout_marginStart="15dp"-->
+<!--                        android:layout_marginTop="-1dp"-->
+<!--                        android:background="#2A969494"-->
+<!--                        android:gravity="center"-->
+<!--                        android:text="00:00"-->
+<!--                        android:textSize="16sp"-->
+<!--                        app:layout_constraintHorizontal_bias="1.0" />-->
+
+<!--                    <ToggleButton-->
+<!--                        android:id="@+id/imgRecToogleButton"-->
+<!--                        android:layout_width="90dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginStart="15dp"-->
+<!--                        android:layout_marginTop="8dp"-->
+<!--                        android:text="IMG RECOGNITION"-->
+<!--                        android:textOff="IMAGE RECOGNITION"-->
+<!--                        android:textOn="STOP"-->
+<!--                        android:textSize="10dp"-->
+<!--                        android:layout_below="@+id/exploreTimeTextView" />-->
+<!--                    <ImageButton-->
+<!--                        android:id="@+id/exploreResetImageBtn"-->
+<!--                        style="@style/Widget.AppCompat.ImageButton"-->
+<!--                        android:layout_width="45dp"-->
+<!--                        android:layout_height="50dp"-->
+<!--                        android:layout_marginStart="8dp"-->
+<!--                        android:layout_marginTop="8dp"-->
+<!--                        android:layout_below="@+id/exploreTimeTextView"-->
+<!--                        android:layout_toRightOf="@id/imgRecToogleButton"-->
+<!--                        app:srcCompat="@drawable/ic_refresh" />-->
+
+<!--                </RelativeLayout>-->
+
+<!--                <RelativeLayout-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:id="@+id/fastestPathLayout"-->
+<!--                    android:layout_toRightOf="@+id/exporeLayout"-->
+<!--                    android:visibility="gone"-->
+<!--                    >-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/fastestTextView"-->
+<!--                        android:layout_width="127dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginTop="10dp"-->
+<!--                        android:layout_marginLeft="12dp"-->
+<!--                        android:background="#4AFFCA28"-->
+<!--                        android:gravity="center"-->
+<!--                        android:text="Fastest Path"-->
+<!--                        android:textSize="15sp"-->
+<!--                        android:textStyle="italic"-->
+<!--                        app:layout_constraintEnd_toEndOf="parent"-->
+<!--                        app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/fastestTimeTextView"-->
+<!--                        android:layout_width="127dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginLeft="12dp"-->
+<!--                        android:background="#2A969494"-->
+<!--                        android:gravity="center"-->
+<!--                        android:text="00:00"-->
+<!--                        android:textSize="16sp"-->
+<!--                        android:layout_below="@+id/fastestTextView" />-->
+
+<!--                    <ToggleButton-->
+<!--                        android:id="@+id/fastestToggleBtn"-->
+<!--                        android:layout_width="90dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginStart="8dp"-->
+<!--                        android:layout_marginTop="8dp"-->
+<!--                        android:text="FASTEST"-->
+<!--                        android:textOff="FASTEST"-->
+<!--                        android:textOn="STOP"-->
+<!--                        android:layout_below="@+id/fastestTimeTextView" />-->
+
+<!--                    <ImageButton-->
+<!--                        android:id="@+id/fastestResetImageBtn"-->
+<!--                        style="@style/Widget.AppCompat.ImageButton"-->
+<!--                        android:layout_width="45dp"-->
+<!--                        android:layout_height="50dp"-->
+<!--                        android:layout_marginTop="8dp"-->
+<!--                        app:layout_constraintEnd_toEndOf="parent"-->
+<!--                        app:layout_constraintHorizontal_bias="0.552"-->
+<!--                        android:layout_below="@+id/fastestTimeTextView"-->
+<!--                        android:layout_toRightOf="@+id/fastestToggleBtn"-->
+<!--                        app:srcCompat="@drawable/ic_refresh" />-->
+
+<!--                </RelativeLayout>-->
+
+<!--            </RelativeLayout>-->
+
+
+<!--            <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:id="@+id/switchLayout"-->
+<!--                >-->
+
+<!--                <Switch-->
+<!--                    android:id="@+id/manualAutoToggleBtn"-->
+<!--                    android:layout_width="200dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="16dp"-->
+<!--                    android:layout_marginLeft="16dp"-->
+<!--                    android:layout_marginTop="5dp"-->
+<!--                    android:layout_marginBottom="16dp"-->
+<!--                    android:paddingRight="150dp"-->
+<!--                    android:switchPadding="-208dp"-->
+<!--                    android:text="MANUAL"-->
+<!--                    android:textAlignment="center"-->
+<!--                    android:textOff="@string/manual"-->
+<!--                    android:textOn="@string/auto"-->
+<!--                    android:textSize="20sp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintHorizontal_bias="0.0"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent"-->
+<!--                    app:layout_constraintVertical_bias="0.0"-->
+<!--                    android:visibility="gone"/>-->
+
+<!--                <Switch-->
+<!--                    android:id="@+id/phoneTiltSwitch"-->
+<!--                    android:layout_width="200dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="16dp"-->
+<!--                    android:layout_marginLeft="16dp"-->
+<!--                    android:layout_marginTop="7dp"-->
+<!--                    android:paddingRight="150dp"-->
+<!--                    android:switchPadding="-250dp"-->
+<!--                    android:text="MOTION SENSOR OFF"-->
+<!--                    android:textAlignment="center"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintHorizontal_bias="0.0"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/manualAutoToggleBtn"-->
+<!--                    android:visibility="gone"/>-->
+<!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+<!--            <RelativeLayout-->
+<!--                android:layout_width="150dp"-->
+<!--                android:layout_height="170dp"-->
+<!--                android:layout_below="@+id/statusLayout"-->
+<!--                android:id="@+id/controlsLayout"-->
+<!--                >-->
+
+<!--                <ImageButton-->
+<!--                    android:id="@+id/forwardImageBtn"-->
+<!--                    android:layout_width="50dp"-->
+<!--                    android:layout_height="50dp"-->
+<!--                    android:padding="5dp"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_centerHorizontal="true"-->
+<!--                    android:background="@drawable/round_button"-->
+<!--                    app:srcCompat="@drawable/ic_arrow_up"-->
+<!--                    android:elevation="5dp"-->
+<!--                    android:layout_marginTop="10dp"/>-->
+
+<!--                <ImageButton-->
+<!--                    android:id="@+id/leftImageBtn"-->
+<!--                    android:layout_width="50dp"-->
+<!--                    android:layout_height="50dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    android:background="@drawable/round_button"-->
+<!--                    app:srcCompat="@drawable/ic_arrow_left"-->
+<!--                    android:elevation="5dp"-->
+<!--                    android:layout_marginLeft="10dp"/>-->
+
+<!--                <ImageButton-->
+<!--                    android:id="@+id/rightImageBtn"-->
+<!--                    android:layout_width="50dp"-->
+<!--                    android:layout_height="50dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_marginLeft="40dp"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    android:layout_alignParentRight="true"-->
+<!--                    android:background="@drawable/round_button"-->
+<!--                    app:srcCompat="@drawable/ic_arrow_right"-->
+<!--                    android:elevation="5dp"-->
+<!--                    android:layout_marginRight="10dp"/>-->
+
+
+
+<!--                <ImageButton-->
+<!--                    android:id="@+id/backImageBtn"-->
+<!--                    android:layout_width="50dp"-->
+<!--                    android:layout_height="50dp"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_centerHorizontal="true"-->
+<!--                    android:layout_alignParentBottom="true"-->
+<!--                    android:background="@drawable/round_button"-->
+<!--                    app:srcCompat="@drawable/ic_arrow_down"-->
+<!--                    android:elevation="5dp"-->
+<!--                    android:layout_marginBottom="10dp"/>-->
+
+
+<!--            </RelativeLayout>-->
+
+<!--            <RelativeLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+
+<!--                android:layout_toRightOf="@+id/controlsLayout"-->
+<!--                android:layout_below="@+id/statusLayout"-->
+<!--                android:paddingLeft="10dp"-->
+<!--                >-->
+
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/twobtnLayout"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:visibility="gone"-->
+<!--                    >-->
+<!--                    <Button-->
+<!--                        android:id="@+id/resetMapBtn"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:textAlignment="center"-->
+<!--                        android:text="reset map"-->
+<!--                        android:textSize="18sp"-->
+<!--                        android:gravity="center_horizontal"-->
+<!--                        />-->
+
+
+<!--                    <Button-->
+<!--                        android:id="@+id/sendToRPIBtn"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginStart="15dp"-->
+<!--                        android:layout_marginEnd="15dp"-->
+<!--                        android:textAlignment="center"-->
+<!--                        android:text="SEND RPI"-->
+<!--                        android:textSize="18sp"-->
+<!--                        android:gravity="center_horizontal"-->
+<!--                        />-->
+
+<!--                </LinearLayout>-->
+
+
+<!--                <RelativeLayout-->
+<!--                    android:id="@+id/bluetooth_messages_container_in_arena"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_below="@+id/twobtnLayout"-->
+<!--                    >-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/bluetooth_messages_title_in_arena"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginVertical="12dp"-->
+<!--                        android:background="@drawable/top_round_rec"-->
+<!--                        android:paddingLeft="10dp"-->
+<!--                        android:paddingRight="10dp"-->
+<!--                        android:paddingBottom="10dp"-->
+<!--                        android:text="Obstacle"-->
+<!--                        android:textSize="18sp"-->
+<!--                        android:elevation="5dp"/>-->
+
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:id="@+id/txtBT"-->
+<!--                        android:layout_marginVertical="12dp"-->
+<!--                        android:layout_marginLeft="15dp"-->
+<!--                        android:text="Bluetooth: "-->
+<!--                        android:textSize="18sp"-->
+<!--                        android:layout_toRightOf="@+id/bluetooth_messages_title_in_arena"/>-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/BTstatus"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginVertical="12dp"-->
+<!--                        android:text="DISCONNECTED"-->
+<!--                        android:textColor="@color/red"-->
+<!--                        android:textSize="18sp"-->
+<!--                        android:textStyle="bold"-->
+<!--                        android:layout_toRightOf="@+id/txtBT"/>-->
+
+<!--                    <ListView-->
+<!--                        android:id="@+id/bluetooth_messages_in_arena"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:layout_marginTop="40dp"-->
+<!--                        android:background="@drawable/listview_round_cor"-->
+<!--                        android:stackFromBottom="true"-->
+<!--                        android:transcriptMode="alwaysScroll"-->
+<!--                        android:elevation="5dp"-->
+<!--                        android:layout_marginBottom="10dp"/>-->
+
+<!--                </RelativeLayout>-->
+
+<!--                <Button-->
+<!--                    android:id="@+id/printMDFString"-->
+<!--                    android:layout_width="180dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_below="@+id/twobtnLayout"-->
+<!--                    android:text="Print MDF String"-->
+<!--                    android:visibility="gone"-->
+<!--                    />-->
+<!--                <Button-->
+<!--                    android:id="@+id/configureButton"-->
+<!--                    android:layout_width="180dp"-->
+<!--                    android:layout_height="45dp"-->
+<!--                    android:text="@string/configure"-->
+<!--                    android:layout_below="@+id/printMDFString"-->
+<!--                    android:visibility="gone"-->
+<!--                    />-->
+
+
+<!--                <Button-->
+<!--                    android:id="@+id/f1ActionButton"-->
+<!--                    android:layout_width="85dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:clickable="true"-->
+<!--                    android:contentDescription="F1"-->
+<!--                    android:focusable="true"-->
+<!--                    android:text="F1"-->
+<!--                    android:layout_below="@id/configureButton"-->
+<!--                    android:visibility="gone"-->
+<!--                    />-->
+
+<!--                <Button-->
+<!--                    android:id="@+id/f2ActionButton"-->
+<!--                    android:layout_width="85dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:clickable="true"-->
+<!--                    android:contentDescription="F2"-->
+<!--                    android:focusable="true"-->
+<!--                    android:text="F2"-->
+<!--                    android:layout_below="@+id/f1ActionButton"-->
+<!--                    android:visibility="gone"-->
+<!--                    />-->
+
+<!--            </RelativeLayout>-->
+
+
+<!--        </RelativeLayout>-->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
