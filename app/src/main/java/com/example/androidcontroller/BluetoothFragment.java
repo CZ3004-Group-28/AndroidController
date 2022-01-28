@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,14 +25,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.androidcontroller.service.BluetoothConnectionService;
+import com.example.androidcontroller.service.BluetoothService;
+
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public class BluetoothFragment extends Fragment {
     private static final String TAG = "BluetoothFragment";
@@ -51,6 +59,16 @@ public class BluetoothFragment extends Fragment {
     private HashMap<String, BluetoothDevice> pairedDevices;
     private HashMap<String, BluetoothDevice> discoveredDevices;
 
+    //Bluetooth Connection
+    private BluetoothConnectionService bluetoothConnectionService;
+    private static final UUID MY_UUID_INSECURE =
+            UUID.fromString("49930a2c-04f6-4fe6-beb7-688360fc5995");
+
+    //TEMPORARY FOR USE TO TEST BT CONNECTION
+    Button sendMsgBtn;
+    TextView receivedTextView;
+    EditText txtMsgToSend;
+
     public BluetoothFragment() {
         bluetoothOn = false;
     }
@@ -63,8 +81,13 @@ public class BluetoothFragment extends Fragment {
         pairedDevices = new HashMap<String, BluetoothDevice>();
         pairedDevicesAdapterData = new ArrayList<>();
 
+        //Intent Filter for pairing devices
         IntentFilter btPairingFilter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         getActivity().registerReceiver(btPairingReceiver, btPairingFilter);
+        bluetoothConnectionService = new BluetoothConnectionService(getContext());
+
+        //Intent Filter for received messages
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(bluetoothMsgReceiver, new IntentFilter("incomingBTMessage"));
     }
 
     @Override
@@ -91,6 +114,17 @@ public class BluetoothFragment extends Fragment {
         pairedDevicesListView.setAdapter(pairedDevicesAdapter);
 
         initializeBluetooth();
+
+        //TEMPORARY FOR BT TEXTING
+        sendMsgBtn = (Button) rootView.findViewById(R.id.temp_btnsend);
+        receivedTextView = (TextView) rootView.findViewById(R.id.temp_btreceivedmsgs);
+        txtMsgToSend = (EditText) rootView.findViewById(R.id.temp_msginput);
+
+        sendMsgBtn.setOnClickListener(v -> {
+            byte[] bytes = txtMsgToSend.getText().toString().getBytes(Charset.defaultCharset());
+            bluetoothConnectionService.write(bytes);
+            txtMsgToSend.setText("");
+        });
         return rootView;
     }
 
@@ -138,13 +172,16 @@ public class BluetoothFragment extends Fragment {
 
     private void searchBluetooth() {
         if (bluetoothOn) {
-
             discoveredDevices.clear();
             discoveredDevicesAdapter.clear();
 
             if (bluetoothAdapter.isDiscovering()) {
                 bluetoothAdapter.cancelDiscovery();
             }
+
+            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+            startActivity(discoverableIntent);
 
             checkLocationPermission();
             bluetoothAdapter.startDiscovery();
@@ -241,9 +278,22 @@ public class BluetoothFragment extends Fragment {
         requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
     }
 
-    private void connectBluetooth(String macAddress) {
+    private boolean connectBluetooth(String macAddress) {
         //TODO: Logic to connect bluetooth
         showShortToast("Connect to: " + macAddress);
+        BluetoothDevice btDevice = pairedDevices.get(macAddress);
+        if(btDevice == null){
+            showShortToast("Bluetooth device not paired");
+            return false;
+        }
+        try{
+            bluetoothConnectionService.startClient(btDevice);
+            return true;
+        }catch(Exception e){
+            showShortToast("An error occured while attempting to start connection");
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private void pairBluetooth(String macAddress) {
@@ -361,7 +411,10 @@ public class BluetoothFragment extends Fragment {
             btDeviceTitleTxt.setText(deviceName);
             btDeviceMACTxt.setText(deviceMAC);
             btnConnect.setOnClickListener(v -> {
-                connectBluetooth(items.get(position));
+                boolean connectSuccess = connectBluetooth(items.get(position));
+                if(connectSuccess){
+                    btnConnect.setText("Connected");
+                }
             });
             return convertView;
         }
@@ -378,6 +431,18 @@ public class BluetoothFragment extends Fragment {
         discoveredDevicesAdapter.updateList(discoveredDevicesAdapterData);
         pairedDevicesAdapter.updateList(pairedDevicesAdapterData);
     }
+
+    private BroadcastReceiver bluetoothMsgReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String text = intent.getStringExtra("msg");
+            if(receivedTextView.getText() == null){
+                receivedTextView.setText(text);
+            }else{
+                receivedTextView.setText(receivedTextView.getText() + "\n"+text);
+            }
+        }
+    };
 
     private void showShortToast(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
