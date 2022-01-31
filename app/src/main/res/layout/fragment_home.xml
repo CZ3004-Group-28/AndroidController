@@ -1,14 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".HomeFragment">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context=".HomeFragment"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:weightSum="2">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <view
+        android:id="@+id/mapView"
+        class="com.example.androidcontroller.GridMap"
+        android:layout_width="450dp"
+        android:layout_height="0dp"
+
+        android:layout_weight="1"
+
+        android:layout_gravity="center"
+
+        tools:ignore="MissingConstraints" />
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="HOME FRAGMENT" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:weightSum="2">
 
-</FrameLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/robotStatusTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="20dp"
+
+                android:text="Robot Status"
+                />
+
+            <TextView
+                android:id="@+id/robotStatusText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="20dp"
+
+                android:text="DISCOVERING"/>
+
+            <Button
+                android:id="@+id/customCmd_btn1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/robotStatusTextView"
+                android:layout_marginBottom="20dp"
+                android:text="Custom cmd 1" />
+
+            <Button
+                android:id="@+id/customCmd_btn2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/robotStatusText"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="20dp"
+                android:text="Custom cmd 2" />
+
+            <Button
+                android:id="@+id/settingsBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/customCmd_btn1"
+                android:layout_marginBottom="20dp"
+                android:text="Settings" />
+
+            <Button
+                android:id="@+id/arenaSetupBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/customCmd_btn2"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="20dp"
+                android:text="Arena Setup" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:weightSum="2"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:id="@+id/upArrowBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_arrow_up" />
+
+                <ImageButton
+                    android:id="@+id/leftArrowBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/upArrowBtn"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_arrow_left" />
+
+                <ImageButton
+                    android:id="@+id/rightArrowBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/upArrowBtn"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_arrow_right" />
+
+                <ImageButton
+                    android:id="@+id/downArrowBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_arrow_down" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>
