@@ -55,7 +55,6 @@ public class GridMap extends View {
     private Paint unexploredColor = new Paint();
     private Paint exploredColor = new Paint();
     private Paint arrowColor = new Paint();
-    //private Paint fastestPathColor = new Paint();
     private Paint imageLine = new Paint();
     private Paint imageLineConfirm = new Paint();
 
@@ -357,16 +356,6 @@ public class GridMap extends View {
         showLog("Exiting createCell");
     }
 
-    public void setEndCoord(int col, int row) {
-        showLog("Entering setEndCoord");
-        row = this.convertRow(row);
-        for (int x = col - 1; x <= col + 1; x++)
-            for (int y = row - 1; y <= row + 1; y++)
-                cells[x][y].setType("end");
-
-        showLog("Exiting setEndCoord");
-    }
-
     public void setStartCoord(int col, int row){
         showLog("Entering setStartCoord");
         startCoord[0] = col;
@@ -424,31 +413,6 @@ public class GridMap extends View {
 
     private void showLog(String message) {
         Log.d(TAG, message);
-    }
-
-    private String getObstacleDirectionText(int inDirection)
-    {
-        String direction = "";
-        switch (inDirection)
-        {
-            case 0:
-                direction = "NONE";
-                break;
-            case 1:
-                direction = "UP";
-                break;
-            case 2:
-                direction = "DOWN";
-                break;
-            case 3:
-                direction = "LEFT";
-                break;
-            case 4:
-                direction = "RIGHT";
-                break;
-        }
-
-        return direction;
     }
 
     private class Cell {
