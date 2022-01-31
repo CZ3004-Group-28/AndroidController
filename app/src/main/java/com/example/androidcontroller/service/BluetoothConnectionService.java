@@ -19,6 +19,9 @@ import java.util.UUID;
 
 public class BluetoothConnectionService {
     public static final String TAG = "BtConnectionSvc";
+
+    public static volatile BluetoothConnectionService INSTANCE;
+
     private static final String appName = "MAP-GRP28-CONTROLLER";
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("49930a2c-04f6-4fe6-beb7-688360fc5995");
@@ -33,6 +36,8 @@ public class BluetoothConnectionService {
     private UUID deviceUUID;
 
     private ConnectedThread connectedThread;
+
+    public static boolean isConnected = false;
 
     public BluetoothConnectionService(Context context){
         this.context = context;
@@ -199,6 +204,8 @@ public class BluetoothConnectionService {
                 e.printStackTrace();
             }
 
+            isConnected = true;
+
             btInStream = tmpIn;
             btOutStream = tmpOut;
         }
@@ -220,6 +227,7 @@ public class BluetoothConnectionService {
                     incomingMessageIntent.putExtra("msg",incomingMessage);
                     LocalBroadcastManager.getInstance(context).sendBroadcast(incomingMessageIntent);
                 } catch (IOException e) {
+                    isConnected = false;
                     Log.e(TAG, "write: Error reading Input Stream. " + e.getMessage() );
                     break;
                 }

@@ -88,6 +88,7 @@ public class BluetoothFragment extends Fragment {
 
         //Intent Filter for received messages
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(bluetoothMsgReceiver, new IntentFilter("incomingBTMessage"));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(sendBluetoothReceiver, new IntentFilter("sendBTMessage"));
     }
 
     @Override
@@ -440,6 +441,19 @@ public class BluetoothFragment extends Fragment {
                 receivedTextView.setText(text);
             }else{
                 receivedTextView.setText(receivedTextView.getText() + "\n"+text);
+            }
+        }
+    };
+
+    private BroadcastReceiver sendBluetoothReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String msg = intent.getStringExtra("msg");
+            try{
+                byte[] msgInBytes = msg.getBytes(Charset.defaultCharset());
+                bluetoothConnectionService.write(msgInBytes);
+            }catch(Exception e){
+                Log.e(TAG,"An error occured while sending bluetooth message");
             }
         }
     };

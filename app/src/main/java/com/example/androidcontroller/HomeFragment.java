@@ -1,15 +1,19 @@
 package com.example.androidcontroller;
 
+import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
@@ -19,7 +23,7 @@ import android.widget.PopupWindow;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment {
-
+    public static String TAG = "HomeFragment";
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -74,6 +78,56 @@ public class HomeFragment extends Fragment {
         arena_options_btn.setOnClickListener(v -> {
             arenaSetOptions();
         });
+
+        ImageButton controlBtnUp = rootview.findViewById(R.id.upArrowBtn);
+        ImageButton controlBtnDown = rootview.findViewById(R.id.downArrowBtn);
+        ImageButton controlBtnLeft = rootview.findViewById(R.id.leftArrowBtn);
+        ImageButton controlBtnRight = rootview.findViewById(R.id.rightArrowBtn);
+
+        //CONTROL BUTTON: Forward
+        controlBtnUp.setOnClickListener(v -> {
+            try{
+                Intent upDirectionIntent = new Intent("sendBTMessage");
+                upDirectionIntent.putExtra("msg","f");
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(upDirectionIntent);
+            }catch (Exception e){
+                Log.e(TAG, "onCreateView: An error occured while making message intent");
+            }
+        });
+
+        //CONTROL BUTTON: Reverse
+        controlBtnDown.setOnClickListener(v -> {
+            try{
+                Intent downDirectionIntent = new Intent("sendBTMessage");
+                downDirectionIntent.putExtra("msg","r");
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(downDirectionIntent);
+            }catch (Exception e){
+                Log.e(TAG, "onCreateView: An error occured while making message intent");
+            }
+        });
+
+        //CONTROL BUTTON: Left
+        controlBtnLeft.setOnClickListener(v -> {
+            try{
+                Intent leftDirectionIntent = new Intent("sendBTMessage");
+                leftDirectionIntent.putExtra("msg","tl");
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(leftDirectionIntent);
+            }catch (Exception e){
+                Log.e(TAG, "onCreateView: An error occured while making message intent");
+            }
+        });
+
+        //CONTROL BUTTON: Right
+        controlBtnRight.setOnClickListener(v -> {
+            try{
+                Intent rightDirectionIntent = new Intent("sendBTMessage");
+                rightDirectionIntent.putExtra("msg","tr");
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(rightDirectionIntent);
+            }catch (Exception e){
+                Log.e(TAG, "onCreateView: An error occured while making message intent");
+            }
+        });
+
 
         // Inflate the layout for this fragment
         return rootview;
