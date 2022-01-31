@@ -132,8 +132,8 @@ public class BluetoothFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        getActivity().unregisterReceiver(btDiscoveryReceiver);
-        getActivity().unregisterReceiver(btPairingReceiver);
+//        getActivity().unregisterReceiver(btDiscoveryReceiver);
+//        getActivity().unregisterReceiver(btPairingReceiver);
     }
 
     private void initializeBluetooth() {
@@ -454,6 +454,7 @@ public class BluetoothFragment extends Fragment {
                 bluetoothConnectionService.write(msgInBytes);
             }catch(Exception e){
                 Log.e(TAG,"An error occured while sending bluetooth message");
+                e.printStackTrace();
             }
         }
     };
