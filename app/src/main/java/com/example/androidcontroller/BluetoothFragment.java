@@ -31,10 +31,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.androidcontroller.service.BluetoothConnectionService;
-import com.example.androidcontroller.service.BluetoothService;
 
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
