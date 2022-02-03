@@ -31,10 +31,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.androidcontroller.service.BluetoothConnectionService;
-import com.example.androidcontroller.service.BluetoothService;
 
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,6 +62,9 @@ public class BluetoothFragment extends Fragment {
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("49930a2c-04f6-4fe6-beb7-688360fc5995");
 
+    //Auxiliary Functions
+    private boolean initializedBCastReceivers = false;
+
     //TEMPORARY FOR USE TO TEST BT CONNECTION
     Button sendMsgBtn;
     TextView receivedTextView;
@@ -81,13 +82,24 @@ public class BluetoothFragment extends Fragment {
         pairedDevices = new HashMap<String, BluetoothDevice>();
         pairedDevicesAdapterData = new ArrayList<>();
 
+        //TO FIX: This is being called multiple times everytime we click onto this view
+        //It is breaking the bt connection
+
         //Intent Filter for pairing devices
         IntentFilter btPairingFilter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         getActivity().registerReceiver(btPairingReceiver, btPairingFilter);
-        bluetoothConnectionService = new BluetoothConnectionService(getContext());
 
-        //Intent Filter for received messages
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(bluetoothMsgReceiver, new IntentFilter("incomingBTMessage"));
+        if(bluetoothConnectionService == null){
+            bluetoothConnectionService = new BluetoothConnectionService(getContext());
+        }
+
+        if(!initializedBCastReceivers){
+            //Intent Filter for received messages
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(bluetoothMsgReceiver, new IntentFilter("incomingBTMessage"));
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(sendBluetoothReceiver, new IntentFilter("sendBTMessage"));
+            initializedBCastReceivers = true;
+        }
+
     }
 
     @Override
@@ -131,8 +143,18 @@ public class BluetoothFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        getActivity().unregisterReceiver(btDiscoveryReceiver);
-        getActivity().unregisterReceiver(btPairingReceiver);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        try{
+            getContext().unregisterReceiver(btDiscoveryReceiver);
+            getContext().unregisterReceiver(btPairingReceiver);
+        }catch (Exception e){
+            Log.e(TAG, "onPause: An error occured while deregistering receivers");
+            e.printStackTrace();
+        }
     }
 
     private void initializeBluetooth() {
@@ -440,6 +462,20 @@ public class BluetoothFragment extends Fragment {
                 receivedTextView.setText(text);
             }else{
                 receivedTextView.setText(receivedTextView.getText() + "\n"+text);
+            }
+        }
+    };
+
+    private BroadcastReceiver sendBluetoothReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String msg = intent.getStringExtra("msg");
+            try{
+                byte[] msgInBytes = msg.getBytes(Charset.defaultCharset());
+                bluetoothConnectionService.write(msgInBytes);
+            }catch(Exception e){
+                Log.e(TAG,"An error occured while sending bluetooth message");
+                e.printStackTrace();
             }
         }
     };

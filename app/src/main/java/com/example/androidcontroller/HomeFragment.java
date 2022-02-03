@@ -1,17 +1,28 @@
 package com.example.androidcontroller;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONObject;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,48 +30,26 @@ import android.widget.PopupWindow;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment {
+    public static String TAG = "HomeFragment";
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private boolean initializedIntentListeners = false;
+    private TextView txtRoboStatus;
 
-    View rootview;
+    private View rootview;
 
-    PopupWindow arena_popup;
+    private PopupWindow arena_popup;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public HomeFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+        if(!initializedIntentListeners){
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(roboStatusUpdateReceiver, new IntentFilter("updateRobocarStatus"));
+            initializedIntentListeners = true;
         }
     }
 
@@ -74,6 +63,57 @@ public class HomeFragment extends Fragment {
         arena_options_btn.setOnClickListener(v -> {
             arenaSetOptions();
         });
+
+        ImageButton controlBtnUp = rootview.findViewById(R.id.upArrowBtn);
+        ImageButton controlBtnDown = rootview.findViewById(R.id.downArrowBtn);
+        ImageButton controlBtnLeft = rootview.findViewById(R.id.leftArrowBtn);
+        ImageButton controlBtnRight = rootview.findViewById(R.id.rightArrowBtn);
+
+        //CONTROL BUTTON: Forward
+        controlBtnUp.setOnClickListener(v -> {
+            try{
+                Intent upDirectionIntent = new Intent("sendBTMessage");
+                upDirectionIntent.putExtra("msg","f");
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(upDirectionIntent);
+            }catch (Exception e){
+                Log.e(TAG, "onCreateView: An error occured while making message intent");
+            }
+        });
+
+        //CONTROL BUTTON: Reverse
+        controlBtnDown.setOnClickListener(v -> {
+            try{
+                Intent downDirectionIntent = new Intent("sendBTMessage");
+                downDirectionIntent.putExtra("msg","r");
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(downDirectionIntent);
+            }catch (Exception e){
+                Log.e(TAG, "onCreateView: An error occured while making message intent");
+            }
+        });
+
+        //CONTROL BUTTON: Left
+        controlBtnLeft.setOnClickListener(v -> {
+            try{
+                Intent leftDirectionIntent = new Intent("sendBTMessage");
+                leftDirectionIntent.putExtra("msg","tl");
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(leftDirectionIntent);
+            }catch (Exception e){
+                Log.e(TAG, "onCreateView: An error occured while making message intent");
+            }
+        });
+
+        //CONTROL BUTTON: Right
+        controlBtnRight.setOnClickListener(v -> {
+            try{
+                Intent rightDirectionIntent = new Intent("sendBTMessage");
+                rightDirectionIntent.putExtra("msg","tr");
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(rightDirectionIntent);
+            }catch (Exception e){
+                Log.e(TAG, "onCreateView: An error occured while making message intent");
+            }
+        });
+
+        this.txtRoboStatus = (TextView) rootview.findViewById(R.id.robotStatusText);
 
         // Inflate the layout for this fragment
         return rootview;
@@ -95,5 +135,31 @@ public class HomeFragment extends Fragment {
         // show the popup window
         // which view you pass in doesn't matter, it is only used for the window tolken
         popupWindow.showAtLocation(rootview, Gravity.CENTER, 0, 0);
+    }
+
+    private BroadcastReceiver roboStatusUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try{
+                JSONObject msgJSON = new JSONObject(intent.getStringExtra("msg"));
+                if(msgJSON.has("status")){
+                    txtRoboStatus.setText(msgJSON.getString("status"));
+                }else{
+                    txtRoboStatus.setText("UNKNOWN");
+                }
+            }catch (Exception e){
+                showShortToast("Error updating robocar status");
+                Log.e(TAG, "onReceive: An error occured while updating the robocar status");
+                e.printStackTrace();
+            }
+        }
+    };
+
+    private void showShortToast(String msg) {
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+    }
+
+    private void showLongToast(String msg) {
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
 }
