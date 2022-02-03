@@ -46,6 +46,7 @@ public class GridMap extends View {
 
     SharedPreferences sharedPreferences;
 
+    //Predefined color paints for the UI
     private Paint blackPaint = new Paint();
     private Paint obstacleColor = new Paint();
     private Paint robotColor = new Paint();
@@ -58,16 +59,19 @@ public class GridMap extends View {
     private Paint imageLine = new Paint();
     private Paint imageLineConfirm = new Paint();
 
+    //Arena formatting
     private static JSONObject receivedJsonObject = new JSONObject();
     private static JSONObject mapInformation;
     private static JSONObject backupMapInformation;
     private static String robotDirection = "None";
+    //Co-ordinates for the robot
     private static int[] startCoord = new int[]{-1, -1};
     private static int[] curCoord = new int[]{-1, -1};
     private static int[] oldCoord = new int[]{-1, -1};
     private static int[] waypointCoord = new int[]{-1, -1};
     private static ArrayList<String[]> arrowCoord = new ArrayList<>();
     private static ArrayList<int[]> obstacleCoord = new ArrayList<>();
+    //Boolean settings for modifying the arena gridview
     private static boolean autoUpdate = false;
     private static boolean canDrawRobot = false;
     private static boolean setWaypointStatus = false;
@@ -78,9 +82,11 @@ public class GridMap extends View {
     private static boolean validPosition = false;
     private static boolean waypointNew=false;
     private boolean newEndCoord=false;
+    //Arrow bitmap
     private Bitmap arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_error);
     private static boolean setObstacleDirection = false;
 
+    //Gridmap & arena sizes
     private static final String TAG = "GridMap";
     private static final int COL = 20;
     private static final int ROW = 20;
@@ -112,6 +118,7 @@ public class GridMap extends View {
     public GridMap(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initMap();
+        //Initialize predefined paints
         blackPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         obstacleColor.setColor(Color.BLACK);
         robotColor.setColor(Color.CYAN);
@@ -137,6 +144,7 @@ public class GridMap extends View {
     }
 
     private void initMap() {
+        //Disable ondraw
         setWillNotDraw(false);
     }
 
@@ -352,7 +360,7 @@ public class GridMap extends View {
 
         for (int x = 0; x <= COL; x++)
             for (int y = 0; y <= ROW; y++)
-                cells[x][y] = new Cell(x * cellSize + (cellSize / 30), y * cellSize + (cellSize / 30), (x + 1) * cellSize, (y + 1) * cellSize, unexploredColor, "unexplored");
+                cells[x][y] = new Cell(x * cellSize + (cellSize/30), y * cellSize + (cellSize/30), (x + 1) * cellSize, (y + 1) * cellSize, unexploredColor, "unexplored");
         showLog("Exiting createCell");
     }
 
