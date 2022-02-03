@@ -11,6 +11,9 @@ import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -19,6 +22,9 @@ import java.util.UUID;
 
 public class BluetoothConnectionService {
     public static final String TAG = "BtConnectionSvc";
+
+    public static volatile BluetoothConnectionService INSTANCE;
+
     private static final String appName = "MAP-GRP28-CONTROLLER";
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("49930a2c-04f6-4fe6-beb7-688360fc5995");
@@ -33,6 +39,8 @@ public class BluetoothConnectionService {
     private UUID deviceUUID;
 
     private ConnectedThread connectedThread;
+
+    public static boolean isConnected = false;
 
     public BluetoothConnectionService(Context context){
         this.context = context;
@@ -199,6 +207,8 @@ public class BluetoothConnectionService {
                 e.printStackTrace();
             }
 
+            isConnected = true;
+
             btInStream = tmpIn;
             btOutStream = tmpOut;
         }
@@ -216,12 +226,16 @@ public class BluetoothConnectionService {
                     String incomingMessage = new String(buffer, 0, bytes);
                     Log.d(TAG, "InputStream: " + incomingMessage);
 
-                    Intent incomingMessageIntent = new Intent("incomingBTMessage");
-                    incomingMessageIntent.putExtra("msg",incomingMessage);
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(incomingMessageIntent);
+//                    Intent incomingMessageIntent = new Intent("incomingBTMessage");
+//                    incomingMessageIntent.putExtra("msg",incomingMessage);
+//                    LocalBroadcastManager.getInstance(context).sendBroadcast(incomingMessageIntent);
+                    handleIncomingBTMessage(incomingMessage);
                 } catch (IOException e) {
+                    isConnected = false;
                     Log.e(TAG, "write: Error reading Input Stream. " + e.getMessage() );
                     break;
+                }catch(JSONException e){
+                    Log.e(TAG, "run: JSON Error in handling incomingBTMessage");
                 }
             }
         }
@@ -266,5 +280,28 @@ public class BluetoothConnectionService {
         Log.d(TAG, "write: Write Called.");
         //perform the write
         connectedThread.write(out);
+    }
+
+    private void handleIncomingBTMessage(String msg) throws JSONException {
+        try{
+            JSONObject msgJSON = new JSONObject(msg);
+            String msgType = msgJSON.getString("type");
+            switch(msgType.toUpperCase()){
+                case "STATUS":
+                    sendIntent("updateRobocarStatus",msgJSON.toString());
+                    break;
+            }
+        }catch (Exception e){
+            //NOT a JSON Obj
+            JSONObject msgJSON = new JSONObject();
+            msgJSON.put("msg",msg);
+            sendIntent("incomingBTMessage", msgJSON.toString());
+        }
+    }
+
+    private void sendIntent(String intentAction, String content){
+        Intent sendingIntent = new Intent(intentAction);
+        sendingIntent.putExtra("msg", content);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(sendingIntent);
     }
 }
