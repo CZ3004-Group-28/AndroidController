@@ -370,6 +370,7 @@ public class GridMap extends View {
 
     public void setStartCoord(int col, int row){
         showLog("Entering setStartCoord");
+        Toast.makeText(getContext(), "Entering setStartCoord", Toast.LENGTH_SHORT).show();
         startCoord[0] = col;
         startCoord[1] = row;
         String direction = getRobotDirection();
@@ -387,9 +388,12 @@ public class GridMap extends View {
 
     public void setCurCoord(int col, int row, String direction) {
         showLog("Entering setCurCoord");
+        Toast.makeText(getContext(), "Entering setCurCoord", Toast.LENGTH_SHORT).show();
+
         curCoord[0] = col;
         curCoord[1] = row;
         this.setRobotDirection(direction);
+        this.updateRobotAxis(col, row, direction);
 
         row = this.convertRow(row);
         for (int x = col - 1; x <= col + 1; x++)
@@ -415,6 +419,8 @@ public class GridMap extends View {
     }
 
     public void setRobotDirection(String direction) {
+        Toast.makeText(getContext(), "SET robotDirection", Toast.LENGTH_SHORT).show();
+
         sharedPreferences = getContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         robotDirection = direction;
@@ -506,6 +512,8 @@ public class GridMap extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        Toast.makeText(getContext(), "ONTOUCHevent", Toast.LENGTH_SHORT).show();
+
         int column = (int) (event.getX() / cellSize);
         int row = this.convertRow((int) (event.getY() / cellSize));
 
@@ -543,6 +551,9 @@ public class GridMap extends View {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                //update robot axis
+                updateRobotAxis(column, row, direction);
 
                 this.invalidate();
                 return true;
@@ -611,7 +622,12 @@ public class GridMap extends View {
 
     public void resetMap() {
         showLog("Entering resetMap");
+
+        Toast.makeText(getContext(), "Entering resetMap", Toast.LENGTH_SHORT).show();
+
         TextView robotStatusTextView =  ((Activity)this.getContext()).findViewById(R.id.robotStatusText);
+
+        updateRobotAxis(1, 1, "None");
 
         robotStatusTextView.setText("Not Available");
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -642,7 +658,65 @@ public class GridMap extends View {
         this.invalidate();
     }
 
+    private void updateRobotAxis(int col, int row, String direction) {
 
+        Toast.makeText(getContext(), "updating axis", Toast.LENGTH_SHORT).show();
+
+        TextView xyAxisTextView =  ((Activity)this.getContext()).findViewById(R.id.robot_xy_value);
+        TextView directionAxisTextView =  ((Activity)this.getContext()).findViewById(R.id.robotDirText);
+
+        String newtext = "X: " + String.valueOf(col-1) + " Y: " + String.valueOf(row-1);
+
+        xyAxisTextView.setText(newtext);
+
+//        xAxisTextView.setText(String.valueOf(col-1));
+//        yAxisTextView.setText(String.valueOf(row-1));
+        //directionAxisTextView.setText(direction);
+        if(direction.equals("up"))
+        {
+            //directionAxisTextView.setText(direction + " (N)");
+            directionAxisTextView.setText("N");
+        }
+        else if (direction.equals("down"))
+        {
+            //directionAxisTextView.setText(direction + " (S) ");
+            directionAxisTextView.setText("S");
+        }
+        else if (direction.equals("right"))
+        {
+            //.setText(direction + " (E) ");
+            directionAxisTextView.setText("E");
+        }
+        else if (direction.equals("left"))
+        {
+            //directionAxisTextView.setText(direction + " (W) ");
+            directionAxisTextView.setText("W");
+        }
+        else if (direction.equals("upleft"))
+        {
+            //directionAxisTextView.setText(direction + " (W) ");
+            directionAxisTextView.setText("NW");
+        }
+        else if (direction.equals("upright"))
+        {
+            //directionAxisTextView.setText(direction + " (W) ");
+            directionAxisTextView.setText("NE");
+        }
+        else if (direction.equals("downleft"))
+        {
+            //directionAxisTextView.setText(direction + " (W) ");
+            directionAxisTextView.setText("SW");
+        }
+        else if (direction.equals("downright"))
+        {
+            //directionAxisTextView.setText(direction + " (W) ");
+            directionAxisTextView.setText("SE");
+        }
+        else
+        {
+            directionAxisTextView.setText("None");
+        }
+    }
 
 
 }

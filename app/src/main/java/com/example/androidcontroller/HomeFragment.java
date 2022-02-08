@@ -130,16 +130,14 @@ public class HomeFragment extends Fragment {
 
         //ARENA RELATED
         Button btnResetArena = rootview.findViewById(R.id.btnResetArena);
-        //Button btnResetArena = rootview.findViewById(R.id.test1_btn);
 
         Button btnSetTarget = rootview.findViewById(R.id.btnSetTarget);
         Button btnSetFacing = rootview.findViewById(R.id.btnDirectionFacing);
 
         Button btnPlaceRobot = rootview.findViewById(R.id.btnPlaceRobot);
-        //Button btnPlaceRobot = rootview.findViewById(R.id.test2_btn);
 
         btnResetArena.setOnClickListener(v -> {
-            showShortToast("Reseting map...");
+            //showShortToast("Reseting map...");
             gridMap.resetMap();
         });
 
@@ -201,10 +199,10 @@ public class HomeFragment extends Fragment {
     };
 
     private void showShortToast(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
 
     private void showLongToast(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
     }
 }

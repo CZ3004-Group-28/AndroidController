@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    tools:context=".HomeFragment"
-    android:orientation="vertical"
-    android:padding="10dp"
-    android:weightSum="5">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".HomeFragment">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:weightSum="5">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -200,26 +205,33 @@
                 android:weightSum="2"
                 android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/test1_btn"
+<!--                <Button-->
+<!--                    android:id="@+id/test1_btn"-->
 
-                    android:layout_weight="1"
+<!--                    android:layout_weight="1"-->
 
-                    android:layout_width="wrap_content"
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginBottom="20dp"-->
+<!--                    android:text="test 1" />-->
+
+<!--                <Button-->
+<!--                    android:id="@+id/test2_btn"-->
+
+<!--                    android:layout_weight="1"-->
+
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginBottom="20dp"-->
+<!--                    android:text="test 2" />-->
+
+                <TextView
+                    android:id="@+id/robot_xy_value"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:text="test 1" />
-
-                <Button
-                    android:id="@+id/test2_btn"
-
-                    android:layout_weight="1"
-
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:text="test 2" />
-
+                    android:text="X:   Y:   " />
             </LinearLayout>
 
         </LinearLayout>
@@ -228,3 +240,4 @@
 
 
 </LinearLayout>
+</HorizontalScrollView>
