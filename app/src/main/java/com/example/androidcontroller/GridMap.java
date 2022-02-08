@@ -352,6 +352,10 @@ public class GridMap extends View {
         return startCoordStatus;
     }
 
+    public void setStartCoordStatus(boolean status){
+        startCoordStatus = status;
+    }
+
     private void createCell() {
         showLog("Entering cellCreate");
         cells = new Cell[COL + 1][ROW + 1];

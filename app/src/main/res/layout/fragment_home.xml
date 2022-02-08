@@ -9,17 +9,51 @@
     android:padding="10dp"
     android:weightSum="5">
 
-    <view
-        android:id="@+id/mapView"
-        class="com.example.androidcontroller.GridMap"
-        android:layout_width="450dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-
         android:layout_weight="3"
+        android:orientation="horizontal">
 
-        android:layout_gravity="center"
+        <view
+            android:id="@+id/mapView"
+            class="com.example.androidcontroller.GridMap"
+            android:layout_width="450dp"
+            android:layout_height="match_parent"
+            tools:ignore="MissingConstraints" />
 
-        tools:ignore="MissingConstraints" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btnResetArena"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Reset" />
+
+            <Button
+                android:id="@+id/btnSetTarget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Target" />
+
+            <Button
+                android:id="@+id/btnDirectionFacing"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Facing:" />
+
+            <Button
+                android:id="@+id/btnPlaceRobot"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Place Robot" />
+        </LinearLayout>
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

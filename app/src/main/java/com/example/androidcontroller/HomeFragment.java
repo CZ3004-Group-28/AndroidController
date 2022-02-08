@@ -39,6 +39,11 @@ public class HomeFragment extends Fragment {
 
     private PopupWindow arena_popup;
 
+    //For Arena
+    boolean placingRobot;
+
+    //GridMap
+    private static GridMap gridMap;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -59,11 +64,21 @@ public class HomeFragment extends Fragment {
 
         rootview = inflater.inflate(R.layout.fragment_home, container, false);
 
+        gridMap = new GridMap(getContext());
+        gridMap = rootview.findViewById(R.id.mapView);
+
+        //Initialize Flags
+        placingRobot = false;
+
+        // For updating of robot status
+        this.txtRoboStatus = (TextView) rootview.findViewById(R.id.robotStatusText);
+
         Button arena_options_btn = rootview.findViewById(R.id.arenaSetupBtn);
         arena_options_btn.setOnClickListener(v -> {
             arenaSetOptions();
         });
 
+        //CONTROL BUTTON DECLARATIONS
         ImageButton controlBtnUp = rootview.findViewById(R.id.upArrowBtn);
         ImageButton controlBtnDown = rootview.findViewById(R.id.downArrowBtn);
         ImageButton controlBtnLeft = rootview.findViewById(R.id.leftArrowBtn);
@@ -113,7 +128,28 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        this.txtRoboStatus = (TextView) rootview.findViewById(R.id.robotStatusText);
+        //ARENA RELATED
+        Button btnResetArena = rootview.findViewById(R.id.btnResetArena);
+        Button btnSetTarget = rootview.findViewById(R.id.btnSetTarget);
+        Button btnSetFacing = rootview.findViewById(R.id.btnDirectionFacing);
+        Button btnPlaceRobot = rootview.findViewById(R.id.btnPlaceRobot);
+
+        btnPlaceRobot.setOnClickListener(v -> {
+            try{
+                //New status
+                placingRobot = !placingRobot;
+                if(placingRobot){
+                    gridMap.setStartCoordStatus(placingRobot);
+                    btnPlaceRobot.setText("Cancel");
+                }else{
+                    gridMap.setStartCoordStatus(placingRobot);
+                    btnPlaceRobot.setText("Place Robot");
+                }
+            }catch (Exception e){
+                Log.e(TAG, "onCreateView: An error occured while placing robot");
+                e.printStackTrace();
+            }
+        });
 
         // Inflate the layout for this fragment
         return rootview;
