@@ -609,5 +609,40 @@ public class GridMap extends View {
         return false;
     }
 
+    public void resetMap() {
+        showLog("Entering resetMap");
+        TextView robotStatusTextView =  ((Activity)this.getContext()).findViewById(R.id.robotStatusText);
+
+        robotStatusTextView.setText("Not Available");
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        receivedJsonObject = null;
+        backupMapInformation = null;
+        startCoord = new int[]{-1, -1};
+        curCoord = new int[]{-1, -1};
+        oldCoord = new int[]{-1, -1};
+        robotDirection = "None";
+        autoUpdate = false;
+        arrowCoord = new ArrayList<>();
+        obstacleCoord = new ArrayList<>();
+        waypointCoord = new int[]{-1, -1};
+        mapDrawn = false;
+        canDrawRobot = false;
+        validPosition = false;
+        oCellArr = new ArrayList<>();
+        rpiObstacle = "";
+        rpiRobot = "";
+        //oCellArrDirection = new ArrayList<>();
+
+        // newly added
+        obstacleNoArray = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}; //reset obstacle no array
+        Bitmap arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_error);
+
+        showLog("Exiting resetMap");
+        this.invalidate();
+    }
+
+
+
 
 }

@@ -26,7 +26,7 @@ import org.json.JSONObject;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragment#newInstance} factory method to
+ * Use the {@link HomeFragment} factory method to
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment {
@@ -130,9 +130,18 @@ public class HomeFragment extends Fragment {
 
         //ARENA RELATED
         Button btnResetArena = rootview.findViewById(R.id.btnResetArena);
+        //Button btnResetArena = rootview.findViewById(R.id.test1_btn);
+
         Button btnSetTarget = rootview.findViewById(R.id.btnSetTarget);
         Button btnSetFacing = rootview.findViewById(R.id.btnDirectionFacing);
+
         Button btnPlaceRobot = rootview.findViewById(R.id.btnPlaceRobot);
+        //Button btnPlaceRobot = rootview.findViewById(R.id.test2_btn);
+
+        btnResetArena.setOnClickListener(v -> {
+            showShortToast("Reseting map...");
+            gridMap.resetMap();
+        });
 
         btnPlaceRobot.setOnClickListener(v -> {
             try{
