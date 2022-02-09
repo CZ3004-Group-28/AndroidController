@@ -920,57 +920,57 @@ public class GridMap extends View {
     }
 
     private void updateRobotAxis(int col, int row, String direction) {
-//        TextView xAxisTextView =  ((Activity)this.getContext()).findViewById(R.id.xAxisTextView);
-//        TextView yAxisTextView =  ((Activity)this.getContext()).findViewById(R.id.yAxisTextView);
-//        TextView directionAxisTextView =  ((Activity)this.getContext()).findViewById(R.id.directionAxisTextView);
-//
-//        xAxisTextView.setText(String.valueOf(col-1));
-//        yAxisTextView.setText(String.valueOf(row-1));
-//        //directionAxisTextView.setText(direction);
-//        if(direction.equals("up"))
-//        {
-//            //directionAxisTextView.setText(direction + " (N)");
-//            directionAxisTextView.setText("N");
-//        }
-//        else if (direction.equals("down"))
-//        {
-//            //directionAxisTextView.setText(direction + " (S) ");
-//            directionAxisTextView.setText("S");
-//        }
-//        else if (direction.equals("right"))
-//        {
-//            //.setText(direction + " (E) ");
-//            directionAxisTextView.setText("E");
-//        }
-//        else if (direction.equals("left"))
-//        {
-//            //directionAxisTextView.setText(direction + " (W) ");
-//            directionAxisTextView.setText("W");
-//        }
-//        else if (direction.equals("upleft"))
-//        {
-//            //directionAxisTextView.setText(direction + " (W) ");
-//            directionAxisTextView.setText("NW");
-//        }
-//        else if (direction.equals("upright"))
-//        {
-//            //directionAxisTextView.setText(direction + " (W) ");
-//            directionAxisTextView.setText("NE");
-//        }
-//        else if (direction.equals("downleft"))
-//        {
-//            //directionAxisTextView.setText(direction + " (W) ");
-//            directionAxisTextView.setText("SW");
-//        }
-//        else if (direction.equals("downright"))
-//        {
-//            //directionAxisTextView.setText(direction + " (W) ");
-//            directionAxisTextView.setText("SE");
-//        }
-//        else
-//        {
-//            directionAxisTextView.setText("None");
-//        }
+        TextView xyAxisTextView =  ((Activity)this.getContext()).findViewById(R.id.robot_xy_value);
+        TextView directionAxisTextView =  ((Activity)this.getContext()).findViewById(R.id.robotDirText);
+
+        String newDirText = "X: " + String.valueOf(col-1) + " Y: " + String.valueOf(row-1);
+
+        xyAxisTextView.setText(newDirText);
+        directionAxisTextView.setText(direction);
+        if(direction.equals("up"))
+        {
+            //directionAxisTextView.setText(direction + " (N)");
+            directionAxisTextView.setText("N");
+        }
+        else if (direction.equals("down"))
+        {
+            //directionAxisTextView.setText(direction + " (S) ");
+            directionAxisTextView.setText("S");
+        }
+        else if (direction.equals("right"))
+        {
+            //.setText(direction + " (E) ");
+            directionAxisTextView.setText("E");
+        }
+        else if (direction.equals("left"))
+        {
+            //directionAxisTextView.setText(direction + " (W) ");
+            directionAxisTextView.setText("W");
+        }
+        else if (direction.equals("upleft"))
+        {
+            //directionAxisTextView.setText(direction + " (W) ");
+            directionAxisTextView.setText("NW");
+        }
+        else if (direction.equals("upright"))
+        {
+            //directionAxisTextView.setText(direction + " (W) ");
+            directionAxisTextView.setText("NE");
+        }
+        else if (direction.equals("downleft"))
+        {
+            //directionAxisTextView.setText(direction + " (W) ");
+            directionAxisTextView.setText("SW");
+        }
+        else if (direction.equals("downright"))
+        {
+            //directionAxisTextView.setText(direction + " (W) ");
+            directionAxisTextView.setText("SE");
+        }
+        else
+        {
+            directionAxisTextView.setText("None");
+        }
     }
 
     public void setWaypointCoord(int col, int row) throws JSONException {

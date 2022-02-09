@@ -34,7 +34,7 @@ public class HomeFragment extends Fragment {
     private PopupWindow arena_popup;
 
     //For Arena
-    boolean placingRobot, settingObstacle;
+    boolean placingRobot, settingObstacle, settingDir;
 
     //GridMap
     private static GridMap gridMap;
@@ -128,7 +128,6 @@ public class HomeFragment extends Fragment {
         Button btnResetArena = rootview.findViewById(R.id.btnResetArena);
         Button btnSetObstacle = rootview.findViewById(R.id.btnSetObstacle);
         Button btnSetFacing = rootview.findViewById(R.id.btnDirectionFacing);
-
         Button btnPlaceRobot = rootview.findViewById(R.id.btnPlaceRobot);
 
         btnResetArena.setOnClickListener(v->{
@@ -171,6 +170,24 @@ public class HomeFragment extends Fragment {
                 Log.e(TAG, "onCreateView: An error occurred while setting obstacle");
                 e.printStackTrace();
             }
+        });
+
+        btnSetFacing.setOnClickListener(v -> {
+
+            try{
+                settingDir = !settingDir;
+                if(settingDir){
+                    gridMap.setSetObstacleDirection(settingDir);
+                    btnSetFacing.setText("Stop set direction");
+                }else{
+                    gridMap.setSetObstacleDirection(settingDir);
+                    btnSetFacing.setText("Set direction");
+                }
+            }catch (Exception e){
+                Log.e(TAG, "onCreateView: An error occurred while setting obstacle direction");
+                e.printStackTrace();
+            }
+
         });
 
         // Inflate the layout for this fragment
