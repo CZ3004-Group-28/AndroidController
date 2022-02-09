@@ -128,6 +128,7 @@ public class HomeFragment extends Fragment {
         Button btnResetArena = rootview.findViewById(R.id.btnResetArena);
         Button btnSetObstacle = rootview.findViewById(R.id.btnSetObstacle);
         Button btnSetFacing = rootview.findViewById(R.id.btnDirectionFacing);
+
         Button btnPlaceRobot = rootview.findViewById(R.id.btnPlaceRobot);
 
         btnResetArena.setOnClickListener(v->{
@@ -213,10 +214,10 @@ public class HomeFragment extends Fragment {
     };
 
     private void showShortToast(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
 
     private void showLongToast(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
     }
 }

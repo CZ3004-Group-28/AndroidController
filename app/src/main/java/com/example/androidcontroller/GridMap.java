@@ -815,6 +815,7 @@ public class GridMap extends View {
 
     public void setStartCoord(int col, int row){
         showLog("Entering setStartCoord");
+        Toast.makeText(getContext(), "Entering setStartCoord", Toast.LENGTH_SHORT).show();
         startCoord[0] = col;
         startCoord[1] = row;
         String direction = getRobotDirection();
@@ -832,6 +833,8 @@ public class GridMap extends View {
 
     public void setCurCoord(int col, int row, String direction) {
         showLog("Entering setCurCoord");
+        Toast.makeText(getContext(), "Entering setCurCoord", Toast.LENGTH_SHORT).show();
+
         curCoord[0] = col;
         curCoord[1] = row;
         this.setRobotDirection(direction);
@@ -906,6 +909,8 @@ public class GridMap extends View {
     }
 
     public void setRobotDirection(String direction) {
+        Toast.makeText(getContext(), "SET robotDirection", Toast.LENGTH_SHORT).show();
+
         sharedPreferences = getContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         robotDirection = direction;
@@ -1286,6 +1291,9 @@ public class GridMap extends View {
 //                    ArenaFragment.isSetStartingPiont = false;
 //                    setStartPointFAB.setImageDrawable(getContext().getDrawable(R.drawable.triangle));
 //                }
+
+                //update robot axis
+                updateRobotAxis(column, row, direction);
 
                 this.invalidate();
                 return true;

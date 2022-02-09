@@ -7,5 +7,8 @@
     <string name="manual">MANUAL</string>
     <string name="auto">AUTO</string>
 
+    <string name="update_xy_coordinate">X:%1$i  Y:%1$i  </string>
+<!--    <string name="update_y_coordinate">Y:%i </string>-->
+
     <string name="configure">Reconfigure</string>
 </resources>

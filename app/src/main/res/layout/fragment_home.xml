@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    tools:context=".HomeFragment"
-    android:orientation="vertical"
-    android:padding="10dp"
-    android:weightSum="5">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".HomeFragment">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:weightSum="5">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -88,13 +93,34 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginBottom="20dp"
 
-                android:text="DISCOVERING" />
+                android:text="Not Available" />
+
+            <TextView
+                android:id="@+id/robotDirTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_below="@id/robotStatusTextView"
+                android:layout_marginBottom="20dp"
+
+                android:text="Robot Direction" />
+
+            <TextView
+                android:id="@+id/robotDirText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_below="@id/robotStatusText"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="20dp"
+
+                android:text="NONE" />
 
             <Button
                 android:id="@+id/customCmd_btn1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/robotStatusTextView"
+                android:layout_below="@id/robotDirTextView"
                 android:layout_marginBottom="20dp"
                 android:text="Custom cmd 1" />
 
@@ -102,7 +128,7 @@
                 android:id="@+id/customCmd_btn2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/robotStatusText"
+                android:layout_below="@id/robotDirText"
                 android:layout_alignParentRight="true"
                 android:layout_marginBottom="20dp"
                 android:text="Custom cmd 2" />
@@ -175,8 +201,37 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:weightSum="2"
+                android:orientation="vertical">
 
+<!--                <Button-->
+<!--                    android:id="@+id/test1_btn"-->
+
+<!--                    android:layout_weight="1"-->
+
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginBottom="20dp"-->
+<!--                    android:text="test 1" />-->
+
+<!--                <Button-->
+<!--                    android:id="@+id/test2_btn"-->
+
+<!--                    android:layout_weight="1"-->
+
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginBottom="20dp"-->
+<!--                    android:text="test 2" />-->
+
+                <TextView
+                    android:id="@+id/robot_xy_value"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="X:   Y:   " />
             </LinearLayout>
 
         </LinearLayout>
@@ -185,3 +240,4 @@
 
 
 </LinearLayout>
+</HorizontalScrollView>
