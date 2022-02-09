@@ -35,10 +35,10 @@
                 android:text="Reset" />
 
             <Button
-                android:id="@+id/btnSetTarget"
+                android:id="@+id/btnSetObstacle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Add Target" />
+                android:text="Add Obstacle" />
 
             <Button
                 android:id="@+id/btnDirectionFacing"

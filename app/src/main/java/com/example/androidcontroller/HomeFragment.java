@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -24,11 +23,6 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class HomeFragment extends Fragment {
     public static String TAG = "HomeFragment";
 
@@ -40,7 +34,7 @@ public class HomeFragment extends Fragment {
     private PopupWindow arena_popup;
 
     //For Arena
-    boolean placingRobot;
+    boolean placingRobot, settingObstacle;
 
     //GridMap
     private static GridMap gridMap;
@@ -64,8 +58,10 @@ public class HomeFragment extends Fragment {
 
         rootview = inflater.inflate(R.layout.fragment_home, container, false);
 
-        gridMap = new GridMap(getContext());
-        gridMap = rootview.findViewById(R.id.mapView);
+        if(gridMap == null){
+            gridMap = new GridMap(getContext());
+            gridMap = rootview.findViewById(R.id.mapView);
+        }
 
         //Initialize Flags
         placingRobot = false;
@@ -130,9 +126,18 @@ public class HomeFragment extends Fragment {
 
         //ARENA RELATED
         Button btnResetArena = rootview.findViewById(R.id.btnResetArena);
-        Button btnSetTarget = rootview.findViewById(R.id.btnSetTarget);
+        Button btnSetObstacle = rootview.findViewById(R.id.btnSetObstacle);
         Button btnSetFacing = rootview.findViewById(R.id.btnDirectionFacing);
         Button btnPlaceRobot = rootview.findViewById(R.id.btnPlaceRobot);
+
+        btnResetArena.setOnClickListener(v->{
+            try{
+                gridMap.resetMap();
+            }catch (Exception e){
+                Log.e(TAG, "onCreateView: An error occured while resetting map");
+                e.printStackTrace();
+            }
+        });
 
         btnPlaceRobot.setOnClickListener(v -> {
             try{
@@ -147,6 +152,22 @@ public class HomeFragment extends Fragment {
                 }
             }catch (Exception e){
                 Log.e(TAG, "onCreateView: An error occured while placing robot");
+                e.printStackTrace();
+            }
+        });
+
+        btnSetObstacle.setOnClickListener(v->{
+            try{
+                settingObstacle = !settingObstacle;
+                if(settingObstacle){
+                    gridMap.setSetObstacleStatus(settingObstacle);
+                    btnSetObstacle.setText("Stop Add Obstacle");
+                }else{
+                    gridMap.setSetObstacleStatus(settingObstacle);
+                    btnSetObstacle.setText("Add Obstacle");
+                }
+            }catch (Exception e){
+                Log.e(TAG, "onCreateView: An error occurred while setting obstacle");
                 e.printStackTrace();
             }
         });
