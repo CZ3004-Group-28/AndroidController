@@ -1234,9 +1234,14 @@ public class GridMap extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
         showLog("Entering onTouchEvent");
         int column = (int) (event.getX() / cellSize);
         int row = this.convertRow((int) (event.getY() / cellSize));
+
+        boolean isSetRobot;
+        isSetRobot = cells[column][20 - row].type.equals("robot");
+
 //        ToggleButton setStartPointToggleBtn = ((Activity)this.getContext()).findViewById(R.id.setStartPointToggleBtn);
 //        ToggleButton setWaypointToggleBtn = ((Activity)this. getContext()).findViewById(R.id.setWaypointToggleBtn);
         // new FAB
@@ -1282,7 +1287,7 @@ public class GridMap extends View {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                updateRobotAxis(column, row, direction);
+                //updateRobotAxis(column, row, direction);
 //                if (setStartPointToggleBtn.isChecked())
 //                    setStartPointToggleBtn.toggle();
 //                // reset setStartPointFAB icon
@@ -1314,7 +1319,6 @@ public class GridMap extends View {
                 return true;
             }
             if (setObstacleStatus) { // setting the position of the obstacle
-
 
                 // TODO: New direction
                 cells[column][20-row].setobstacleFacing(getObstacleDirectionText(newDirection));
@@ -1356,10 +1360,13 @@ public class GridMap extends View {
                 this.invalidate();
                 return true;
             }
-            if(setObstacleDirection)
-            {
-                showLog("Enter set obstacle direction");
 
+            if(setObstacleDirection || (setObstacleDirection && isSetRobot))
+            {
+                if((setObstacleDirection && isSetRobot)){
+                    Toast.makeText((Activity) this.getContext(), "SETTING ROBOT DIR", Toast.LENGTH_SHORT).show();
+                }
+                showLog("Enter set obstacle direction");
 
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
                 mBuilder.setTitle("Select Obstacle Direction");
@@ -1379,19 +1386,44 @@ public class GridMap extends View {
                         switch (switchDirection)
                         {
                             case 0:
-                                cells[column][20 - row].setobstacleFacing("NONE");
+                                if(isSetRobot){
+                                    setRobotDirection("up");
+                                }
+                                else {
+                                    cells[column][20 - row].setobstacleFacing("NONE");
+                                }
                                 break;
                             case 1:
-                                cells[column][20 - row].setobstacleFacing("UP");
+                                if(isSetRobot){
+                                    setRobotDirection("up");
+                                }
+                                else{
+                                    cells[column][20 - row].setobstacleFacing("UP");
+                                }
                                 break;
                             case 2:
-                                cells[column][20 - row].setobstacleFacing("DOWN");
+                                if(isSetRobot){
+                                    setRobotDirection("down");
+                                }
+                                else{
+                                    cells[column][20 - row].setobstacleFacing("DOWN");
+                                }
                                 break;
                             case 3:
-                                cells[column][20 - row].setobstacleFacing("LEFT");
+                                if(isSetRobot){
+                                    setRobotDirection("left");
+                                }
+                                else{
+                                    cells[column][20 - row].setobstacleFacing("LEFT");
+                                }
                                 break;
                             case 4:
+                                if(isSetRobot){
+                                    setRobotDirection("right");
+                                }
+                                else{
                                 cells[column][20 - row].setobstacleFacing("RIGHT");
+                                }
                                 break;
                         }
 //                        ArenaFragment.updateArenaBTMessage( "Obstacle No: " + cells[column][20 - row].obstacleNo + "\t\tX: "+ (column-1) + "\t\tY: " + (row-1) +  "\t\tDirection: " + cells[column][20 - row].getobstacleFacing());
@@ -1414,7 +1446,7 @@ public class GridMap extends View {
                 });
 
                 // check if the cell selected is obstacle or not
-                if(cells[column][20 - row].type.equals("obstacle")) {
+                if(cells[column][20 - row].type.equals("obstacle") || isSetRobot) {
 
                     AlertDialog dialog = mBuilder.create();
                     dialog.show();
