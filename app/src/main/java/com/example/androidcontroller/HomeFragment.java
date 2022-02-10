@@ -178,10 +178,10 @@ public class HomeFragment extends Fragment {
                 settingDir = !settingDir;
                 if(settingDir){
                     gridMap.setSetObstacleDirection(settingDir);
-                    btnSetFacing.setText("Stop set direction");
+                    btnSetFacing.setText("Stop Set Facing");
                 }else{
                     gridMap.setSetObstacleDirection(settingDir);
-                    btnSetFacing.setText("Set direction");
+                    btnSetFacing.setText("Set Facing");
                 }
             }catch (Exception e){
                 Log.e(TAG, "onCreateView: An error occurred while setting obstacle direction");

@@ -51,7 +51,7 @@
                 android:id="@+id/btnDirectionFacing"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Facing:" />
+                android:text="Set Facing" />
 
             <Button
                 android:id="@+id/btnPlaceRobot"
