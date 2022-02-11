@@ -149,8 +149,8 @@ public class BluetoothFragment extends Fragment {
     public void onPause() {
         super.onPause();
         try{
-            getContext().unregisterReceiver(btDiscoveryReceiver);
-            getContext().unregisterReceiver(btPairingReceiver);
+//            getContext().unregisterReceiver(btDiscoveryReceiver);
+//            getContext().unregisterReceiver(btPairingReceiver);
         }catch (Exception e){
             Log.e(TAG, "onPause: An error occured while deregistering receivers");
             e.printStackTrace();

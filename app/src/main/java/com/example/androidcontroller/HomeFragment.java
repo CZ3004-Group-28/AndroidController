@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -24,11 +23,6 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class HomeFragment extends Fragment {
     public static String TAG = "HomeFragment";
 
@@ -39,6 +33,11 @@ public class HomeFragment extends Fragment {
 
     private PopupWindow arena_popup;
 
+    //For Arena
+    boolean placingRobot, settingObstacle, settingDir;
+
+    //GridMap
+    private static GridMap gridMap;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -59,11 +58,23 @@ public class HomeFragment extends Fragment {
 
         rootview = inflater.inflate(R.layout.fragment_home, container, false);
 
+        if(gridMap == null){
+            gridMap = new GridMap(getContext());
+            gridMap = rootview.findViewById(R.id.mapView);
+        }
+
+        //Initialize Flags
+        placingRobot = false;
+
+        // For updating of robot status
+        this.txtRoboStatus = (TextView) rootview.findViewById(R.id.robotStatusText);
+
         Button arena_options_btn = rootview.findViewById(R.id.arenaSetupBtn);
         arena_options_btn.setOnClickListener(v -> {
             arenaSetOptions();
         });
 
+        //CONTROL BUTTON DECLARATIONS
         ImageButton controlBtnUp = rootview.findViewById(R.id.upArrowBtn);
         ImageButton controlBtnDown = rootview.findViewById(R.id.downArrowBtn);
         ImageButton controlBtnLeft = rootview.findViewById(R.id.leftArrowBtn);
@@ -113,7 +124,71 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        this.txtRoboStatus = (TextView) rootview.findViewById(R.id.robotStatusText);
+        //ARENA RELATED
+        Button btnResetArena = rootview.findViewById(R.id.btnResetArena);
+        Button btnSetObstacle = rootview.findViewById(R.id.btnSetObstacle);
+        Button btnSetFacing = rootview.findViewById(R.id.btnDirectionFacing);
+        Button btnPlaceRobot = rootview.findViewById(R.id.btnPlaceRobot);
+
+        btnResetArena.setOnClickListener(v->{
+            try{
+                gridMap.resetMap();
+            }catch (Exception e){
+                Log.e(TAG, "onCreateView: An error occured while resetting map");
+                e.printStackTrace();
+            }
+        });
+
+        btnPlaceRobot.setOnClickListener(v -> {
+            try{
+                //New status
+                placingRobot = !placingRobot;
+                if(placingRobot){
+                    gridMap.setStartCoordStatus(placingRobot);
+                    btnPlaceRobot.setText("Cancel");
+                }else{
+                    gridMap.setStartCoordStatus(placingRobot);
+                    btnPlaceRobot.setText("Place Robot");
+                }
+            }catch (Exception e){
+                Log.e(TAG, "onCreateView: An error occured while placing robot");
+                e.printStackTrace();
+            }
+        });
+
+        btnSetObstacle.setOnClickListener(v->{
+            try{
+                settingObstacle = !settingObstacle;
+                if(settingObstacle){
+                    gridMap.setSetObstacleStatus(settingObstacle);
+                    btnSetObstacle.setText("Stop Add Obstacle");
+                }else{
+                    gridMap.setSetObstacleStatus(settingObstacle);
+                    btnSetObstacle.setText("Add Obstacle");
+                }
+            }catch (Exception e){
+                Log.e(TAG, "onCreateView: An error occurred while setting obstacle");
+                e.printStackTrace();
+            }
+        });
+
+        btnSetFacing.setOnClickListener(v -> {
+
+            try{
+                settingDir = !settingDir;
+                if(settingDir){
+                    gridMap.setSetObstacleDirection(settingDir);
+                    btnSetFacing.setText("Stop Set Facing");
+                }else{
+                    gridMap.setSetObstacleDirection(settingDir);
+                    btnSetFacing.setText("Set Facing");
+                }
+            }catch (Exception e){
+                Log.e(TAG, "onCreateView: An error occurred while setting obstacle direction");
+                e.printStackTrace();
+            }
+
+        });
 
         // Inflate the layout for this fragment
         return rootview;
@@ -156,10 +231,10 @@ public class HomeFragment extends Fragment {
     };
 
     private void showShortToast(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
 
     private void showLongToast(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
     }
 }
