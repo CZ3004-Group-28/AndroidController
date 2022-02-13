@@ -1998,6 +1998,38 @@ public class GridMap extends View {
     public static void setPublicMDFObstacle(String msg) {
         publicMDFObstacle = msg;
     }
+
+    private int facingStringToInt(String direction){
+        if(direction == null || direction.isEmpty()){
+            return -1;
+        }
+
+        switch(direction.toUpperCase()){
+            case "N":
+            case "NORTH":
+            case "UP":
+            case "U":
+                return 0;
+            case "E":
+            case "EAST":
+            case "RIGHT":
+            case "R":
+
+                return 2;
+            case "S":
+            case "SOUTH":
+            case "DOWN":
+            case "D":
+                return 4;
+            case "W":
+            case "WEST":
+            case "LEFT":
+            case "L":
+                return 6;
+            default:
+                return -1;
+        }
+    }
     
     private void sendUpdatedObstacleInformation(){
         try{
@@ -2011,7 +2043,7 @@ public class GridMap extends View {
                 obstacle.put("x",obstacleX);
                 obstacle.put("y",obstacleY);
                 obstacle.put("id",obstacleCell.obstacleNo);
-                obstacle.put("d",obstacleCell.obstacleFacing);
+                obstacle.put("d",facingStringToInt(obstacleCell.obstacleFacing));
 
                 obstaclesList.put(obstacle);
             }
