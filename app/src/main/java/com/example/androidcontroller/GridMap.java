@@ -1171,9 +1171,6 @@ public class GridMap extends View {
         int column = (int) (event.getX() / cellSize);
         int row = this.convertRow((int) (event.getY() / cellSize));
 
-        boolean isSetRobot;
-        isSetRobot = cells[column][20 - row].type.equals("robot");
-
         if (event.getAction() == MotionEvent.ACTION_DOWN && this.getAutoUpdate() == false && column<=20 && row<=20 && column>=1 && row>=1) {
 
             if (startCoordStatus) {
@@ -1276,8 +1273,11 @@ public class GridMap extends View {
                 return true;
             }
 
-            if(setObstacleDirection || (setObstacleDirection && isSetRobot))
+            if(setObstacleDirection)
             {
+                boolean isSetRobot;
+                isSetRobot = cells[column][20 - row].type.equals("robot");
+
                 if((setObstacleDirection && isSetRobot)){
                     Toast.makeText((Activity) this.getContext(), "SETTING ROBOT DIR", Toast.LENGTH_SHORT).show();
                 }
@@ -1420,6 +1420,7 @@ public class GridMap extends View {
                     for (int i = 0; i < obstacleCoord.size(); i++) {
                         if (obstacleCoord.get(i)[0] == selectedObsCoord[0] && obstacleCoord.get(i)[1] == selectedObsCoord[1]) {
                             obstacleCoord.remove(i);
+                            sendUpdatedObstacleInformation();
                         }
                     }
                     //If selection is within the grid
