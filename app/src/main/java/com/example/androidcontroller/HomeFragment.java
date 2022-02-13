@@ -272,10 +272,9 @@ public class HomeFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             try{
                 JSONObject msgJSON = new JSONObject(intent.getStringExtra("msg"));
-                JSONArray coords = msgJSON.getJSONArray("value");
-                int xCoord = coords.getInt(0);
-                int yCoord = coords.getInt(1);
-                int dirInt = coords.getInt(2);
+                int xCoord = msgJSON.getInt("x");
+                int yCoord = msgJSON.getInt("y");
+                int dirInt = msgJSON.getInt("d");
                 String direction = "up";
                 switch(dirInt){
                     case 0: //NORTH
@@ -290,6 +289,12 @@ public class HomeFragment extends Fragment {
                     case 6: //WEST
                         direction = "left";
                         break;
+                }
+
+                if(xCoord < 0 || yCoord < 0 || xCoord > 20 || yCoord > 20){
+                    showShortToast("Error: Robot move out of area (x: "+xCoord+", y: "+yCoord+")");
+                    Log.e(TAG, "onReceive: Robot is out of the arena area");
+                    return;
                 }
 
                 int[] curCoord = gridMap.getCurCoord(); // robot current coordinate this.setOldRobotCoord(curCoord[0], curCoord[1]);

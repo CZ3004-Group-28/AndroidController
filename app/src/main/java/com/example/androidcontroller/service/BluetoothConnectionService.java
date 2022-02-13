@@ -351,9 +351,11 @@ public class BluetoothConnectionService {
                         dir=6;
                         break;
                 }
-                int[] positionInfo = {xPos,yPos,dir};
+                
                 JSONObject positionJson = new JSONObject();
-                positionJson.put("value",positionInfo);
+                positionJson.put("x",xPos);
+                positionJson.put("y",yPos);
+                positionJson.put("d",dir);
                 sendIntent("updateRobocarLocation",positionJson.toString());
             }
             Log.i(TAG, "handlePlainTextCommand: Unknown Command: "+cmd);
