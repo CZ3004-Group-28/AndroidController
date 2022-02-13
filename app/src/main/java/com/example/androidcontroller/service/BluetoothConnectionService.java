@@ -283,19 +283,85 @@ public class BluetoothConnectionService {
     }
 
     private void handleIncomingBTMessage(String msg) throws JSONException {
+        Log.i(TAG, "handleIncomingBTMessage: New incoming message: "+msg);
         try{
             JSONObject msgJSON = new JSONObject(msg);
-            String msgType = msgJSON.getString("type");
+            String msgType = msgJSON.getString("cat");
             switch(msgType.toUpperCase()){
-                case "STATUS":
+                case "INFO":
                     sendIntent("updateRobocarStatus",msgJSON.toString());
-                    break;
+                    return;
+                case "IMAGE-REC":
+                    JSONObject imageRecObj = msgJSON.getJSONObject("value");
+                    sendIntent("imageResult",imageRecObj.toString());
+                    return;
+                case "LOCATION":
+                    sendIntent("updateRobocarLocation",msgJSON.toString());
+                    return;
             }
         }catch (Exception e){
             //NOT a JSON Obj
             JSONObject msgJSON = new JSONObject();
             msgJSON.put("msg",msg);
             sendIntent("incomingBTMessage", msgJSON.toString());
+        }
+        handlePlainTextCommand(msg);
+    }
+
+    private void handlePlainTextCommand(String cmd){
+
+        //NOT A JSON Object; will assume it is basic text command responses
+        try{
+            if(cmd.contains("TARGET")){
+                //Submitting target ID (imageResult)
+                //TARGET, <Obstacle Number>, <Target ID>
+                String[] commandComponents = cmd.split(",");
+                if(commandComponents.length < 3){
+                    Log.e(TAG, "handleIncomingBTMessage: The TARGET plain text command has insufficient parts, command: "+cmd);
+                    return;
+                }
+                JSONObject imageRecResultObj = new JSONObject();
+                imageRecResultObj.put("obstacle_id",commandComponents[1]);
+                imageRecResultObj.put("image_id",commandComponents[2]);
+                sendIntent("imageResult",imageRecResultObj.toString());
+                return;
+            }
+            if(cmd.contains("ROBOT")){
+                //Submitting robot position update
+                //ROBOT, <x>, <y>, <direction>
+                String[] commandComponents = cmd.split(",");
+                if(commandComponents.length < 4){
+                    Log.e(TAG, "handleIncomingBTMessage: The ROBOT plain text command has insufficient parts, command: "+cmd);
+                    return;
+                }
+                int xPos = Integer.parseInt(commandComponents[1]);
+                int yPos = Integer.parseInt(commandComponents[2]);
+                int dir = -1;
+                switch(commandComponents[3].trim().toUpperCase()){
+                    case "N":
+                        dir = 0;
+                        break;
+                    case"E":
+                        dir=2;
+                        break;
+                    case "S":
+                        dir=4;
+                        break;
+                    case"W":
+                        dir=6;
+                        break;
+                }
+                
+                JSONObject positionJson = new JSONObject();
+                positionJson.put("x",xPos);
+                positionJson.put("y",yPos);
+                positionJson.put("d",dir);
+                sendIntent("updateRobocarLocation",positionJson.toString());
+            }
+            Log.i(TAG, "handlePlainTextCommand: Unknown Command: "+cmd);
+        }catch (Exception e){
+            Log.e(TAG, "handleIncomingBTMessage: An error occured while trying to handle plain text cmd");
+            e.printStackTrace();
         }
     }
 
