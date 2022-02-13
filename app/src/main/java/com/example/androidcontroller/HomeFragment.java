@@ -21,6 +21,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class HomeFragment extends Fragment {
@@ -81,6 +82,9 @@ public class HomeFragment extends Fragment {
 
         if(!initializedIntentListeners){
             LocalBroadcastManager.getInstance(getContext()).registerReceiver(roboStatusUpdateReceiver, new IntentFilter("updateRobocarStatus"));
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(imageRecResultReceiver, new IntentFilter("imageResult"));
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(robotLocationUpdateReceiver, new IntentFilter("updateRobocarLocation"));
+
             initializedIntentListeners = true;
         }
     }
@@ -258,6 +262,63 @@ public class HomeFragment extends Fragment {
             }catch (Exception e){
                 showShortToast("Error updating robocar status");
                 Log.e(TAG, "onReceive: An error occured while updating the robocar status");
+                e.printStackTrace();
+            }
+        }
+    };
+
+    private BroadcastReceiver robotLocationUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try{
+                JSONObject msgJSON = new JSONObject(intent.getStringExtra("msg"));
+                JSONArray coords = msgJSON.getJSONArray("value");
+                int xCoord = coords.getInt(0);
+                int yCoord = coords.getInt(1);
+                int dirInt = coords.getInt(2);
+                String direction = "up";
+                switch(dirInt){
+                    case 0: //NORTH
+                        direction = "up";
+                        break;
+                    case 2: //EAST
+                        direction = "right";
+                        break;
+                    case 4: //SOUTH
+                        direction = "down";
+                        break;
+                    case 6: //WEST
+                        direction = "left";
+                        break;
+                }
+
+                int[] curCoord = gridMap.getCurCoord(); // robot current coordinate this.setOldRobotCoord(curCoord[0], curCoord[1]);
+
+                if (curCoord[0] != -1 && curCoord[1] != -1) {
+                    gridMap.unsetOldRobotCoord(curCoord[0], curCoord[1]);
+                    gridMap.setCurCoord(xCoord, yCoord, direction);
+                } else {
+                    showShortToast("Error: Robot has no start point");
+                }
+            }catch (Exception e){
+                showShortToast("Error updating robot location");
+                Log.e(TAG, "onReceive: An error occured while updating robot location");
+                e.printStackTrace();
+            }
+        }
+    };
+
+    private BroadcastReceiver imageRecResultReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try{
+                JSONObject msgJSON = new JSONObject(intent.getStringExtra("msg"));
+                int obstacleID = Integer.parseInt(msgJSON.getString("obstacle_id"));
+                String targetID = msgJSON.getString("image_id");
+                gridMap.updateImageNumberCell(obstacleID, targetID);
+            }catch (Exception e){
+                showShortToast("Error updating image rec result");
+                Log.e(TAG, "onReceive: An error occured while upating the image rec result");
                 e.printStackTrace();
             }
         }
