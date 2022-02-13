@@ -40,6 +40,11 @@ import java.util.List;
 
 import static java.lang.String.valueOf;
 
+/***
+ * IMPORTANT NOTES:
+ * cells[][] contain Cell Objects, to access the object at coordinates x & y, you will need to access it via cells[x][20-y]
+ */
+
 public class GridMap extends View {
 
     public GridMap(Context c) {
@@ -440,6 +445,10 @@ public class GridMap extends View {
         this.invalidate();
     }
 
+    private Cell getCellAtCoordinates(int x, int y){
+        return cells[x][COL-y];
+    }
+
     public void setCellType(int x, int y, String type){
         cells[x+1][19-y].setType(type);
         cells[x+1][19-y].setId(-1);
@@ -524,15 +533,15 @@ public class GridMap extends View {
         showLog("Entering drawGridNumber");
         for (int x = 1; x <= COL; x++) {
             if (x > 9)
-                canvas.drawText(Integer.toString(x-1), cells[x][20].startX + (cellSize / 5), cells[x][20].startY + (cellSize / 3), blackPaint);
+                canvas.drawText(Integer.toString(x), cells[x][20].startX + (cellSize / 5), cells[x][20].startY + (cellSize / 3), blackPaint);
             else
-                canvas.drawText(Integer.toString(x-1), cells[x][20].startX + (cellSize / 3), cells[x][20].startY + (cellSize / 3), blackPaint);
+                canvas.drawText(Integer.toString(x), cells[x][20].startX + (cellSize / 3), cells[x][20].startY + (cellSize / 3), blackPaint);
         }
         for (int y = 0; y < ROW; y++) {
             if ((20 - y) > 9)
-                canvas.drawText(Integer.toString(19 - y), cells[0][y].startX + (cellSize / 2), cells[0][y].startY + (cellSize / 1.5f), blackPaint);
+                canvas.drawText(Integer.toString(20 - y), cells[0][y].startX + (cellSize / 2), cells[0][y].startY + (cellSize / 1.5f), blackPaint);
             else
-                canvas.drawText(Integer.toString(19 - y), cells[0][y].startX + (cellSize / 1.5f), cells[0][y].startY + (cellSize / 1.5f), blackPaint);
+                canvas.drawText(Integer.toString(20 - y), cells[0][y].startX + (cellSize / 1.5f), cells[0][y].startY + (cellSize / 1.5f), blackPaint);
         }
         showLog("Exiting drawGridNumber");
     }
@@ -958,6 +967,10 @@ public class GridMap extends View {
 
     private void setObstacleCoord(int col, int row) {
         showLog("Entering setObstacleCoord");
+        //Check if obstacle has been previously set there
+        if(getCellAtCoordinates(col,row).type.equalsIgnoreCase("obstacle")){
+            return;
+        }
         int[] obstacleCoord = new int[]{col, row};
         GridMap.obstacleCoord.add(obstacleCoord);
         row = this.convertRow(row);
@@ -1984,27 +1997,20 @@ public class GridMap extends View {
     public static void setPublicMDFObstacle(String msg) {
         publicMDFObstacle = msg;
     }
-
-    public static String getPublicMDFExploration() {
-        return publicMDFExploration;
-    }
-
-    public static String getPublicMDFObstacle() {
-        return publicMDFObstacle;
-    }
     
     private void sendUpdatedObstacleInformation(){
         try{
             JSONArray obstaclesList = new JSONArray();
+
             for(int i = 0; i<obstacleCoord.size();i++){
                 JSONObject obstacle = new JSONObject();
                 int obstacleX = obstacleCoord.get(i)[0];
                 int obstacleY = obstacleCoord.get(i)[1];
-                Cell obstacleCell = cells[obstacleX][obstacleY];
+                Cell obstacleCell = cells[obstacleX][20-obstacleY];
                 obstacle.put("x",obstacleX);
                 obstacle.put("y",obstacleY);
                 obstacle.put("id",obstacleCell.obstacleNo);
-                obstacle.put("d",obstacleCell.getobstacleFacing());
+                obstacle.put("d",obstacleCell.obstacleFacing);
 
                 obstaclesList.put(obstacle);
             }
