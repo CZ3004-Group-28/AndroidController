@@ -188,6 +188,23 @@ public class BluetoothConnectionService {
         connectThread.start();
     }
 
+    public synchronized void disconnect(){
+        if(connectedThread != null){
+            connectedThread.cancel();
+            connectedThread = null;
+        }
+        if(connectThread != null){
+            connectThread.cancel();
+            connectThread = null;
+        }
+        if(insecureAcceptThread != null){
+            insecureAcceptThread.cancel();
+            insecureAcceptThread = null;
+        }
+
+        isConnected = false;
+    }
+
     private class ConnectedThread extends Thread {
         private final BluetoothSocket bluetoothSocket;
         private final InputStream btInStream;
@@ -203,11 +220,12 @@ public class BluetoothConnectionService {
             try {
                 tmpIn = bluetoothSocket.getInputStream();
                 tmpOut = bluetoothSocket.getOutputStream();
+
+                sendIntent("connectionBTStatus","connected");
+                isConnected = true;
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            isConnected = true;
 
             btInStream = tmpIn;
             btOutStream = tmpOut;
@@ -225,12 +243,9 @@ public class BluetoothConnectionService {
                     bytes = btInStream.read(buffer);
                     String incomingMessage = new String(buffer, 0, bytes);
                     Log.d(TAG, "InputStream: " + incomingMessage);
-
-//                    Intent incomingMessageIntent = new Intent("incomingBTMessage");
-//                    incomingMessageIntent.putExtra("msg",incomingMessage);
-//                    LocalBroadcastManager.getInstance(context).sendBroadcast(incomingMessageIntent);
                     handleIncomingBTMessage(incomingMessage);
                 } catch (IOException e) {
+                    sendIntent("connectionBTStatus", "disconnected");
                     isConnected = false;
                     Log.e(TAG, "write: Error reading Input Stream. " + e.getMessage() );
                     break;

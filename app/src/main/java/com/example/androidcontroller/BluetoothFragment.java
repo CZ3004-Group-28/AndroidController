@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,6 +62,10 @@ public class BluetoothFragment extends Fragment {
     private BluetoothConnectionService bluetoothConnectionService;
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("49930a2c-04f6-4fe6-beb7-688360fc5995");
+    private boolean retryConnection = false;
+    private String curDeviceAddress;
+    private Handler reconnectionHandler = new Handler();
+    private Button curConnectionBtn;
 
     //Auxiliary Functions
     private boolean initializedBCastReceivers = false;
@@ -124,6 +129,7 @@ public class BluetoothFragment extends Fragment {
             //Intent Filter for received messages
             LocalBroadcastManager.getInstance(getContext()).registerReceiver(bluetoothMsgReceiver, new IntentFilter("incomingBTMessage"));
             LocalBroadcastManager.getInstance(getContext()).registerReceiver(sendBluetoothReceiver, new IntentFilter("sendBTMessage"));
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(btConnectionUpdateReceiver, new IntentFilter("connectionBTStatus"));
             initializedBCastReceivers = true;
         }
 
@@ -327,6 +333,10 @@ public class BluetoothFragment extends Fragment {
         requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
     }
 
+    private void disconnectBluetooth(){
+        bluetoothConnectionService.disconnect();
+    }
+
     private boolean connectBluetooth(String macAddress) {
         //TODO: Logic to connect bluetooth
         showShortToast("Connect to: " + macAddress);
@@ -337,6 +347,7 @@ public class BluetoothFragment extends Fragment {
         }
         try{
             bluetoothConnectionService.startClient(btDevice);
+            curDeviceAddress = macAddress;
             return true;
         }catch(Exception e){
             showShortToast("An error occured while attempting to start connection");
@@ -460,9 +471,16 @@ public class BluetoothFragment extends Fragment {
             btDeviceTitleTxt.setText(deviceName);
             btDeviceMACTxt.setText(deviceMAC);
             btnConnect.setOnClickListener(v -> {
+                if(btnConnect.getText().equals("Disconnect")){
+                    retryConnection = false;
+                    disconnectBluetooth();
+                    return;
+                }
                 boolean connectSuccess = connectBluetooth(items.get(position));
                 if(connectSuccess){
-                    btnConnect.setText("Connected");
+                    btnConnect.setText("Wait..");
+                    retryConnection = true;
+                    curConnectionBtn = btnConnect;
                 }
             });
             return convertView;
@@ -502,6 +520,47 @@ public class BluetoothFragment extends Fragment {
                 bluetoothConnectionService.write(msgInBytes);
             }catch(Exception e){
                 Log.e(TAG,"An error occured while sending bluetooth message");
+                e.printStackTrace();
+            }
+        }
+    };
+
+    private BroadcastReceiver btConnectionUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try{
+                String status = intent.getStringExtra("msg");
+                switch(status.toUpperCase()){
+                    case "CONNECTED":
+                        curConnectionBtn.setText("Disconnect");
+                        break;
+                    case "DISCONNECTED":
+                        showShortToast("Bluetooth Connection disconnected");
+                        if(retryConnection){
+                            reconnectionHandler.postDelayed(reconnectRunnable, 5000);
+                        }else {
+                            curConnectionBtn.setText("Connect");
+                        }
+                        break;
+                }
+            }catch (Exception e){
+                Log.e(TAG, "onReceive: An error occured while trying to auto reconnect bluetooth");
+                e.printStackTrace();
+            }
+        }
+    };
+
+    private Runnable reconnectRunnable =new Runnable() {
+        @Override
+        public void run() {
+            try {
+                if(!BluetoothConnectionService.isConnected && retryConnection){
+                    connectBluetooth(curDeviceAddress);
+                }
+                reconnectionHandler.removeCallbacks(reconnectRunnable);
+            }catch (Exception e){
+                Log.e(TAG, "run: An error occured while running reconnectRunnable");
+                showShortToast("Error reconnecting, retrying in 5s");
                 e.printStackTrace();
             }
         }
