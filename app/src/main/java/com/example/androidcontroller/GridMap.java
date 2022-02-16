@@ -2031,7 +2031,7 @@ public class GridMap extends View {
         }
     }
     
-    private void sendUpdatedObstacleInformation(){
+    public void sendUpdatedObstacleInformation(){
         try{
             JSONArray obstaclesList = new JSONArray();
 

@@ -69,26 +69,22 @@
             android:orientation="horizontal"
             android:weightSum="2">
 
-            <RelativeLayout
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
                 <TextView
                     android:id="@+id/robotStatusTextView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginBottom="20dp"
-
                     android:text="Robot Status"
-                    />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
                 <TextView
                     android:id="@+id/robotStatusText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
 
                     android:layout_alignParentTop="true"
@@ -97,62 +93,31 @@
 
                     android:text="Not Available" />
 
-                <TextView
-                    android:id="@+id/robotDirTextView"
-                    android:layout_width="wrap_content"
+                <Button
+                    android:id="@+id/btnToggleRobotMode"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
-                    android:layout_below="@id/robotStatusTextView"
-                    android:layout_marginBottom="20dp"
-
-                    android:text="Robot Direction" />
-
-                <TextView
-                    android:id="@+id/robotDirText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-
-                    android:layout_below="@id/robotStatusText"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginBottom="20dp"
-
-                    android:text="NONE" />
+                    android:text="Mode: Manual" />
 
                 <Button
-                    android:id="@+id/customCmd_btn1"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/btnSendInfo"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/robotDirTextView"
-                    android:layout_marginBottom="20dp"
-                    android:text="Custom cmd 1" />
+                    android:text="Send Arena Info" />
 
                 <Button
-                    android:id="@+id/customCmd_btn2"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/btnStartImageRec"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/robotDirText"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginBottom="20dp"
-                    android:text="Custom cmd 2" />
+                    android:text="Start Image Rec" />
 
                 <Button
-                    android:id="@+id/settingsBtn"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/btnStartFastestCar"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/customCmd_btn1"
-                    android:layout_marginBottom="20dp"
-                    android:text="Settings" />
+                    android:text="Start Fastest Car" />
 
-                <Button
-                    android:id="@+id/arenaSetupBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/customCmd_btn2"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginBottom="20dp"
-                    android:text="Arena Setup" />
-
-            </RelativeLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -234,6 +199,18 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="X:   Y:   " />
+
+                    <TextView
+                        android:id="@+id/robotDirText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:layout_below="@id/robotStatusText"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginBottom="20dp"
+
+                        android:text="Facing"
+                        android:textAlignment="center" />
                 </LinearLayout>
 
             </LinearLayout>

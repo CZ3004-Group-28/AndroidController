@@ -32,13 +32,14 @@ public class HomeFragment extends Fragment {
 
     private View rootview;
 
-    private PopupWindow arena_popup;
-
     //For Arena
     boolean placingRobot, settingObstacle, settingDir;
 
     //GridMap
     private static GridMap gridMap;
+
+    //For robot
+    private boolean isManual = false;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -106,11 +107,6 @@ public class HomeFragment extends Fragment {
         // For updating of robot status
         this.txtRoboStatus = (TextView) rootview.findViewById(R.id.robotStatusText);
 
-        Button arena_options_btn = rootview.findViewById(R.id.arenaSetupBtn);
-        arena_options_btn.setOnClickListener(v -> {
-            arenaSetOptions();
-        });
-
         //CONTROL BUTTON DECLARATIONS
         ImageButton controlBtnUp = rootview.findViewById(R.id.upArrowBtn);
         ImageButton controlBtnDown = rootview.findViewById(R.id.downArrowBtn);
@@ -120,9 +116,7 @@ public class HomeFragment extends Fragment {
         //CONTROL BUTTON: Forward
         controlBtnUp.setOnClickListener(v -> {
             try{
-                Intent upDirectionIntent = new Intent("sendBTMessage");
-                upDirectionIntent.putExtra("msg","f");
-                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(upDirectionIntent);
+                sendDirectionCmdIntent("FW01");
             }catch (Exception e){
                 Log.e(TAG, "onCreateView: An error occured while making message intent");
             }
@@ -131,9 +125,7 @@ public class HomeFragment extends Fragment {
         //CONTROL BUTTON: Reverse
         controlBtnDown.setOnClickListener(v -> {
             try{
-                Intent downDirectionIntent = new Intent("sendBTMessage");
-                downDirectionIntent.putExtra("msg","r");
-                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(downDirectionIntent);
+                sendDirectionCmdIntent("BW01");
             }catch (Exception e){
                 Log.e(TAG, "onCreateView: An error occured while making message intent");
             }
@@ -142,9 +134,7 @@ public class HomeFragment extends Fragment {
         //CONTROL BUTTON: Left
         controlBtnLeft.setOnClickListener(v -> {
             try{
-                Intent leftDirectionIntent = new Intent("sendBTMessage");
-                leftDirectionIntent.putExtra("msg","tl");
-                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(leftDirectionIntent);
+                sendDirectionCmdIntent("TL01");
             }catch (Exception e){
                 Log.e(TAG, "onCreateView: An error occured while making message intent");
             }
@@ -153,13 +143,35 @@ public class HomeFragment extends Fragment {
         //CONTROL BUTTON: Right
         controlBtnRight.setOnClickListener(v -> {
             try{
-                Intent rightDirectionIntent = new Intent("sendBTMessage");
-                rightDirectionIntent.putExtra("msg","tr");
-                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(rightDirectionIntent);
+                sendDirectionCmdIntent("TR01");
             }catch (Exception e){
                 Log.e(TAG, "onCreateView: An error occured while making message intent");
             }
         });
+
+        //ROBOT RELATED
+        Button btnToggleRobotMode = rootview.findViewById(R.id.btnToggleRobotMode);
+        Button btnSendArenaInfo = rootview.findViewById(R.id.btnSendInfo);
+        Button btnSendStartImageRec = rootview.findViewById(R.id.btnStartImageRec);
+        Button btnSendStartFastestCar = rootview.findViewById(R.id.btnStartFastestCar);
+
+        btnToggleRobotMode.setOnClickListener(v -> {
+            isManual = !isManual;
+            if(isManual){
+                sendModeCmdIntent("manual");
+            }else{
+                sendModeCmdIntent("path");
+            }
+        });
+
+        btnSendArenaInfo.setOnClickListener(v->{
+            gridMap.sendUpdatedObstacleInformation();
+        });
+
+        btnSendStartImageRec.setOnClickListener(v->{
+            sendControlCmdIntent("start");
+        });
+
 
         //ARENA RELATED
         Button btnResetArena = rootview.findViewById(R.id.btnResetArena);
@@ -229,24 +241,6 @@ public class HomeFragment extends Fragment {
 
         // Inflate the layout for this fragment
         return rootview;
-    }
-
-    private void arenaSetOptions(){
-//        View arenaPopUpView = getLayoutInflater().inflate(R.layout.arena_setup, null);
-//        arena_popup = new PopupWindow(arenaPopUpView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
-//        arena_popup.setBackgroundDrawable(new BitmapDrawable());
-//        arena_popup.showAtLocation(rootview, Gravity.CENTER, 0, 0);
-
-        View popupView = getLayoutInflater().inflate(R.layout.arena_setup, null);
-        // create the popup window
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = true; // lets taps outside the popup also dismiss it
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-
-        // show the popup window
-        // which view you pass in doesn't matter, it is only used for the window tolken
-        popupWindow.showAtLocation(rootview, Gravity.CENTER, 0, 0);
     }
 
     private BroadcastReceiver roboStatusUpdateReceiver = new BroadcastReceiver() {
@@ -335,5 +329,52 @@ public class HomeFragment extends Fragment {
 
     private void showLongToast(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+    }
+
+    private void sendDirectionCmdIntent(String direction){
+        try{
+            JSONObject directionJSONObj = new JSONObject();
+            directionJSONObj.put("cat","manual");
+            directionJSONObj.put("value",direction);
+
+            broadcastSendBTIntent(directionJSONObj.toString());
+        }catch (Exception e){
+            Log.e(TAG, "sendDirectionCmdIntent: An error occured while sending direction command intent");
+            e.printStackTrace();
+        }
+    }
+
+    private void sendModeCmdIntent(String mode){
+        try{
+            if(!mode.equals("path") || !mode.equals("manual")){
+                Log.i(TAG, "sendModeIntent: Invalid mode to send: "+mode);
+                return;
+            }
+            JSONObject modeJSONObj = new JSONObject();
+            modeJSONObj.put("cat","mode");
+            modeJSONObj.put("value",mode);
+
+            broadcastSendBTIntent(modeJSONObj.toString());
+        }catch (Exception e){
+            Log.e(TAG, "sendModeIntent: An error occured while sending mode command intent");
+            e.printStackTrace();
+        }
+    }
+
+    private void sendControlCmdIntent(String control){
+        try{
+            JSONObject ctrlJSONObj = new JSONObject();
+            ctrlJSONObj.put("cat","control");
+            ctrlJSONObj.put("value",control);
+        }catch (Exception e){
+            Log.e(TAG, "sendControlCmdIntent: An error occured while sending controlc ommand intent");
+            e.printStackTrace();
+        }
+    }
+
+    private void broadcastSendBTIntent(String msg){
+        Intent sendBTIntent = new Intent("sendBTMessage");
+        sendBTIntent.putExtra("msg",msg);
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(sendBTIntent);
     }
 }
