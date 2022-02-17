@@ -26,6 +26,9 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class HomeFragment extends Fragment{
     public static String TAG = "HomeFragment";
 
@@ -205,7 +208,17 @@ public class HomeFragment extends Fragment{
         });
 
         btnSendStartImageRec.setOnClickListener(v->{
+
             sendControlCmdIntent("start");
+
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    sendControlCmdIntent("stop");
+                }
+            }, 360000);
+
+
         });
 
 
@@ -403,8 +416,10 @@ public class HomeFragment extends Fragment{
             JSONObject ctrlJSONObj = new JSONObject();
             ctrlJSONObj.put("cat","control");
             ctrlJSONObj.put("value",control);
+
+            broadcastSendBTIntent(ctrlJSONObj.toString());
         }catch (Exception e){
-            Log.e(TAG, "sendControlCmdIntent: An error occured while sending controlc ommand intent");
+            Log.e(TAG, "sendControlCmdIntent: An error occured while sending control command intent");
             e.printStackTrace();
         }
     }
