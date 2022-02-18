@@ -197,8 +197,10 @@ public class HomeFragment extends Fragment{
         btnToggleRobotMode.setOnClickListener(v -> {
             isManual = !isManual;
             if(isManual){
+                btnToggleRobotMode.setText("Mode: Manual");
                 sendModeCmdIntent("manual");
             }else{
+                btnToggleRobotMode.setText("Mode: Path");
                 sendModeCmdIntent("path");
             }
         });
@@ -396,7 +398,7 @@ public class HomeFragment extends Fragment{
 
     private void sendModeCmdIntent(String mode){
         try{
-            if(!mode.equals("path") || !mode.equals("manual")){
+            if(!mode.equals("path") && !mode.equals("manual")){
                 Log.i(TAG, "sendModeIntent: Invalid mode to send: "+mode);
                 return;
             }

@@ -986,8 +986,8 @@ public class GridMap extends View {
             }
         }
         showLog("Exiting setObstacleCoord");
-        // TODO: uncommand for bluetooth
-        sendUpdatedObstacleInformation();
+//         UNCOMMENT LINE BELOW FOR C6/7
+//        sendUpdatedObstacleInformation();
     }
 
     private ArrayList<int[]> getObstacleCoord() {
@@ -1338,10 +1338,10 @@ public class GridMap extends View {
                                 }
                                 break;
                         }
-
-                        if(!isSetRobot){
-                            sendUpdatedObstacleInformation();
-                        }
+                        // UNCOMMENT BELOW FOR C6/7
+//                        if(!isSetRobot){
+//                            sendUpdatedObstacleInformation();
+//                        }
                         invalidate();
 
                         dialogInterface.dismiss();
@@ -1420,7 +1420,8 @@ public class GridMap extends View {
                     for (int i = 0; i < obstacleCoord.size(); i++) {
                         if (obstacleCoord.get(i)[0] == selectedObsCoord[0] && obstacleCoord.get(i)[1] == selectedObsCoord[1]) {
                             obstacleCoord.remove(i);
-                            sendUpdatedObstacleInformation();
+                            //UNCOMMENT BELOW FOR C6/7
+//                            sendUpdatedObstacleInformation();
                         }
                     }
                     //If selection is within the grid
