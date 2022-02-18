@@ -9,9 +9,11 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -24,7 +26,10 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class HomeFragment extends Fragment {
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class HomeFragment extends Fragment{
     public static String TAG = "HomeFragment";
 
     private boolean initializedIntentListeners = false;
@@ -34,6 +39,8 @@ public class HomeFragment extends Fragment {
 
     //For Arena
     boolean placingRobot, settingObstacle, settingDir;
+
+    private Handler handler = new Handler();
 
     //GridMap
     private static GridMap gridMap;
@@ -114,38 +121,70 @@ public class HomeFragment extends Fragment {
         ImageButton controlBtnRight = rootview.findViewById(R.id.rightArrowBtn);
 
         //CONTROL BUTTON: Forward
-        controlBtnUp.setOnClickListener(v -> {
-            try{
-                sendDirectionCmdIntent("FW01");
-            }catch (Exception e){
-                Log.e(TAG, "onCreateView: An error occured while making message intent");
+//        controlBtnUp.setOnClickListener(v -> {
+//            try{
+//                sendDirectionCmdIntent("FW01");
+//            }catch (Exception e){
+//                Log.e(TAG, "onCreateView: An error occured while making message intent");
+//            }
+//        });
+
+        controlBtnUp.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                    sendDirectionCmdIntent("FW--");
+
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    sendDirectionCmdIntent("STOP");
+                }
+
+                return true;
             }
         });
 
         //CONTROL BUTTON: Reverse
-        controlBtnDown.setOnClickListener(v -> {
-            try{
-                sendDirectionCmdIntent("BW01");
-            }catch (Exception e){
-                Log.e(TAG, "onCreateView: An error occured while making message intent");
+        controlBtnDown.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                    sendDirectionCmdIntent("BW--");
+
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    sendDirectionCmdIntent("STOP");
+                }
+
+                return true;
             }
         });
 
         //CONTROL BUTTON: Left
-        controlBtnLeft.setOnClickListener(v -> {
-            try{
-                sendDirectionCmdIntent("TL01");
-            }catch (Exception e){
-                Log.e(TAG, "onCreateView: An error occured while making message intent");
+        controlBtnLeft.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                    sendDirectionCmdIntent("TL--");
+
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    sendDirectionCmdIntent("STOP");
+                }
+
+                return true;
             }
         });
 
         //CONTROL BUTTON: Right
-        controlBtnRight.setOnClickListener(v -> {
-            try{
-                sendDirectionCmdIntent("TR01");
-            }catch (Exception e){
-                Log.e(TAG, "onCreateView: An error occured while making message intent");
+        controlBtnRight.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                    sendDirectionCmdIntent("TR--");
+
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    sendDirectionCmdIntent("STOP");
+                }
+
+                return true;
             }
         });
 
@@ -158,8 +197,10 @@ public class HomeFragment extends Fragment {
         btnToggleRobotMode.setOnClickListener(v -> {
             isManual = !isManual;
             if(isManual){
+                btnToggleRobotMode.setText("Mode: Manual");
                 sendModeCmdIntent("manual");
             }else{
+                btnToggleRobotMode.setText("Mode: Path");
                 sendModeCmdIntent("path");
             }
         });
@@ -169,7 +210,17 @@ public class HomeFragment extends Fragment {
         });
 
         btnSendStartImageRec.setOnClickListener(v->{
+
             sendControlCmdIntent("start");
+
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    sendControlCmdIntent("stop");
+                }
+            }, 360000);
+
+
         });
 
 
@@ -332,6 +383,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void sendDirectionCmdIntent(String direction){
+
         try{
             JSONObject directionJSONObj = new JSONObject();
             directionJSONObj.put("cat","manual");
@@ -346,7 +398,7 @@ public class HomeFragment extends Fragment {
 
     private void sendModeCmdIntent(String mode){
         try{
-            if(!mode.equals("path") || !mode.equals("manual")){
+            if(!mode.equals("path") && !mode.equals("manual")){
                 Log.i(TAG, "sendModeIntent: Invalid mode to send: "+mode);
                 return;
             }
@@ -366,8 +418,10 @@ public class HomeFragment extends Fragment {
             JSONObject ctrlJSONObj = new JSONObject();
             ctrlJSONObj.put("cat","control");
             ctrlJSONObj.put("value",control);
+
+            broadcastSendBTIntent(ctrlJSONObj.toString());
         }catch (Exception e){
-            Log.e(TAG, "sendControlCmdIntent: An error occured while sending controlc ommand intent");
+            Log.e(TAG, "sendControlCmdIntent: An error occured while sending control command intent");
             e.printStackTrace();
         }
     }
