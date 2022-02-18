@@ -298,13 +298,10 @@ public class HomeFragment extends Fragment{
         @Override
         public void onReceive(Context context, Intent intent) {
             try{
-                JSONObject msgJSON = new JSONObject(intent.getStringExtra("msg"));
-                if(msgJSON.has("status")){
-                    txtRoboStatus.setText(msgJSON.getString("status"));
-                }else{
-                    txtRoboStatus.setText("UNKNOWN");
-                }
+                String msgInfo = intent.getStringExtra("msg");
+                txtRoboStatus.setText(msgInfo);
             }catch (Exception e){
+                txtRoboStatus.setText("UNKNOWN");
                 showShortToast("Error updating robocar status");
                 Log.e(TAG, "onReceive: An error occured while updating the robocar status");
                 e.printStackTrace();

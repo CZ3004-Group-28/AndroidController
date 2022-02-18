@@ -304,14 +304,16 @@ public class BluetoothConnectionService {
             String msgType = msgJSON.getString("cat");
             switch(msgType.toUpperCase()){
                 case "INFO":
-                    sendIntent("updateRobocarStatus",msgJSON.toString());
+                    String infoStr = msgJSON.getString("value");
+                    sendIntent("updateRobocarStatus",infoStr);
                     return;
                 case "IMAGE-REC":
                     JSONObject imageRecObj = msgJSON.getJSONObject("value");
                     sendIntent("imageResult",imageRecObj.toString());
                     return;
                 case "LOCATION":
-                    sendIntent("updateRobocarLocation",msgJSON.toString());
+                    JSONObject locationObj = msgJSON.getJSONObject("value");
+                    sendIntent("updateRobocarLocation",locationObj.toString());
                     return;
             }
         }catch (Exception e){
