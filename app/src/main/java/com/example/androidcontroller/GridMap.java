@@ -220,7 +220,7 @@ public class GridMap extends View {
                                     } else{
                                         Paint textPaint2 = new Paint();
                                         textPaint2.setTextSize(20);
-                                        textPaint2.setColor(Color.WHITE);
+                                        textPaint2.setColor(Color.GREEN);
                                         textPaint2.setTextAlign(Paint.Align.CENTER);
                                         canvas.drawRect(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY, blackPaint);
                                         canvas.drawText(cells[x][y].targetID, (cells[x][y].startX+cells[x][y].endX)/2, cells[x][y].endY + (cells[x][y].startY-cells[x][y].endY)/4, textPaint2);
