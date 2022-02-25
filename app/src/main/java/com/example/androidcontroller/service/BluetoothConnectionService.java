@@ -370,8 +370,8 @@ public class BluetoothConnectionService {
                 }
                 
                 JSONObject positionJson = new JSONObject();
-                positionJson.put("x",xPos);
-                positionJson.put("y",yPos);
+                positionJson.put("x",++xPos);
+                positionJson.put("y",++yPos);
                 positionJson.put("d",dir);
                 sendIntent("updateRobocarLocation",positionJson.toString());
             }

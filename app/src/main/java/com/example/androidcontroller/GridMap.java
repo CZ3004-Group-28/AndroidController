@@ -533,15 +533,15 @@ public class GridMap extends View {
         showLog("Entering drawGridNumber");
         for (int x = 1; x <= COL; x++) {
             if (x > 9)
-                canvas.drawText(Integer.toString(x), cells[x][20].startX + (cellSize / 5), cells[x][20].startY + (cellSize / 3), blackPaint);
+                canvas.drawText(Integer.toString(x-1), cells[x][20].startX + (cellSize / 5), cells[x][20].startY + (cellSize / 3), blackPaint);
             else
-                canvas.drawText(Integer.toString(x), cells[x][20].startX + (cellSize / 3), cells[x][20].startY + (cellSize / 3), blackPaint);
+                canvas.drawText(Integer.toString(x-1), cells[x][20].startX + (cellSize / 3), cells[x][20].startY + (cellSize / 3), blackPaint);
         }
         for (int y = 0; y < ROW; y++) {
             if ((20 - y) > 9)
-                canvas.drawText(Integer.toString(20 - y), cells[0][y].startX + (cellSize / 2), cells[0][y].startY + (cellSize / 1.5f), blackPaint);
+                canvas.drawText(Integer.toString(20 - y-1), cells[0][y].startX + (cellSize / 2), cells[0][y].startY + (cellSize / 1.5f), blackPaint);
             else
-                canvas.drawText(Integer.toString(20 - y), cells[0][y].startX + (cellSize / 1.5f), cells[0][y].startY + (cellSize / 1.5f), blackPaint);
+                canvas.drawText(Integer.toString(20 - y-1), cells[0][y].startX + (cellSize / 1.5f), cells[0][y].startY + (cellSize / 1.5f), blackPaint);
         }
         showLog("Exiting drawGridNumber");
     }
@@ -2041,8 +2041,8 @@ public class GridMap extends View {
                 int obstacleX = obstacleCoord.get(i)[0];
                 int obstacleY = obstacleCoord.get(i)[1];
                 Cell obstacleCell = cells[obstacleX][20-obstacleY];
-                obstacle.put("x",obstacleX);
-                obstacle.put("y",obstacleY);
+                obstacle.put("x",obstacleX-1);
+                obstacle.put("y",obstacleY-1);
                 obstacle.put("id",obstacleCell.obstacleNo);
                 obstacle.put("d",facingStringToInt(obstacleCell.obstacleFacing));
 
