@@ -1156,7 +1156,7 @@ public class GridMap extends View {
 
     public void resetMap() {
         showLog("Entering resetMap");
-        TextView robotStatusTextView =  ((Activity)this.getContext()).findViewById(R.id.robotStatusTextView);
+        TextView robotStatusTextView =  ((Activity)this.getContext()).findViewById(R.id.robotStatusText);
         updateRobotAxis(1, 1, "None");
         robotStatusTextView.setText("Not Available");
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -1460,7 +1460,7 @@ public class GridMap extends View {
     }
 
     public void printRobotStatus(String message) {
-        TextView robotStatusTextView = ((Activity)this.getContext()).findViewById(R.id.robotStatusTextView);
+        TextView robotStatusTextView = ((Activity)this.getContext()).findViewById(R.id.robotStatusText);
         robotStatusTextView.setText(message);
     }
 
