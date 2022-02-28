@@ -181,15 +181,12 @@ public class GridMap extends View {
             int endrow = ROW-1;
             endrow = this.convertRow(endrow);
             RectF endrect = new RectF(endcol * cellSize, endrow * cellSize, (endcol + 1) * cellSize, (endrow + 1) * cellSize);
-            //Bitmap goal = BitmapFactory.decodeResource(getResources(), R.drawable.goal);
-            //canvas.drawBitmap(goal, null, endrect, null);
             mapDrawn = true;
             newEndCoord=false;
         }
 
         if (getCanDrawRobot())
             drawRobot(canvas, curCoord);
-        //drawArrow(canvas, arrowCoord);
 
         showLog("Exiting onDraw");
     }
@@ -215,7 +212,6 @@ public class GridMap extends View {
 
                                     // TODO: NEW Target ID
                                     if(cells[x][y].targetID == null) {
-                                        //canvas.drawText(Integer.toString(a + 1), cells[x][y].startX + (cellSize / 3.2f), cells[x][y].startY + (cellSize / 1.5f), exploredColor);
                                         canvas.drawText(Integer.toString(cells[x][y].obstacleNo), cells[x][y].startX + (cellSize / 3.2f), cells[x][y].startY + (cellSize / 1.5f), exploredColor);
                                     } else{
                                         Paint textPaint2 = new Paint();
@@ -263,88 +259,36 @@ public class GridMap extends View {
         for (int x = 1; x <= COL; x++)
             for (int y = 0; y < ROW; y++)
                 for (int i = 0; i < this.getArrowCoord().size(); i++) {
-                    // Update Target Image ID
-                    /*
-                    if(cells[x][y].obstacleNo != -1 && cells[x][y].targetID != null){
-                        Paint textPaint2 = new Paint();
-                        textPaint2.setTextSize(20);
-                        textPaint2.setColor(Color.WHITE);
-                        textPaint2.setTextAlign(Paint.Align.CENTER);
-                        canvas.drawRect(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY, blackPaint);
-                        canvas.drawText(cells[x][y].targetID, (cells[x][y].startX+cells[x][y].endX)/2, cells[x][y].endY + (cells[x][y].startY-cells[x][y].endY)/4, textPaint2);
-                    } */
-
                     // TODO: NEW Obstacle Facing
                     if (cells[x][y].obstacleFacing != null) {
                         if (cells[x][y].obstacleFacing == "UP" && cells[x][y].isDirection == false ) {
-
                             canvas.drawRect(cells[x][y].startX + 2 , cells[x][y].startY + 1, cells[x][y].endX, cells[x][y].endY - (cellSize / 1.1f), imageLine);
-
-                            //RectF rect = new RectF(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY);
-//                            Drawable face = getResources().getDrawable(R.drawable.border_top);
-//                            canvas.drawBitmap(drawableToBitmap(face), null, rect, null);
-                            //Toast.makeText((Activity) this.getContext(), "Update", Toast.LENGTH_SHORT).show();
                         }
                         if (cells[x][y].obstacleFacing == "DOWN" && cells[x][y].isDirection == false) {
-
                             canvas.drawRect(cells[x][y].startX + 2, cells[x][y].startY + (cellSize / 1f) - 2, cells[x][y].endX, cells[x][y].endY - 1, imageLine);
-//                            RectF rect = new RectF(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY);
-//                            Drawable face = getResources().getDrawable(R.drawable.border_bottom);
-//                            canvas.drawBitmap(drawableToBitmap(face), null, rect, null);
                         }
                         if (cells[x][y].obstacleFacing == "LEFT" && cells[x][y].isDirection == false) {
                             canvas.drawRect(cells[x][y].startX + 1, cells[x][y].startY + 2, cells[x][y].endX - (cellSize / 1.1f), cells[x][y].endY, imageLine);
-
-//                            RectF rect = new RectF(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY);
-//                            Drawable face = getResources().getDrawable(R.drawable.border_left);
-//                            canvas.drawBitmap(drawableToBitmap(face), null, rect, null);
                         }
                         if (cells[x][y].obstacleFacing == "RIGHT" && cells[x][y].isDirection == false) {
-
                             canvas.drawRect(cells[x][y].startX + (cellSize / 1f) -2, cells[x][y].startY, cells[x][y].endX -1, cells[x][y].endY, imageLine);
-
-//                            RectF rect = new RectF(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY);
-//                            Drawable face = getResources().getDrawable(R.drawable.border_right);
-//                            canvas.drawBitmap(drawableToBitmap(face), null, rect, null);
                         }
 
                         // for confirm direction display
                         if (cells[x][y].obstacleFacing == "UP" && cells[x][y].isDirection == true ) {
-
-
                             canvas.drawRect(cells[x][y].startX + 2 , cells[x][y].startY + 1, cells[x][y].endX, cells[x][y].endY - (cellSize / 1.1f), imageLineConfirm);
-
-                            //RectF rect = new RectF(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY);
-//                            Drawable face = getResources().getDrawable(R.drawable.border_top);
-//                            canvas.drawBitmap(drawableToBitmap(face), null, rect, null);
-                            //Toast.makeText((Activity) this.getContext(), "Update", Toast.LENGTH_SHORT).show();
                         }
                         if (cells[x][y].obstacleFacing == "DOWN" && cells[x][y].isDirection == true) {
 
                             canvas.drawRect(cells[x][y].startX + 2, cells[x][y].startY + (cellSize / 1f) - 2, cells[x][y].endX, cells[x][y].endY - 1, imageLineConfirm);
-//                            RectF rect = new RectF(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY);
-//                            Drawable face = getResources().getDrawable(R.drawable.border_bottom);
-//                            canvas.drawBitmap(drawableToBitmap(face), null, rect, null);
                         }
                         if (cells[x][y].obstacleFacing == "LEFT" && cells[x][y].isDirection == true) {
-
-
                             canvas.drawRect(cells[x][y].startX + 1, cells[x][y].startY + 2, cells[x][y].endX - (cellSize / 1.1f), cells[x][y].endY, imageLineConfirm);
-
-//                            RectF rect = new RectF(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY);
-//                            Drawable face = getResources().getDrawable(R.drawable.border_left);
-//                            canvas.drawBitmap(drawableToBitmap(face), null, rect, null);
                         }
                         if (cells[x][y].obstacleFacing == "RIGHT" && cells[x][y].isDirection == true) {
-
-
                             canvas.drawRect(cells[x][y].startX + (cellSize / 1f) -2, cells[x][y].startY, cells[x][y].endX -1, cells[x][y].endY, imageLineConfirm);
-
-//                            RectF rect = new RectF(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY);
-//                            Drawable face = getResources().getDrawable(R.drawable.border_right);
-//                            canvas.drawBitmap(drawableToBitmap(face), null, rect, null);
                         }
-                    } // End
+                    }
                 }
 
         showLog("Exiting drawIndividualCell");
@@ -483,56 +427,24 @@ public class GridMap extends View {
             int endrow = 19;
             endrow = this.convertRow(endrow);
             RectF endrect = new RectF(endcol * cellSize, endrow * cellSize, (endcol + 1) * cellSize, (endrow + 1) * cellSize);
-            //Bitmap goal = BitmapFactory.decodeResource(getResources(), R.drawable.goal);
-            //canvas.drawBitmap(goal, null, endrect, null);
             newEndCoord=false;
         }
         for (int y = androidRowCoord; y <= androidRowCoord + 1; y++){
             canvas.drawLine(cells[curCoord[0] - 1][y].startX, cells[curCoord[0] - 1][y].startY - (cellSize / 30), cells[curCoord[0] + 1][y].endX, cells[curCoord[0] + 1][y].startY - (cellSize / 30), robotColor );
         }
-        //canvas.drawBitmap(bitmap, null, mRedPaddleRect, mPaint);
         for (int x = curCoord[0] - 1; x < curCoord[0] + 1; x++){
             canvas.drawLine(cells[x][androidRowCoord - 1].startX - (cellSize / 30) + cellSize, cells[x][androidRowCoord - 1].startY, cells[x][androidRowCoord + 1].startX - (cellSize / 30) + cellSize, cells[x][androidRowCoord + 1].endY, robotColor);
         }
         int col = curCoord[0];
         int row = androidRowCoord;
         RectF rect = new RectF(col * cellSize, row * cellSize, (col + 1) * cellSize, (row + 1) * cellSize);
-        //Bitmap robot = BitmapFactory.decodeResource(getResources(), R.drawable.robot);
-        //canvas.drawBitmap(robot, null, rect, null);
-        //canvas.drawRect(cells[curCoord[0] - 1][androidRowCoord - 1].startX,cells[curCoord[0] - 1][androidRowCoord - 1].startY,cells[curCoord[0] - 1][androidRowCoord + 1].startX,cells[curCoord[0] - 1][androidRowCoord + 1].endY,waypointColor);
 
         switch (this.getRobotDirection()) {
             case "up":
-
                 //left drawn line
                 canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord + 1].startX, cells[curCoord[0] - 1][androidRowCoord + 1].endY, (cells[curCoord[0]][androidRowCoord - 1].startX + cells[curCoord[0]][androidRowCoord - 1].endX) / 2, cells[curCoord[0]][androidRowCoord - 1].startY, blackPaint);
-
                 //right drawn line
                 canvas.drawLine((cells[curCoord[0]][androidRowCoord - 1].startX + cells[curCoord[0]][androidRowCoord - 1].endX) / 2, cells[curCoord[0]][androidRowCoord - 1].startY, cells[curCoord[0] + 1][androidRowCoord + 1].endX, cells[curCoord[0] + 1][androidRowCoord + 1].endY, blackPaint);
-
-                //NE
-                //left drawn line
-                //canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord].startX, cells[curCoord[0] - 1][androidRowCoord].endY, (cells[curCoord[0] + 1][androidRowCoord - 1].startX + cells[curCoord[0] + 2][androidRowCoord - 1 ].endX) / 2, cells[curCoord[0] + 2][androidRowCoord - 1].startY, blackPaint);
-                //canvas.drawLine((cells[curCoord[0] + 1][androidRowCoord - 1].startX + cells[curCoord[0] + 2][androidRowCoord - 1].endX) / 2, cells[curCoord[0] + 1][androidRowCoord - 1].startY, cells[curCoord[0] - 1][androidRowCoord].endX, cells[curCoord[0] - 1][androidRowCoord + 1].endY, blackPaint);
-
-                //NW
-                //left drawn line
-                //canvas.drawLine(cells[curCoord[0] + 1][androidRowCoord + 1].startX, cells[curCoord[0] + 1][androidRowCoord + 1].endY, (cells[curCoord[0] - 2][androidRowCoord].startX + cells[curCoord[0] - 1][androidRowCoord].endX) / 2, cells[curCoord[0] - 1][androidRowCoord - 1].startY, blackPaint);
-                //canvas.drawLine((cells[curCoord[0] - 2][androidRowCoord].startX + cells[curCoord[0] - 1][androidRowCoord].endX) / 2, cells[curCoord[0]][androidRowCoord - 1].startY, cells[curCoord[0] + 1][androidRowCoord].endX, cells[curCoord[0] + 1][androidRowCoord].endY, blackPaint);
-
-                // SE
-                //canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord].startX, cells[curCoord[0] - 1][androidRowCoord].startY, (cells[curCoord[0] + 1][androidRowCoord + 1].startX + cells[curCoord[0] + 2][androidRowCoord + 1].endX) / 2, cells[curCoord[0] + 1][androidRowCoord + 1].endY, blackPaint);
-                //canvas.drawLine((cells[curCoord[0] + 1][androidRowCoord + 1].startX + cells[curCoord[0] + 2][androidRowCoord + 1].endX) / 2, cells[curCoord[0]][androidRowCoord + 1].endY, cells[curCoord[0] - 1][androidRowCoord - 1].endX, cells[curCoord[0] - 1][androidRowCoord - 1].startY, blackPaint);
-
-
-                // SW
-                //canvas.drawLine(cells[curCoord[0] + 1][androidRowCoord - 1].startX, cells[curCoord[0] + 1][androidRowCoord - 1].startY, (cells[curCoord[0] - 2][androidRowCoord + 1].startX + cells[curCoord[0] - 1][androidRowCoord + 1].endX) / 2, cells[curCoord[0] - 1][androidRowCoord + 1].endY, blackPaint);
-                //canvas.drawLine((cells[curCoord[0] - 2][androidRowCoord + 1].startX + cells[curCoord[0] - 1][androidRowCoord + 1].endX) / 2, cells[curCoord[0]][androidRowCoord + 1].endY, cells[curCoord[0] + 1][androidRowCoord].endX, cells[curCoord[0] + 1][androidRowCoord].startY, blackPaint);
-
-
-                //showLog( " curCoord[0]: " +Integer.toString(curCoord[0]) + " androidRowCoord: " +Integer.toString(20 - (androidRowCoord)) + " curCoord[1]: " + Integer.toString(curCoord[1]));
-
-
                 break;
             case "down":
                 canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord - 1].startX, cells[curCoord[0] - 1][androidRowCoord - 1].startY, (cells[curCoord[0]][androidRowCoord + 1].startX + cells[curCoord[0]][androidRowCoord + 1].endX) / 2, cells[curCoord[0]][androidRowCoord + 1].endY, blackPaint);
@@ -876,17 +788,11 @@ public class GridMap extends View {
         waypointCoord[0] = col;
         waypointCoord[1] = row;
         waypointNew=true;
-        //Canvas canvas = null;
 
         row = this.convertRow(row);
         cells[col][row].setType("waypoint");
-        /*RectF rect = new RectF(col * cellSize, row * cellSize, (col + 1) * cellSize, (row + 1) * cellSize);
-        Bitmap dog = BitmapFactory.decodeResource(getResources(), R.drawable.dog);
-        canvas.drawBitmap(dog, null, rect, null);*/
         this.invalidate();
 
-        // TODO:uncommand for bluetooth to work
-        //BluetoothFragment.printMessage("waypoint", waypointCoord[1]-1,waypointCoord[0]-1);
         showLog("Exiting setWaypointCoord");
     }
 
@@ -1002,12 +908,6 @@ public class GridMap extends View {
                 case "arrow":
                     this.paint = arrowColor;
                     break;
-                /*case "fastestPath":
-                    this.paint = fastestPathColor;
-                    break;
-                case "image":
-                    this.paint = obstacleColor;
-                    break;*/
                 case "id":
                     this.paint = obstacleColor;
                     break;
@@ -1082,8 +982,6 @@ public class GridMap extends View {
             // remove the last coma
             StringBuffer messageBuffer = new StringBuffer(message);
             messageBuffer.deleteCharAt(messageBuffer.length() - 1);
-
-//            BluetoothFragment.printMessage(messageBuffer.toString());
         }
         else
         {
@@ -1139,15 +1037,6 @@ public class GridMap extends View {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                //updateRobotAxis(column, row, direction);
-//                if (setStartPointToggleBtn.isChecked())
-//                    setStartPointToggleBtn.toggle();
-//                // reset setStartPointFAB icon
-//                if (ArenaFragment.isSetStartingPiont)
-//                {
-//                    ArenaFragment.isSetStartingPiont = false;
-//                    setStartPointFAB.setImageDrawable(getContext().getDrawable(R.drawable.triangle));
-//                }
 
                 //update robot axis
                 updateRobotAxis(column, row, direction);
@@ -1299,10 +1188,6 @@ public class GridMap extends View {
                             if (oCellArr.get(x) == cells[column][20-row]) {
                                 selectedObsCoord[2] = x;
                             }
-                            //TODO: new oCellArr
-//                            if (cells[oCellArr.get(x).getX()][oCellArr.get(x).getY()] == cells[column][20-row]) {
-//                                selectedObsCoord[2] = x;
-//                            }
                         }
                         obsSelected = true;
                         return true;
@@ -1341,10 +1226,6 @@ public class GridMap extends View {
                     obsTargetImageID = cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].targetID; // <-- newly added
                     cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].targetID = null; // <-- newly added
 
-                    //Remove old Cell
-                    // TODO: uncommand for bluetooth to work
-//                    BluetoothFragment.printMessage("Removed obstacle " + "(" + valueOf(selectedObsCoord[0] - 1) + "," + valueOf(Math.abs(selectedObsCoord[1]) - 1) + ")");
-//                    cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].setType("unexplored");
                     //Remove from obstacles coord arraylist
                     for (int i = 0; i < obstacleCoord.size(); i++) {
                         if (obstacleCoord.get(i)[0] == selectedObsCoord[0] && obstacleCoord.get(i)[1] == selectedObsCoord[1]) {
@@ -1357,17 +1238,9 @@ public class GridMap extends View {
                     if (column <= 20 && row <= 20 && column >= 1 && row >= 1) {
                         //Create the new cell
                         oCellArr.set(selectedObsCoord[2], cells[column][20 - row]);
-//                        this.setObstacleCoord(column, row);
-                        //oCellArrDirection.set(selectedObsCoord[2],-1);
-                        //TODO: new oCellArr
-//                        ObstacleCellArray obstacleCellArray = new ObstacleCellArray(column,(20 - row));
-//                        oCellArr.set(selectedObsCoord[2],obstacleCellArray);
-//                        oCellArr.get(selectedObsCoord[2]).setX(column);
-//                        oCellArr.get(selectedObsCoord[2]).setY((20 - row));
 
                         selectedObsCoord[0] = column;
                         selectedObsCoord[1] = row;
-                        // TODO: new Obstacle
                         // Add obstacle facing direction
                         cells[column][20-row].setobstacleFacing(obsSelectedFacing); // <-- newly added
                         // Add target ID
@@ -1383,16 +1256,11 @@ public class GridMap extends View {
                             oCellArr.remove(oCellArr.size() - 1);
                             //oCellArrDirection.remove(oCellArrDirection.size() - 1);
 
-                            // TODO: new Obstacle
                             // Remove obstacle facing direction
                             cells[selectedObsCoord[0]][20-selectedObsCoord[1]].setobstacleFacing(null); //<-- newly added
                             // Remove target ID
                             cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].targetID = null; // <-- newly added
                         }
-                        //TODO: new oCellArr
-//                        if (cells[oCellArr.get(oCellArr.size() - 1).getX()][oCellArr.get(oCellArr.size() - 1).getY()] == cells[selectedObsCoord[0]][20 - selectedObsCoord[1]]) {
-//                            oCellArr.remove(oCellArr.size() - 1);
-//                        }
                     }
                     this.invalidate();
                     return true;
@@ -1411,12 +1279,9 @@ public class GridMap extends View {
     }
 
     public void setStartingPointManual() throws JSONException {
-        //TextView robotStatusTextView = ((Activity)this.getContext()).findViewById(R.id.robotStatusTextView);
-        //robotStatusTextView.setText("yesss");
         if (canDrawRobot)
             this.setOldRobotCoord(curCoord[0], curCoord[1]);
         Integer[] infoJsonArray = new Integer[]{0,17,90};
-//                    infoJsonObject = infoJsonArray.getJSONObject(0);
 
         for (int row = ROW - 1; row >= 0; row--)
             for (int col = 1; col <= COL; col++)
@@ -1442,23 +1307,9 @@ public class GridMap extends View {
     public void resetMap() {
         showLog("Entering resetMap");
         TextView robotStatusTextView =  ((Activity)this.getContext()).findViewById(R.id.robotStatusTextView);
-//        Switch manualAutoToggleBtn = ((Activity)this.getContext()).findViewById(R.id.manualAutoToggleBtn);
-//        Switch phoneTiltSwitch = ((Activity)this.getContext()).findViewById(R.id.phoneTiltSwitch);
         updateRobotAxis(1, 1, "None");
         robotStatusTextView.setText("Not Available");
         SharedPreferences.Editor editor = sharedPreferences.edit();
-
-
-//        if (manualAutoToggleBtn.isChecked()) {
-//            manualAutoToggleBtn.toggle();
-//            manualAutoToggleBtn.setText("MANUAL");
-//        }
-//        this.toggleCheckedBtn("None");
-//
-//        if (phoneTiltSwitch.isChecked()) {
-//            phoneTiltSwitch.toggle();
-//            phoneTiltSwitch.setText("TILT OFF");
-//        }
 
         receivedJsonObject = null;
         backupMapInformation = null;
@@ -1551,16 +1402,8 @@ public class GridMap extends View {
                 case "robotPosition":
                     infoJsonArray = mapInformation.getJSONArray("robotPosition");
                     if (infoJsonArray.getInt(0)<=13 && infoJsonArray.getInt(0)>=0 && infoJsonArray.getInt(1)<=18 && infoJsonArray.getInt(1)>=0){
-                        //TextView robotStatusTextView = ((Activity)this.getContext()).findViewById(R.id.robotStatusTextView);
-                        //robotStatusTextView.setText("yesss");
                         if (canDrawRobot)
                             this.setOldRobotCoord(curCoord[0], curCoord[1]);
-
-//                    infoJsonObject = infoJsonArray.getJSONObject(0);
-
-                    /*for (int row = ROW - 1; row >= 0; row--)
-                        for (int col = 1; col <= COL; col++)
-                            cells[col][row].setType("unexplored");*/
 
                         String direction;
                         if (infoJsonArray.getInt(2) == 90) {
@@ -1611,10 +1454,6 @@ public class GridMap extends View {
                     //message = "length of the map info: " + mapInformation.names().length();
                     break;
                 case "status":
-//                    infoJsonArray = mapInformation.getJSONArray("status");
-//                    infoJsonObject = infoJsonArray.getJSONObject(0);
-//                    printRobotStatus(infoJsonObject.getString("status"));
-//                    message = "status: " + infoJsonObject.getString("status");
                     String msg = mapInformation.getString("status");
                     printRobotStatus(msg);
                     message = "status: " + msg;
@@ -1625,14 +1464,11 @@ public class GridMap extends View {
                     message = "Unintended default for JSONObject";
                     break;
             }
-//            if (!message.equals("updateMapInformation Default message"))
-//                BluetoothFragment.receiveMessage(message);
         }
         showLog("Exiting updateMapInformation");
         this.invalidate();
     }
 
-    // TODO: need find a way to make the turn like a car using angle (clock)
     public void moveRobot(String direction) {
         showLog("Entering moveRobot");
         setValidPosition(false);
@@ -1817,10 +1653,6 @@ public class GridMap extends View {
         }
 
         showLog("After loop: obstacleString: " + obstacleString + ", length: " + obstacleString.length());
-
-
-//        publicMDFObstacle = obstacleString;
-//        publicMDFExploration = exploredString;
 
         if (!obstacleString.equals("")) {
             hexBigIntegerObstacle = new BigInteger(obstacleString, 2);
