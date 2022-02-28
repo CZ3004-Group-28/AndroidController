@@ -583,9 +583,14 @@ public class GridMap extends View {
         this.updateRobotAxis(col, row, direction);
 
         row = this.convertRow(row);
-        for (int x = col - 1; x <= col + 1; x++)
-            for (int y = row - 1; y <= row + 1; y++)
-                cells[x][y].setType("robot");
+        for (int x = col - 1; x <= col + 1; x++){
+            for (int y = row - 1; y <= row + 1; y++){
+                if(!cells[x][y].type.equals("obstacle")){
+                    cells[x][y].setType("robot");
+                }
+            }
+        }
+
         showLog("Exiting setCurCoord");
     }
 
@@ -625,9 +630,13 @@ public class GridMap extends View {
         oldCoord[0] = oldCol;
         oldCoord[1] = oldRow;
         oldRow = this.convertRow(oldRow);
-        for (int x = oldCol - 1; x <= oldCol + 1; x++)
-            for (int y = oldRow - 1; y <= oldRow + 1; y++)
-                cells[x][y].setType("unexplored");
+        for (int x = oldCol - 1; x <= oldCol + 1; x++){
+            for (int y = oldRow - 1; y <= oldRow + 1; y++){
+                if(!cells[x][y].type.equals("obstacle")){
+                    cells[x][y].setType("unexplored");
+                }
+            }
+        }
         showLog("Exiting setOldRobotCoord");
     }
 
@@ -886,9 +895,13 @@ public class GridMap extends View {
                     int[] startCoord = this.getStartCoord();
                     if (startCoord[0] >= 2 && startCoord[1] >= 2) {
                         startCoord[1] = this.convertRow(startCoord[1]);
-                        for (int x = startCoord[0] - 1; x <= startCoord[0] + 1; x++)
-                            for (int y = startCoord[1] - 1; y <= startCoord[1] + 1; y++)
-                                cells[x][y].setType("unexplored");
+                        for (int x = startCoord[0] - 1; x <= startCoord[0] + 1; x++) {
+                            for (int y = startCoord[1] - 1; y <= startCoord[1] + 1; y++) {
+                                if (!cells[x][y].type.equals("obstacle")) {
+                                    cells[x][y].setType("unexplored");
+                                }
+                            }
+                        }
                     }
                 }
                 else
