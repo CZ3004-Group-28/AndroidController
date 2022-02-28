@@ -662,12 +662,17 @@ public class GridMap extends View {
     }
 
     private void updateRobotAxis(int col, int row, String direction) {
-        TextView xyAxisTextView =  ((Activity)this.getContext()).findViewById(R.id.robot_xy_value);
+        TextView xAxisTextView =  ((Activity)this.getContext()).findViewById(R.id.robot_x_value);
+        TextView yAxisTextView =  ((Activity)this.getContext()).findViewById(R.id.robot_y_value);
         TextView directionAxisTextView =  ((Activity)this.getContext()).findViewById(R.id.robotDirText);
 
-        String newDirText = "X: " + String.valueOf(col-1) + " Y: " + String.valueOf(row-1);
+        String newDirText_x = "X: " + String.valueOf(col-1);
 
-        xyAxisTextView.setText(newDirText);
+        String newDirText_y = "Y: " + String.valueOf(row-1);
+
+        xAxisTextView.setText(newDirText_x);
+        yAxisTextView.setText(newDirText_y);
+
         directionAxisTextView.setText(direction);
         if(direction.equals("up"))
         {

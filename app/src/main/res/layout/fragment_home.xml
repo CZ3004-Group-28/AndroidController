@@ -126,44 +126,92 @@
                 android:weightSum="2"
                 android:orientation="vertical">
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:weightSum="2"
+                    android:orientation="horizontal">
 
-                    <ImageButton
-                        android:id="@+id/upArrowBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        android:src="@drawable/ic_arrow_up" />
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
 
-                    <ImageButton
-                        android:id="@+id/leftArrowBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toLeftOf="@id/upArrowBtn"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/ic_arrow_left" />
+                        <ImageButton
+                            android:id="@+id/upArrowBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_centerHorizontal="true"
+                            android:src="@drawable/ic_arrow_up" />
 
-                    <ImageButton
-                        android:id="@+id/rightArrowBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toRightOf="@id/upArrowBtn"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/ic_arrow_right" />
+                        <ImageButton
+                            android:id="@+id/leftArrowBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toLeftOf="@id/upArrowBtn"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_arrow_left" />
 
-                    <ImageButton
-                        android:id="@+id/downArrowBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_centerHorizontal="true"
-                        android:src="@drawable/ic_arrow_down" />
+                        <ImageButton
+                            android:id="@+id/rightArrowBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@id/upArrowBtn"
+                            android:src="@drawable/ic_arrow_right" />
 
-                </RelativeLayout>
+                        <ImageButton
+                            android:id="@+id/downArrowBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_centerHorizontal="true"
+                            android:src="@drawable/ic_arrow_down" />
+
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:weightSum="3"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/robot_x_value"
+                            android:layout_weight="1"
+                            android:textStyle="bold"
+                            android:textAlignment="left"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="X:" />
+
+                        <TextView
+                            android:id="@+id/robot_y_value"
+                            android:layout_weight="1"
+                            android:textStyle="bold"
+                            android:textAlignment="left"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Y:" />
+
+                        <TextView
+                            android:id="@+id/robotDirText"
+                            android:layout_weight="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+
+                            android:layout_below="@id/robotStatusText"
+                            android:layout_marginBottom="20dp"
+
+                            android:text="Facing"
+                            android:textAlignment="left" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -192,25 +240,7 @@
                     <!--                    android:layout_marginBottom="20dp"-->
                     <!--                    android:text="test 2" />-->
 
-                    <TextView
-                        android:id="@+id/robot_xy_value"
-                        android:textStyle="bold"
-                        android:textAlignment="center"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="X:   Y:   " />
 
-                    <TextView
-                        android:id="@+id/robotDirText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-
-                        android:layout_below="@id/robotStatusText"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginBottom="20dp"
-
-                        android:text="Facing"
-                        android:textAlignment="center" />
                 </LinearLayout>
 
             </LinearLayout>
