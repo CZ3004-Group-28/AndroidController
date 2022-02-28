@@ -227,32 +227,6 @@ public class GridMap extends View {
                                     }
                                     written = true;
                                     break;
-
-//                                    canvas.drawText(Integer.toString(a + 1), cells[x][y].startX + (cellSize / 3f), cells[x][y].startY + (cellSize / 1.5f), exploredColor);
-//
-//                                    //TODO: new direction
-//                                    switch (oCellArrDirection.get(a)) {
-//                                        case 1:
-//                                            // Up
-//                                            canvas.drawRect(cells[x][y].startX + 2, cells[x][y].startY + 1, cells[x][y].endX, cells[x][y].endY - (cellSize / 1.1f), imageLine);
-//                                            break;
-//                                        case 2:
-//                                            // Down
-//                                            canvas.drawRect(cells[x][y].startX + 2, cells[x][y].startY + (cellSize / 1f), cells[x][y].endX, cells[x][y].endY, imageLine);
-//                                            break;
-//                                        case 3:
-//                                            // Left
-//                                            canvas.drawRect(cells[x][y].startX + 1, cells[x][y].startY + 2, cells[x][y].endX - (cellSize / 1.1f), cells[x][y].endY, imageLine);
-//                                            break;
-//                                        case 4:
-//                                            // Right
-//                                            canvas.drawRect(cells[x][y].startX + (cellSize / 1f), cells[x][y].startY, cells[x][y].endX, cells[x][y].endY, imageLine);
-//                                            break;
-//
-//                                    }
-//
-//                                    written = true;
-//                                    break;
                                 }
                             }
 
@@ -272,52 +246,7 @@ public class GridMap extends View {
                                     canvas.drawRect(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY, blackPaint);
                                     canvas.drawText(cells[x][y].targetID, (cells[x][y].startX+cells[x][y].endX)/2, cells[x][y].endY + (cells[x][y].startY-cells[x][y].endY)/4, textPaint2);
                                 }
-
-//                                // add a numbered obstacle cell
-//                                oCellArr.add(cells[x][y]);
-//                                canvas.drawText(Integer.toString(oCellArr.size()), cells[x][y].startX + (cellSize / 3f), cells[x][y].startY + (cellSize / 1.5f), exploredColor);
-//
-//                                //TODO: new direction
-//                                oCellArrDirection.add(newDirection);
-//                                switch (newDirection) {
-//                                    case 1:
-//                                        // Up
-//                                        canvas.drawRect(cells[x][y].startX + 2 , cells[x][y].startY + 1, cells[x][y].endX, cells[x][y].endY - (cellSize / 1.1f), imageLine);
-//                                        break;
-//                                    case 2:
-//                                        // Down
-//                                        canvas.drawRect(cells[x][y].startX + 2, cells[x][y].startY + (cellSize / 1f), cells[x][y].endX, cells[x][y].endY, imageLine);
-//                                        break;
-//                                    case 3:
-//                                        // Left
-//                                        canvas.drawRect(cells[x][y].startX + 1, cells[x][y].startY + 2, cells[x][y].endX - (cellSize / 1.1f), cells[x][y].endY, imageLine);
-//                                        break;
-//                                    case 4:
-//                                        // Right
-//                                        canvas.drawRect(cells[x][y].startX + (cellSize / 1f), cells[x][y].startY, cells[x][y].endX, cells[x][y].endY, imageLine);
-//                                        break;
-//
-//                                }
                             }
-                            /*switch (iDirection) {
-                                case 0:
-                                    // Up
-                                    canvas.drawRect(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY - (cellSize / 1f), imageLine);
-                                    break;
-                                case 1:
-                                    // Down
-                                    canvas.drawRect(cells[x][y].startX, cells[x][y].startY + (cellSize / 1f), cells[x][y].endX, cells[x][y].endY, imageLine);
-                                    break;
-                                case 2:
-                                    // Left
-                                    canvas.drawRect(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX - (cellSize / 1f), cells[x][y].endY, imageLine);
-                                    break;
-                                case 3:
-                                    // Right
-                                    canvas.drawRect(cells[x][y].startX + (cellSize / 1f), cells[x][y].startY, cells[x][y].endX, cells[x][y].endY, imageLine);
-                                    break;
-
-                            }*/
                         }
                     }
                     else {
