@@ -183,7 +183,7 @@
                             android:id="@+id/robot_x_value"
                             android:layout_weight="1"
                             android:textStyle="bold"
-                            android:textAlignment="left"
+                            android:textAlignment="textStart"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="X:" />
@@ -192,7 +192,7 @@
                             android:id="@+id/robot_y_value"
                             android:layout_weight="1"
                             android:textStyle="bold"
-                            android:textAlignment="left"
+                            android:textAlignment="textStart"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Y:" />
@@ -202,12 +202,10 @@
                             android:layout_weight="1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-
                             android:layout_below="@id/robotStatusText"
                             android:layout_marginBottom="20dp"
-
                             android:text="Facing"
-                            android:textAlignment="left" />
+                            android:textAlignment="textStart" />
                     </LinearLayout>
 
                 </LinearLayout>

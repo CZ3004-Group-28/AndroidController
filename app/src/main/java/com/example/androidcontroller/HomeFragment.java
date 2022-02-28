@@ -294,15 +294,15 @@ public class HomeFragment extends Fragment{
         Button btnFW10 = rootview.findViewById(R.id.temp_btnFW10);
         btnFW10.setOnClickListener(v -> {sendDirectionCmdIntent("FW10");});
         Button btnBT10 = rootview.findViewById(R.id.temp_btnBW10);
-        btnBT10.setOnClickListener(v -> {sendControlCmdIntent("BW10");});
+        btnBT10.setOnClickListener(v -> {sendDirectionCmdIntent("BW10");});
         Button btnFL00 = rootview.findViewById(R.id.temp_btnFL00);
-        btnFL00.setOnClickListener(v -> {sendControlCmdIntent("FL00");});
+        btnFL00.setOnClickListener(v -> {sendDirectionCmdIntent("FL00");});
         Button btnFR00 = rootview.findViewById(R.id.temp_btnFR00);
-        btnFR00.setOnClickListener(v -> {sendControlCmdIntent("FR00");});
+        btnFR00.setOnClickListener(v -> {sendDirectionCmdIntent("FR00");});
         Button btnBL00 = rootview.findViewById(R.id.temp_btnBL00);
-        btnBL00.setOnClickListener(v -> {sendControlCmdIntent("BL00");});
+        btnBL00.setOnClickListener(v -> {sendDirectionCmdIntent("BL00");});
         Button btnBR00 = rootview.findViewById(R.id.temp_btnBR00);
-        btnBR00.setOnClickListener(v->{sendControlCmdIntent("BR00");});
+        btnBR00.setOnClickListener(v->{sendDirectionCmdIntent("BR00");});
 
         // Inflate the layout for this fragment
         return rootview;
