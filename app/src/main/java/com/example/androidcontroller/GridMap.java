@@ -737,7 +737,7 @@ public class GridMap extends View {
         return waypointCoord;
     }
 
-    private void setObstacleCoord(int col, int row) {
+    protected void setObstacleCoord(int col, int row) {
         showLog("Entering setObstacleCoord");
         //Check if obstacle has been previously set there
         if(getCellAtCoordinates(col,row).type.equalsIgnoreCase("obstacle")){

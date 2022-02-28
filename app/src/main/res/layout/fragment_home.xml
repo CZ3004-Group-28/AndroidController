@@ -217,7 +217,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:weightSum="2"
+                    android:weightSum="3"
                     android:orientation="vertical">
 
                     <!--                <Button-->
@@ -281,6 +281,62 @@
                             android:layout_height="wrap_content"
                             android:text="BR00" />
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="5">
+
+                        <TextView
+                            android:id="@+id/add_obs_x_tv"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="X: "/>
+
+                        <EditText
+                            android:id="@+id/add_obs_x_value"
+                            android:layout_weight="1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:inputType="text"/>
+
+                        <TextView
+                            android:id="@+id/add_obs_y_tv"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="Y: "/>
+
+                        <EditText
+                            android:id="@+id/add_obs_y_value"
+                            android:layout_weight="1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:inputType="text"/>
+
+<!--                        <Spinner-->
+<!--                            android:id="@+id/obs_facing_drop"-->
+<!--                            android:layout_weight="1"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:background="@android:drawable/btn_dropdown"-->
+<!--                            android:spinnerMode="dropdown"/>-->
+
+                        <Button
+                            android:id="@+id/add_obs_btn"
+                            android:layout_weight="1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Add obstacle" />
+
+                    </LinearLayout>
+
+
+
                 </LinearLayout>
 
             </LinearLayout>

@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -285,6 +286,45 @@ public class HomeFragment extends Fragment{
                 }
             }catch (Exception e){
                 Log.e(TAG, "onCreateView: An error occurred while setting obstacle direction");
+                e.printStackTrace();
+            }
+
+        });
+
+        //Adding obstacles using buttons
+        Button addObsManual = rootview.findViewById(R.id.add_obs_btn);
+        EditText addObs_x = rootview.findViewById(R.id.add_obs_x_value);
+        EditText addObs_y = rootview.findViewById(R.id.add_obs_y_value);
+
+        addObsManual.setOnClickListener(v -> {
+
+            try{
+
+                String x_value = addObs_x.getText().toString();
+                String y_value = addObs_y.getText().toString();
+
+                try
+                {
+                    int x_value_int = Integer.parseInt(x_value);
+                    int y_value_int = Integer.parseInt(y_value);
+
+                    if( x_value_int < 20 && x_value_int >=0 && y_value_int < 20 && y_value_int >=0){
+                        gridMap.setObstacleCoord(x_value_int+1, y_value_int+1);
+                        showShortToast("obs successfully added!");
+                    }else{
+                        showShortToast("wrong values entered!!");
+                    }
+
+                }catch (Exception e){
+                    showShortToast("Incorrect values!");
+                    //incorrect format, reset EditText fields
+                    addObs_x.setText("");
+                    addObs_y.setText("");
+                }
+
+
+            }catch (Exception e){
+                Log.e(TAG, "onCreateView: An error occurred while adding obstacle manually");
                 e.printStackTrace();
             }
 
