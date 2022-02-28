@@ -308,12 +308,6 @@ public class GridMap extends View {
         return bitmap;
     } // end
 
-    public void drawImageNumberCell(int id,int x, int y) {
-        cells[x+1][19-y].setType("image");
-        cells[x+1][19-y].setId(id);
-        this.invalidate();
-    }
-
     private Cell getCellAtCoordinates(int x, int y){
         return cells[x][COL-y];
     }
@@ -332,32 +326,6 @@ public class GridMap extends View {
                     if (cells[x][y].obstacleNo == obstacleNo) {
                         cells[x][y].targetID = targetID;
                         //cells[x][y].isDirection = true;
-                    }
-        this.invalidate();
-    }
-
-    public void updateImageNumberCell(int obstacleNo, String targetID, String obstacleFacing){
-        // find the obstacle no which has the same id
-        for (int x = 1; x <= COL; x++)
-            for (int y = 0; y < ROW; y++)
-                for (int i = 0; i < this.getArrowCoord().size(); i++)
-                    if (cells[x][y].obstacleNo == obstacleNo && cells[x][y].type == "obstacle") {
-                        cells[x][y].targetID = targetID;
-                        cells[x][y].isDirection = true;
-                        if(obstacleFacing.contains("UP")) {
-                            cells[x][y].setobstacleFacing("UP");
-                        }
-                        if(obstacleFacing.contains("DOWN")) {
-                            cells[x][y].setobstacleFacing("DOWN");
-                        }
-                        if(obstacleFacing.contains("RIGHT")) {
-                            cells[x][y].setobstacleFacing("RIGHT");
-                        }
-                        if(obstacleFacing.contains("LEFT")) {
-                            cells[x][y].setobstacleFacing("LEFT");
-
-                        }
-                        break;
                     }
         this.invalidate();
     }
