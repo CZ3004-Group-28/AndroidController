@@ -211,6 +211,48 @@
 
                         android:text="Facing"
                         android:textAlignment="center" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <Button
+                            android:id="@+id/temp_btnFW10"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="FW10" />
+                        <Button
+                            android:id="@+id/temp_btnBW10"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="BW10" />
+                        <Button
+                            android:id="@+id/temp_btnFL00"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="FL00" />
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <Button
+                            android:id="@+id/temp_btnFR00"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="FR00" />
+                        <Button
+                            android:id="@+id/temp_btnBL00"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="BL00" />
+                        <Button
+                            android:id="@+id/temp_btnBR00"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="BR00" />
+                    </LinearLayout>
                 </LinearLayout>
 
             </LinearLayout>
