@@ -18,6 +18,11 @@ public class MainActivity extends AppCompatActivity {
     private HomeFragment homeFragment = new HomeFragment();
     private BluetoothFragment bluetoothFragment = new BluetoothFragment();
 
+    private final int[] ICONS = new int[]{
+            R.drawable.ic_baseline_home_24,
+            R.drawable.ic_baseline_bluetooth_24
+    };
+
     //FOR BOTTOM NAVIGATION BAR
     //https://www.youtube.com/watch?v=Bb8SgfI4Cm4
     ActivityMainBinding binding;
@@ -38,13 +43,16 @@ public class MainActivity extends AppCompatActivity {
         viewPager2.setAdapter(adapter);
         viewPager2.setUserInputEnabled(false);
 
-        TAB_TITLE = adapter.getTabTitles();
-        tabLayout.setSelectedTabIndicator(R.color.black);
+        //commented to change tab to icon
+        //TAB_TITLE = adapter.getTabTitles();
+        //tabLayout.setSelectedTabIndicator(R.color.black);
 
+        //commented to change tab to icon
         new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
             @Override
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                tab.setText(TAB_TITLE[position]);
+                //tab.setText(TAB_TITLE[position]);
+                tab.setIcon(ICONS[position]);
             }
         }).attach();
 

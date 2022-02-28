@@ -16,6 +16,7 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
     // TODO: original tab
     private static final String[] TAB_TITLES = new String[]{ "Home", "Bluetooth"};
 
+
     public ViewPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
     }
