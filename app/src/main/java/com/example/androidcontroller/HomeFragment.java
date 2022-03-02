@@ -310,16 +310,14 @@ public class HomeFragment extends Fragment{
 
                     if( x_value_int < 20 && x_value_int >=0 && y_value_int < 20 && y_value_int >=0){
                         gridMap.setObstacleCoord(x_value_int+1, y_value_int+1);
-                        showShortToast("obs successfully added!");
+                        showShortToast("Added obstacle");
+                        addObs_x.setText("");
+                        addObs_y.setText("");
                     }else{
-                        showShortToast("wrong values entered!!");
+                        showShortToast("Invalid Coordinates");
                     }
-
                 }catch (Exception e){
                     showShortToast("Incorrect values!");
-                    //incorrect format, reset EditText fields
-                    addObs_x.setText("");
-                    addObs_y.setText("");
                 }
 
 
