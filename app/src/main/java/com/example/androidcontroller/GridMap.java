@@ -388,8 +388,9 @@ public class GridMap extends View {
 
         curCoord[0] = col;
         curCoord[1] = row;
-        this.setRobotDirection(direction);
-        this.updateRobotAxis(col, row, direction);
+        //TODO: Remove these methods and change to a single source of truth
+//        this.setRobotDirection(direction);
+//        this.updateRobotAxis(col, row, direction);
 
         row = this.convertRow(row);
         for (int x = col - 1; x <= col + 1; x++) {
@@ -581,7 +582,7 @@ public class GridMap extends View {
         BORDER
     }
 
-    private enum Direction{
+    public enum Direction{
         NONE,
         UP,
         DOWN,
@@ -617,9 +618,7 @@ public class GridMap extends View {
                 return true;
             }
             if (setObstacleDirection) {
-                boolean isSetRobot;
-                isSetRobot = (selectedCell.type == CellType.ROBOT);
-
+                startFacingSelection(selectedCell);
             }
         }
         //=============OLD CODE======================
@@ -651,91 +650,6 @@ public class GridMap extends View {
                 updateRobotAxis(mapX, mapY, direction);
 
                 this.invalidate();
-                return true;
-            }
-
-            if (setObstacleDirection) {
-                boolean isSetRobot;
-                isSetRobot = cells[mapX][20 - mapY].type.equals("robot");
-
-                if ((setObstacleDirection && isSetRobot)) {
-                    Toast.makeText((Activity) this.getContext(), "SETTING ROBOT DIR", Toast.LENGTH_SHORT).show();
-                }
-                showLog("Enter set obstacle direction");
-
-                AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
-                mBuilder.setTitle("Select Obstacle Direction");
-                mBuilder.setSingleChoiceItems(directionList, switchDirection, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        switchDirection = i;
-                    }
-                });
-                mBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Direction selectedDirection = Direction.NONE;
-                        switch (switchDirection) {
-                            case 0:
-                                selectedDirection = Direction.NONE;
-                                if (isSetRobot) {
-                                    setRobotDirection(Direction.NONE);
-                                } else {
-                                    cells[mapX][20 - mapY].setobstacleFacing(Direction.NONE);
-                                }
-                                break;
-                            case 1:
-                                selectedDirection = Direction.UP;
-                                if (isSetRobot) {
-                                    setRobotDirection(Direction.UP);
-                                } else {
-                                    cells[mapX][20 - mapY].setobstacleFacing(Direction.UP);
-                                }
-                                break;
-                            case 2:
-                                selectedDirection = Direction.DOWN;
-                                if (isSetRobot) {
-                                    setRobotDirection(Direction.DOWN);
-                                } else {
-                                    cells[mapX][20 - mapY].setobstacleFacing(Direction.DOWN);
-                                }
-                                break;
-                            case 3:
-                                selectedDirection = Direction.LEFT;
-                                if (isSetRobot) {
-                                    setRobotDirection(Direction.LEFT);
-                                } else {
-                                    cells[mapX][20 - mapY].setobstacleFacing(Direction.LEFT);
-                                }
-                                break;
-                            case 4:
-                                selectedDirection = Direction.RIGHT;
-                                if (isSetRobot) {
-                                    setRobotDirection(Direction.RIGHT);
-                                } else {
-                                    cells[mapX][20 - mapY].setobstacleFacing(Direction.RIGHT);
-                                }
-                                break;
-                        }
-                        // UNCOMMENT BELOW FOR C6/7
-//                        if(!isSetRobot){
-//                            sendUpdatedObstacleInformation();
-//                        }
-                        invalidate();
-
-                        dialogInterface.dismiss();
-                    }
-                });
-
-                // check if the cell selected is obstacle or not
-                if (cells[mapX][20 - mapY].type.equals("obstacle") || isSetRobot) {
-
-                    AlertDialog dialog = mBuilder.create();
-                    dialog.show();
-                }
-
-                this.invalidate();
-                showLog("Exit set obstacle direction");
                 return true;
             }
             // selection of obstacle in the map
@@ -847,53 +761,45 @@ public class GridMap extends View {
         mBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
+                Direction selectedDirection = Direction.NONE;
                 switch (switchDirection) {
                     case 0:
-                        if (isSetRobot) {
-                            setRobotDirection(Direction.NONE);
-                        } else {
-                            selectedCell.setobstacleFacing(Direction.NONE);
-                        }
+                        selectedDirection = Direction.NONE;
                         break;
                     case 1:
-                        if (isSetRobot) {
-                            setRobotDirection(Direction.UP);
-                        } else {
-                            selectedCell.setobstacleFacing(Direction.UP);
-                        }
+                        selectedDirection = Direction.UP;
                         break;
                     case 2:
-                        if (isSetRobot) {
-                            setRobotDirection(Direction.DOWN);
-                        } else {
-                            selectedCell.setobstacleFacing(Direction.DOWN);
-                        }
+                        selectedDirection = Direction.DOWN;
                         break;
                     case 3:
-                        if (isSetRobot) {
-                            setRobotDirection(Direction.LEFT);
-                        } else {
-                            selectedCell.setobstacleFacing(Direction.LEFT);
-                        }
+                        selectedDirection = Direction.LEFT;
                         break;
                     case 4:
-                        if (isSetRobot) {
-                            setRobotDirection(Direction.RIGHT);
-                        } else {
-                            selectedCell.setobstacleFacing(Direction.RIGHT);
-                        }
+                        selectedDirection = Direction.RIGHT;
                         break;
+                }
+
+                if(isSetRobot && selectedDirection == Direction.NONE){
+                    setRobotDirection(Direction.UP);
+                }else if(isSetRobot){
+                    setRobotDirection(selectedDirection);
+                }else{
+                    selectedCell.setobstacleFacing(selectedDirection);
                 }
                 // UNCOMMENT BELOW FOR C6/7
 //                        if(!isSetRobot){
 //                            sendUpdatedObstacleInformation();
 //                        }
                 invalidate();
-
                 dialogInterface.dismiss();
             }
         });
+
+        if(selectedCell.type == CellType.OBSTACLE || selectedCell.type == CellType.ROBOT){
+            AlertDialog dialog = mBuilder.create();
+            dialog.show();
+        }
     }
 
     public void turnOffRobotPlacementButton() {

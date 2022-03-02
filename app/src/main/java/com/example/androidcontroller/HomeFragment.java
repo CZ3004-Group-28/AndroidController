@@ -395,7 +395,7 @@ public class HomeFragment extends Fragment{
 
                 if (curCoord[0] != -1 && curCoord[1] != -1) {
                     gridMap.unsetOldRobotCoord(curCoord[0], curCoord[1]);
-                    gridMap.setCurCoord(xCoord, yCoord, direction);
+                    gridMap.setCurCoord(xCoord, yCoord, GridMap.Direction.UP);
                 } else {
                     showShortToast("Error: Robot has no start point");
                 }
