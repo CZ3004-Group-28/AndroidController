@@ -460,12 +460,12 @@ public class GridMap extends View {
 
     private void createCell() {
         showLog("Entering cellCreate");
-        cells = new Cell[COL + 1][ROW + 1];
+        cells = new Cell[COL + 2][ROW + 2];
         this.calculateDimension();
         cellSize = this.getCellSize();
 
-        for (int x = 0; x <= COL; x++)
-            for (int y = 0; y <= ROW; y++)
+        for (int x = 0; x <= COL+1; x++)
+            for (int y = 0; y <= ROW+1; y++)
                 cells[x][y] = new Cell(x * cellSize + (cellSize / 30), y * cellSize + (cellSize / 30), (x + 1) * cellSize, (y + 1) * cellSize, unexploredColor, "unexplored");
         showLog("Exiting createCell");
     }
@@ -524,7 +524,7 @@ public class GridMap extends View {
     }
 
     private void calculateDimension() {
-        this.setCellSize(getWidth()/(COL+1));
+        this.setCellSize(getWidth()/(COL+2));
     }
 
     private int convertRow(int row) {
