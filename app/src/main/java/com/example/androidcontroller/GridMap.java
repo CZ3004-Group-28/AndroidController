@@ -150,25 +150,11 @@ public class GridMap extends View {
 
         if (!mapDrawn) {
             this.createCell();
-            // TODO: Remove end coordinate
-            //this.setEndCoord(COL-1, ROW-1);
-            newEndCoord=true;
-            showLog("Map drawn");
         }
 
         drawIndividualCell(canvas);
-        drawHorizontalLines(canvas);
-        drawVerticalLines(canvas);
+        drawGridLines(canvas);
         drawGridNumber(canvas);
-
-        if(newEndCoord==true){
-            int endcol = COL-1;
-            int endrow = ROW-1;
-            endrow = this.convertRow(endrow);
-            RectF endrect = new RectF(endcol * cellSize, endrow * cellSize, (endcol + 1) * cellSize, (endrow + 1) * cellSize);
-            mapDrawn = true;
-            newEndCoord=false;
-        }
 
         if (getCanDrawRobot())
             drawRobot(canvas, curCoord);
@@ -179,97 +165,43 @@ public class GridMap extends View {
     private void drawIndividualCell(Canvas canvas) {
         showLog("Entering drawIndividualCell");
 
-        for (int x = 1; x <= COL; x++)
-            for (int y = 0; y < ROW; y++)
-                    if (!cells[x][y].type.equals("image") && cells[x][y].getId() == -1) {
-                        canvas.drawRect(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY, cells[x][y].paint);
+        for(int x=0;x<COL+2;x++){
+            for(int y=0;y<ROW+2;y++){
+                Cell cell = cells[x][y];
+                canvas.drawRect(cell.startX, cell.startY, cell.endX, cell.endY, cell.paint);
 
-                        // this is for drawing numbers in obstacle and using oCellArr arraylist for drag and drop
-                        if (cells[x][y].type.equals("obstacle")) {
-                            boolean written = false;
-                            for (int a = 0; a < oCellArr.size(); a++) {
-                                if (cells[x][y] == oCellArr.get(a)) {
-
-                                    // TODO: NEW Target ID
-                                    if(cells[x][y].targetID == null) {
-                                        canvas.drawText(Integer.toString(cells[x][y].obstacleNo), cells[x][y].startX + (cellSize / 3.2f), cells[x][y].startY + (cellSize / 1.5f), exploredColor);
-                                    } else{
-                                        Paint textPaint2 = new Paint();
-                                        textPaint2.setTextSize(20);
-                                        textPaint2.setColor(Color.GREEN);
-                                        textPaint2.setTextAlign(Paint.Align.CENTER);
-                                        canvas.drawRect(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY, blackPaint);
-                                        canvas.drawText(cells[x][y].targetID, (cells[x][y].startX+cells[x][y].endX)/2, cells[x][y].endY + (cells[x][y].startY-cells[x][y].endY)/4, textPaint2);
-                                    }
-                                    written = true;
-                                    break;
-                                }
-                            }
-
-                            if (written == false) {
-
-                                // TODO: NEW Obstacle ID
-                                oCellArr.add(cells[x][y]);
-                                //cells[x][y].obstacleNo = (oCellArr.size()); // assign number to id
-                                if(cells[x][y].targetID == null){
-                                    //canvas.drawText(Integer.toString(oCellArr.size()), cells[x][y].startX + (cellSize / 3.2f), cells[x][y].startY + (cellSize / 1.5f), exploredColor);
-                                    canvas.drawText(Integer.toString(cells[x][y].obstacleNo), cells[x][y].startX + (cellSize / 3.2f), cells[x][y].startY + (cellSize / 1.5f), exploredColor);
-                                } else {
-                                    Paint textPaint2 = new Paint();
-                                    textPaint2.setTextSize(20);
-                                    textPaint2.setColor(Color.WHITE);
-                                    textPaint2.setTextAlign(Paint.Align.CENTER);
-                                    canvas.drawRect(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY, blackPaint);
-                                    canvas.drawText(cells[x][y].targetID, (cells[x][y].startX+cells[x][y].endX)/2, cells[x][y].endY + (cells[x][y].startY-cells[x][y].endY)/4, textPaint2);
-                                }
-                            }
-                        }
-                    }
-                    else {
-                        // this part draw the numbers out on the map
-                        Paint textPaint = new Paint();
-                        textPaint.setTextSize(20);
-                        textPaint.setColor(Color.WHITE);
-                        textPaint.setTextAlign(Paint.Align.CENTER);
-                        canvas.drawRect(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY, cells[x][y].paint);
-                        canvas.drawText(String.valueOf(cells[x][y].getId()),(cells[x][y].startX+cells[x][y].endX)/2, cells[x][y].endY + (cells[x][y].startY-cells[x][y].endY)/4, textPaint);
+                if(cell.type == CellType.OBSTACLE){
+                    //Draw the number for the obstacle
+                    if(cell.targetID == null){
+                        canvas.drawText(Integer.toString(cell.obstacleNo), cell.startX + (cellSize / 3.2f), cell.startY + (cellSize / 1.5f), exploredColor);
+                    }else{
+                        Paint targetPaint = new Paint();
+                        targetPaint.setTextSize(20);
+                        targetPaint.setColor(Color.GREEN);
+                        targetPaint.setTextAlign(Paint.Align.CENTER);
+                        canvas.drawText(cell.targetID, (cell.startX+cell.endX)/2, cell.endY + (cell.startY-cell.endY)/4, targetPaint);
                     }
 
-        // Obstacle Face --> Assign Drawable to the cells @ GridMap.Java (Start)
-        for (int x = 1; x <= COL; x++)
-            for (int y = 0; y < ROW; y++){
-                    // TODO: NEW Obstacle Facing
-                    if (cells[x][y].obstacleFacing != null) {
-                        if (cells[x][y].obstacleFacing == "UP" && cells[x][y].isDirection == false ) {
-                            canvas.drawRect(cells[x][y].startX + 2 , cells[x][y].startY + 1, cells[x][y].endX, cells[x][y].endY - (cellSize / 1.1f), imageLine);
-                        }
-                        if (cells[x][y].obstacleFacing == "DOWN" && cells[x][y].isDirection == false) {
-                            canvas.drawRect(cells[x][y].startX + 2, cells[x][y].startY + (cellSize / 1f) - 2, cells[x][y].endX, cells[x][y].endY - 1, imageLine);
-                        }
-                        if (cells[x][y].obstacleFacing == "LEFT" && cells[x][y].isDirection == false) {
-                            canvas.drawRect(cells[x][y].startX + 1, cells[x][y].startY + 2, cells[x][y].endX - (cellSize / 1.1f), cells[x][y].endY, imageLine);
-                        }
-                        if (cells[x][y].obstacleFacing == "RIGHT" && cells[x][y].isDirection == false) {
-                            canvas.drawRect(cells[x][y].startX + (cellSize / 1f) -2, cells[x][y].startY, cells[x][y].endX -1, cells[x][y].endY, imageLine);
-                        }
-
-                        // for confirm direction display
-                        if (cells[x][y].obstacleFacing == "UP" && cells[x][y].isDirection == true ) {
-                            canvas.drawRect(cells[x][y].startX + 2 , cells[x][y].startY + 1, cells[x][y].endX, cells[x][y].endY - (cellSize / 1.1f), imageLineConfirm);
-                        }
-                        if (cells[x][y].obstacleFacing == "DOWN" && cells[x][y].isDirection == true) {
-
-                            canvas.drawRect(cells[x][y].startX + 2, cells[x][y].startY + (cellSize / 1f) - 2, cells[x][y].endX, cells[x][y].endY - 1, imageLineConfirm);
-                        }
-                        if (cells[x][y].obstacleFacing == "LEFT" && cells[x][y].isDirection == true) {
-                            canvas.drawRect(cells[x][y].startX + 1, cells[x][y].startY + 2, cells[x][y].endX - (cellSize / 1.1f), cells[x][y].endY, imageLineConfirm);
-                        }
-                        if (cells[x][y].obstacleFacing == "RIGHT" && cells[x][y].isDirection == true) {
-                            canvas.drawRect(cells[x][y].startX + (cellSize / 1f) -2, cells[x][y].startY, cells[x][y].endX -1, cells[x][y].endY, imageLineConfirm);
+                    //Draw the obstacle facing
+                    if(cell.obstacleFacing != null || cell.obstacleFacing.equalsIgnoreCase("NONE")){
+                        switch(cell.obstacleFacing){
+                            case "UP":
+                                canvas.drawRect(cell.startX + 2 , cell.startY + 1, cell.endX, cell.endY - (cellSize / 1.1f), imageLine);
+                                break;
+                            case "DOWN":
+                                canvas.drawRect(cell.startX + 2, cell.startY + (cellSize / 1f) - 2, cell.endX, cell.endY - 1, imageLine);
+                                break;
+                            case "LEFT":
+                                canvas.drawRect(cell.startX + 1, cell.startY + 2, cell.endX - (cellSize / 1.1f), cell.endY, imageLine);
+                                break;
+                            case "RIGHT":
+                                canvas.drawRect(cell.startX + (cellSize / 1f) -2, cell.startY, cell.endX -1, cell.endY, imageLine);
+                                break;
                         }
                     }
                 }
-
+            }
+        }
         showLog("Exiting drawIndividualCell");
     }
 
@@ -287,29 +219,42 @@ public class GridMap extends View {
         this.invalidate();
     }
 
-    private void drawHorizontalLines(Canvas canvas) {
-        for (int y = 0; y <= ROW; y++)
-            canvas.drawLine(cells[1][y].startX, cells[1][y].startY - (cellSize / 30), cells[20][y].endX, cells[20][y].startY - (cellSize / 30), blackPaint);
-    }
+    private void drawGridLines(Canvas canvas){
+        //HORIZONTAL LINES
+        for(int y=0;y<=COL; y++){
+            Cell start = cells[1][y];
+            Cell end = cells[COL][y];
+            canvas.drawLine(start.startX, start.endY,end.endX,end.endY, blackPaint );
+        }
 
-    private void drawVerticalLines(Canvas canvas) {
-        for (int x = 0; x <= COL; x++)
-            canvas.drawLine(cells[x][0].startX - (cellSize / 30) + cellSize, cells[x][0].startY - (cellSize / 30), cells[x][0].startX - (cellSize / 30) + cellSize, cells[x][19].endY + (cellSize / 30), blackPaint);
+        //VERTICAL LINES
+        for(int x=1;x<=COL+1;x++){
+            Cell start = cells[x][1];
+            Cell end = cells[x][ROW];
+            canvas.drawLine(start.startX, start.startY,end.startX,end.endY, blackPaint );
+        }
     }
 
     private void drawGridNumber(Canvas canvas) {
         showLog("Entering drawGridNumber");
-        for (int x = 1; x <= COL; x++) {
-            if (x > 9)
-                canvas.drawText(Integer.toString(x-1), cells[x][20].startX + (cellSize / 5), cells[x][20].startY + (cellSize / 3), blackPaint);
+        //X-AXIS numbers
+        for(int x=1; x<=COL;x++){
+            Cell cell = cells[x][COL+1];
+            String num = ""+(x-1);
+            if(x>9)
+                canvas.drawText(num, cell.startX + (cellSize/5), cell.startY+(cellSize/3),blackPaint);
             else
-                canvas.drawText(Integer.toString(x-1), cells[x][20].startX + (cellSize / 3), cells[x][20].startY + (cellSize / 3), blackPaint);
+                canvas.drawText(num, cell.startX + (cellSize/3), cell.startY+(cellSize/3),blackPaint);
         }
-        for (int y = 0; y < ROW; y++) {
-            if ((20 - y) > 9)
-                canvas.drawText(Integer.toString(20 - y-1), cells[0][y].startX + (cellSize / 2), cells[0][y].startY + (cellSize / 1.5f), blackPaint);
+        //Y-AXIS numbers
+        for(int y=1;y<=ROW;y++){
+            Cell cell = cells[0][y];
+            int adjustedY = ROW-y;
+            String num = ""+adjustedY;
+            if(adjustedY > 9)
+                canvas.drawText(num, cell.startX + (cellSize / 2), cell.startY + (cellSize / 1.5f), blackPaint);
             else
-                canvas.drawText(Integer.toString(20 - y-1), cells[0][y].startX + (cellSize / 1.5f), cells[0][y].startY + (cellSize / 1.5f), blackPaint);
+                canvas.drawText(num, cell.startX + (cellSize / 2), cell.startY + (cellSize / 1.5f), blackPaint);
         }
         showLog("Exiting drawGridNumber");
     }
@@ -396,50 +341,13 @@ public class GridMap extends View {
         return autoUpdate;
     }
 
-    public boolean getMapDrawn() {
-        return mapDrawn;
-    }
-
-    private void setValidPosition(boolean status) {
-        validPosition = status;
-    }
-
-    public boolean getValidPosition() {
-        return validPosition;
-    }
-
-    public void setUnSetCellStatus(boolean status) {
-        unSetCellStatus = status;
-    }
-
-    public boolean getUnSetCellStatus() {
-        return unSetCellStatus;
-    }
-
     public void setSetObstacleDirection(boolean status)
     {
         setObstacleDirection = status;
     }
 
-    public boolean getSetObstacleDirection()
-    {
-        return setObstacleDirection;
-    }
-
     public void setSetObstacleStatus(boolean status) {
         setObstacleStatus = status;
-    }
-
-    public boolean getSetObstacleStatus() {
-        return setObstacleStatus;
-    }
-
-    public void setExploredStatus(boolean status) {
-        setExploredStatus = status;
-    }
-
-    public boolean getExploredStatus() {
-        return setExploredStatus;
     }
 
     public void setStartCoordStatus(boolean status) {
@@ -450,10 +358,6 @@ public class GridMap extends View {
         return startCoordStatus;
     }
 
-    public void setWaypointStatus(boolean status) {
-        setWaypointStatus = status;
-    }
-
     public boolean getCanDrawRobot() {
         return canDrawRobot;
     }
@@ -461,12 +365,26 @@ public class GridMap extends View {
     private void createCell() {
         showLog("Entering cellCreate");
         cells = new Cell[COL + 2][ROW + 2];
-        this.calculateDimension();
-        cellSize = this.getCellSize();
+        cellSize = getWidth()/(COL+2);
 
-        for (int x = 0; x <= COL+1; x++)
-            for (int y = 0; y <= ROW+1; y++)
-                cells[x][y] = new Cell(x * cellSize + (cellSize / 30), y * cellSize + (cellSize / 30), (x + 1) * cellSize, (y + 1) * cellSize, unexploredColor, "unexplored");
+        for (int x = 0; x < COL+2; x++){
+            for (int y = 0; y < ROW+2; y++){
+                float startX = x*cellSize;
+                float startY = y*cellSize;
+                cells[x][y] = new Cell(startX, startY, startX+cellSize, startY+cellSize, CellType.UNEXPLORED);
+            }
+        }
+
+        //Set the borders
+        for(int x=0;x<COL+2;x++){
+            cells[x][0].setType(CellType.BORDER);
+            cells[x][ROW+1].setType(CellType.BORDER);
+        }
+        for(int y=0;y<ROW+2;y++){
+            cells[0][y].setType(CellType.BORDER);
+            cells[COL+1][y].setType(CellType.BORDER);
+        }
+
         showLog("Exiting createCell");
     }
 
@@ -475,7 +393,7 @@ public class GridMap extends View {
         row = this.convertRow(row);
         for (int x = col - 1; x <= col + 1; x++)
             for (int y = row - 1; y <= row + 1; y++)
-                cells[x][y].setType("end");
+                cells[x][y].setType(CellType.BORDER);
 
         showLog("Exiting setEndCoord");
     }
@@ -510,8 +428,8 @@ public class GridMap extends View {
         row = this.convertRow(row);
         for (int x = col - 1; x <= col + 1; x++){
             for (int y = row - 1; y <= row + 1; y++){
-                if(!cells[x][y].type.equals("obstacle")){
-                    cells[x][y].setType("robot");
+                if(cells[x][y].type != CellType.OBSTACLE){
+                    cells[x][y].setType(CellType.ROBOT);
                 }
             }
         }
@@ -523,20 +441,8 @@ public class GridMap extends View {
         return curCoord;
     }
 
-    private void calculateDimension() {
-        this.setCellSize(getWidth()/(COL+2));
-    }
-
     private int convertRow(int row) {
         return (20 - row);
-    }
-
-    private void setCellSize(float cellSize) {
-        GridMap.cellSize = cellSize;
-    }
-
-    private float getCellSize() {
-        return cellSize;
     }
 
     public void unsetOldRobotCoord(int oldCol, int oldRow) {
@@ -546,8 +452,8 @@ public class GridMap extends View {
         oldRow = this.convertRow(oldRow);
         for (int x = oldCol - 1; x <= oldCol + 1; x++){
             for (int y = oldRow - 1; y <= oldRow + 1; y++){
-                if(!cells[x][y].type.equals("obstacle")){
-                    cells[x][y].setType("unexplored");
+                if(cells[x][y].type != CellType.OBSTACLE){
+                    cells[x][y].setType(CellType.UNEXPLORED);
                 }
             }
         }
@@ -628,33 +534,16 @@ public class GridMap extends View {
         }
     }
 
-    public void setWaypointCoord(int col, int row) throws JSONException {
-        showLog("Entering setWaypointCoord");
-        waypointCoord[0] = col;
-        waypointCoord[1] = row;
-        waypointNew=true;
-
-        row = this.convertRow(row);
-        cells[col][row].setType("waypoint");
-        this.invalidate();
-
-        showLog("Exiting setWaypointCoord");
-    }
-
-    private int[] getWaypointCoord() {
-        return waypointCoord;
-    }
-
     protected void setObstacleCoord(int col, int row) {
         showLog("Entering setObstacleCoord");
         //Check if obstacle has been previously set there
-        if(getCellAtCoordinates(col,row).type.equalsIgnoreCase("obstacle")){
+        if(getCellAtCoordinates(col,row).type == CellType.OBSTACLE){
             return;
         }
         int[] obstacleCoord = new int[]{col, row};
         GridMap.obstacleCoord.add(obstacleCoord);
         row = this.convertRow(row);
-        cells[col][row].setType("obstacle");
+        cells[col][row].setType(CellType.OBSTACLE);
         // set obstacle No
         for(int i = 0; i<obstacleNoArray.length; i++){
             if(obstacleNoArray[i] != -1){
@@ -707,7 +596,7 @@ public class GridMap extends View {
     private class Cell {
         float startX, startY, endX, endY;
         Paint paint;
-        String type;
+        CellType type;
         int id = -1;
         // Obstacle Face @ GridMap.Java -> class Cell
         String obstacleFacing = "null";
@@ -717,52 +606,34 @@ public class GridMap extends View {
 
         boolean isDirection = false;
 
-        private Cell(float startX, float startY, float endX, float endY, Paint paint, String type) {
+        private Cell(float startX, float startY, float endX, float endY, CellType type) {
             this.startX = startX;
             this.startY = startY;
             this.endX = endX;
             this.endY = endY;
-            this.paint = paint;
-            this.type = type;
+            setType(type);
         }
 
-        public void setType(String type) {
+        public void setType(CellType type) {
             this.type = type;
             switch (type) {
-                case "obstacle":
+                case OBSTACLE:
                     this.paint = obstacleColor;
                     break;
-                case "robot":
+                case ROBOT:
                     this.paint = robotColor;
                     break;
-                case "end":
+                case BORDER:
                     this.paint = endColor;
                     break;
-                case "start":
-                    this.paint = startColor;
-                    break;
-                case "waypoint":
-                    this.paint = waypointColor;
-                    break;
-                case "unexplored":
+                case UNEXPLORED:
                     this.paint = unexploredColor;
-                    break;
-                case "explored":
-                    this.paint = exploredColor;
-                    break;
-                case "arrow":
-                    this.paint = arrowColor;
-                    break;
-                case "id":
-                    this.paint = obstacleColor;
                     break;
                 default:
                     showLog("setTtype default: " + type);
                     break;
             }
         }
-
-        //TODO: set the IDs and obstacleFacing
 
         // Obstacle Face @ GridMap.Java -> class Cell
         public void setobstacleFacing(String obstacleFacing) {
@@ -779,6 +650,13 @@ public class GridMap extends View {
         public int getId() {
             return this.id;
         }
+    }
+
+    private enum CellType{
+        UNEXPLORED,
+        OBSTACLE,
+        ROBOT,
+        BORDER
     }
 
     @Override
@@ -798,7 +676,7 @@ public class GridMap extends View {
                         for (int x = startCoord[0] - 1; x <= startCoord[0] + 1; x++) {
                             for (int y = startCoord[1] - 1; y <= startCoord[1] + 1; y++) {
                                 if (!cells[x][y].type.equals("obstacle")) {
-                                    cells[x][y].setType("unexplored");
+                                    cells[x][y].setType(CellType.UNEXPLORED);
                                 }
                             }
                         }
@@ -833,19 +711,6 @@ public class GridMap extends View {
                 this.invalidate();
                 return true;
             }
-            if (setWaypointStatus) {
-                int[] waypointCoord = this.getWaypointCoord();
-                if (waypointCoord[0] >= 1 && waypointCoord[1] >= 1)
-                    cells[waypointCoord[0]][this.convertRow(waypointCoord[1])].setType("unexplored");
-                setWaypointStatus = false;
-                try {
-                    this.setWaypointCoord(column, row);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                this.invalidate();
-                return true;
-            }
             if (setObstacleStatus) { // setting the position of the obstacle
 
                 // TODO: New direction
@@ -857,14 +722,9 @@ public class GridMap extends View {
                 return true;
 
             }
-            if (setExploredStatus) {
-                cells[column][20-row].setType("explored");
-                this.invalidate();
-                return true;
-            }
             if (unSetCellStatus) { // TODO: remove obstacle not yet use (ontouch on the map to remove)
                 ArrayList<int[]> obstacleCoord = this.getObstacleCoord();
-                cells[column][20-row].setType("unexplored");
+                cells[column][20-row].setType(CellType.UNEXPLORED);
                 for (int i=0; i<obstacleCoord.size(); i++) {
                     if (obstacleCoord.get(i)[0] == column && obstacleCoord.get(i)[1] == row){
                         obstacleNoArray[cells[column][20-row].obstacleNo - 1] = cells[column][20-row].obstacleNo; // unset obstacle no by assigning number back to array
@@ -1007,7 +867,7 @@ public class GridMap extends View {
                     //BluetoothFragment.printMessage("RemovedObstacle, " + "<" + valueOf(selectedObsCoord[0] - 1) + ">, <" + valueOf(Math.abs(selectedObsCoord[1]) - 1) + ">, <" + cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo + ">");
                     obstacleNoArray[cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo - 1] = cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo; // unset obstacle no by assigning number back to array
                     cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo = -1;
-                    cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].setType("unexplored");
+                    cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].setType(CellType.UNEXPLORED);
                     // Remove obstacle facing direction
                     obsSelectedFacing = cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].getobstacleFacing(); // <-- newly added
                     cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].setobstacleFacing(null); // <-- newly added
