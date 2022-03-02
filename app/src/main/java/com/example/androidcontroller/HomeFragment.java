@@ -369,19 +369,19 @@ public class HomeFragment extends Fragment{
                 int xCoord = msgJSON.getInt("x");
                 int yCoord = msgJSON.getInt("y");
                 int dirInt = msgJSON.getInt("d");
-                String direction = "up";
+                GridMap.Direction direction = GridMap.Direction.UP;
                 switch(dirInt){
                     case 0: //NORTH
-                        direction = "up";
+                        direction = GridMap.Direction.UP;
                         break;
                     case 2: //EAST
-                        direction = "right";
+                        direction = GridMap.Direction.RIGHT;
                         break;
                     case 4: //SOUTH
-                        direction = "down";
+                        direction = GridMap.Direction.DOWN;
                         break;
                     case 6: //WEST
-                        direction = "left";
+                        direction = GridMap.Direction.LEFT;
                         break;
                 }
 
@@ -391,14 +391,7 @@ public class HomeFragment extends Fragment{
                     return;
                 }
 
-                int[] curCoord = gridMap.getCurCoord(); // robot current coordinate this.setOldRobotCoord(curCoord[0], curCoord[1]);
-
-                if (curCoord[0] != -1 && curCoord[1] != -1) {
-                    gridMap.unsetOldRobotCoord(curCoord[0], curCoord[1]);
-                    gridMap.setCurCoord(xCoord, yCoord, GridMap.Direction.UP);
-                } else {
-                    showShortToast("Error: Robot has no start point");
-                }
+                gridMap.updateCurCoord(xCoord, yCoord, direction);
             }catch (Exception e){
                 showShortToast("Error updating robot location");
                 Log.e(TAG, "onReceive: An error occured while updating robot location");
