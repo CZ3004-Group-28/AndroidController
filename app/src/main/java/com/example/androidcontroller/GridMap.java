@@ -72,7 +72,6 @@ public class GridMap extends View {
     private static int[] curCoord = new int[]{-1, -1};
     private static int[] oldCoord = new int[]{-1, -1};
     private static int[] waypointCoord = new int[]{-1, -1};
-    private static ArrayList<String[]> arrowCoord = new ArrayList<>();
     private static ArrayList<int[]> obstacleCoord = new ArrayList<>();
     private static boolean autoUpdate = false;
     private static boolean canDrawRobot = false;
@@ -150,11 +149,6 @@ public class GridMap extends View {
         Log.d(TAG,"Creating Cell");
 
         if (!mapDrawn) {
-            String[] dummyArrowCoord = new String[3];
-            dummyArrowCoord[0] = "1";
-            dummyArrowCoord[1] = "1";
-            dummyArrowCoord[2] = "dummy";
-            arrowCoord.add(dummyArrowCoord);
             this.createCell();
             // TODO: Remove end coordinate
             //this.setEndCoord(COL-1, ROW-1);
@@ -187,7 +181,6 @@ public class GridMap extends View {
 
         for (int x = 1; x <= COL; x++)
             for (int y = 0; y < ROW; y++)
-                for (int i = 0; i < this.getArrowCoord().size(); i++)
                     if (!cells[x][y].type.equals("image") && cells[x][y].getId() == -1) {
                         canvas.drawRect(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY, cells[x][y].paint);
 
@@ -244,8 +237,7 @@ public class GridMap extends View {
 
         // Obstacle Face --> Assign Drawable to the cells @ GridMap.Java (Start)
         for (int x = 1; x <= COL; x++)
-            for (int y = 0; y < ROW; y++)
-                for (int i = 0; i < this.getArrowCoord().size(); i++) {
+            for (int y = 0; y < ROW; y++){
                     // TODO: NEW Obstacle Facing
                     if (cells[x][y].obstacleFacing != null) {
                         if (cells[x][y].obstacleFacing == "UP" && cells[x][y].isDirection == false ) {
@@ -289,7 +281,6 @@ public class GridMap extends View {
         // find the obstacle no which has the same id
         for (int x = 1; x <= COL; x++)
             for (int y = 0; y < ROW; y++)
-                for (int i = 0; i < this.getArrowCoord().size(); i++)
                     if (cells[x][y].obstacleNo == obstacleNo) {
                         cells[x][y].targetID = targetID;
                     }
@@ -395,10 +386,6 @@ public class GridMap extends View {
         }
         turnOffRobotPlacementButton();
         showLog("Exiting drawRobot");
-    }
-
-    private ArrayList<String[]> getArrowCoord() {
-        return arrowCoord;
     }
 
     public String getRobotDirection() {
@@ -569,21 +556,6 @@ public class GridMap extends View {
 
     private int[] getOldRobotCoord() {
         return oldCoord;
-    }
-
-    private void setArrowCoordinate(int col, int row, String arrowDirection) {
-        showLog("Entering setArrowCoordinate");
-        int[] obstacleCoord = new int[]{col, row};
-        this.getObstacleCoord().add(obstacleCoord);
-        String[] arrowCoord = new String[3];
-        arrowCoord[0] = String.valueOf(col);
-        arrowCoord[1] = String.valueOf(row);
-        arrowCoord[2] = arrowDirection;
-        this.getArrowCoord().add(arrowCoord);
-
-        row = convertRow(row);
-        cells[col][row].setType("arrow");
-        showLog("Exiting setArrowCoordinate");
     }
 
     public void setRobotDirection(String direction) {
@@ -1107,7 +1079,6 @@ public class GridMap extends View {
         oldCoord = new int[]{-1, -1};
         robotDirection = "None";
         autoUpdate = false;
-        arrowCoord = new ArrayList<>();
         obstacleCoord = new ArrayList<>();
         waypointCoord = new int[]{-1, -1};
         mapDrawn = false;
@@ -1190,6 +1161,15 @@ public class GridMap extends View {
         }
 
 
+    }
+
+    private Cell getCellAtCoord(int x, int y){
+        if(x < 1 || y < 1 || x > COL || y > ROW){
+            Log.e(TAG, "getCellAtCoord: INCORRECT COORDS");
+            throw new IndexOutOfBoundsException("Invalid coordinate");
+        }
+        y = convertRow(y);
+        return cells[x][y];
     }
 
 
