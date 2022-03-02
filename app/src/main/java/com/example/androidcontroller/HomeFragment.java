@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -289,6 +290,57 @@ public class HomeFragment extends Fragment{
             }
 
         });
+
+        //Adding obstacles using buttons
+        Button addObsManual = rootview.findViewById(R.id.add_obs_btn);
+        EditText addObs_x = rootview.findViewById(R.id.add_obs_x_value);
+        EditText addObs_y = rootview.findViewById(R.id.add_obs_y_value);
+
+        addObsManual.setOnClickListener(v -> {
+
+            try{
+
+                String x_value = addObs_x.getText().toString();
+                String y_value = addObs_y.getText().toString();
+
+                try
+                {
+                    int x_value_int = Integer.parseInt(x_value);
+                    int y_value_int = Integer.parseInt(y_value);
+
+                    if( x_value_int < 20 && x_value_int >=0 && y_value_int < 20 && y_value_int >=0){
+                        gridMap.setObstacleCoord(x_value_int+1, y_value_int+1);
+                        showShortToast("Added obstacle");
+                        addObs_x.setText("");
+                        addObs_y.setText("");
+                    }else{
+                        showShortToast("Invalid Coordinates");
+                    }
+                }catch (Exception e){
+                    showShortToast("Incorrect values!");
+                }
+
+
+            }catch (Exception e){
+                Log.e(TAG, "onCreateView: An error occurred while adding obstacle manually");
+                e.printStackTrace();
+            }
+
+        });
+
+        // DEBUGGING BUTTONS
+        Button btnFW10 = rootview.findViewById(R.id.temp_btnFW10);
+        btnFW10.setOnClickListener(v -> {sendDirectionCmdIntent("FW10");});
+        Button btnBT10 = rootview.findViewById(R.id.temp_btnBW10);
+        btnBT10.setOnClickListener(v -> {sendDirectionCmdIntent("BW10");});
+        Button btnFL00 = rootview.findViewById(R.id.temp_btnFL00);
+        btnFL00.setOnClickListener(v -> {sendDirectionCmdIntent("FL00");});
+        Button btnFR00 = rootview.findViewById(R.id.temp_btnFR00);
+        btnFR00.setOnClickListener(v -> {sendDirectionCmdIntent("FR00");});
+        Button btnBL00 = rootview.findViewById(R.id.temp_btnBL00);
+        btnBL00.setOnClickListener(v -> {sendDirectionCmdIntent("BL00");});
+        Button btnBR00 = rootview.findViewById(R.id.temp_btnBR00);
+        btnBR00.setOnClickListener(v->{sendDirectionCmdIntent("BR00");});
 
         // Inflate the layout for this fragment
         return rootview;

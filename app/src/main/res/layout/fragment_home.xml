@@ -93,29 +93,61 @@
 
                     android:text="Not Available" />
 
-                <Button
-                    android:id="@+id/btnToggleRobotMode"
+                <TextView
+                    android:id="@+id/obstacleListTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Mode: Manual" />
+                    android:text="Obstacles"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
-                <Button
-                    android:id="@+id/btnSendInfo"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Send Arena Info" />
+                    android:orientation="horizontal"
+                    android:weightSum="5">
 
-                <Button
-                    android:id="@+id/btnStartImageRec"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Start Image Rec" />
+                    <TextView
+                        android:id="@+id/add_obs_x_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="X: " />
 
-                <Button
-                    android:id="@+id/btnStartFastestCar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Start Fastest Car" />
+                    <EditText
+                        android:id="@+id/add_obs_x_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:inputType="number" />
+
+                    <TextView
+                        android:id="@+id/add_obs_y_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Y: " />
+
+                    <EditText
+                        android:id="@+id/add_obs_y_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:inputType="number" />
+
+                    <Button
+                        android:id="@+id/add_obs_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Add" />
+
+                </LinearLayout>
+
+
+
+
 
             </LinearLayout>
 
@@ -123,94 +155,210 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:weightSum="2"
                 android:orientation="vertical">
 
-                <RelativeLayout
+                <TextView
+                    android:id="@+id/manualControlTextView"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                    <ImageButton
-                        android:id="@+id/upArrowBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        android:src="@drawable/ic_arrow_up" />
-
-                    <ImageButton
-                        android:id="@+id/leftArrowBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toLeftOf="@id/upArrowBtn"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/ic_arrow_left" />
-
-                    <ImageButton
-                        android:id="@+id/rightArrowBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toRightOf="@id/upArrowBtn"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/ic_arrow_right" />
-
-                    <ImageButton
-                        android:id="@+id/downArrowBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_centerHorizontal="true"
-                        android:src="@drawable/ic_arrow_down" />
-
-                </RelativeLayout>
+                    android:layout_height="wrap_content"
+                    android:text="Robot Controls"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:weightSum="2"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <!--                <Button-->
-                    <!--                    android:id="@+id/test1_btn"-->
-
-                    <!--                    android:layout_weight="1"-->
-
-                    <!--                    android:layout_width="wrap_content"-->
-                    <!--                    android:layout_height="wrap_content"-->
-                    <!--                    android:layout_marginBottom="20dp"-->
-                    <!--                    android:text="test 1" />-->
-
-                    <!--                <Button-->
-                    <!--                    android:id="@+id/test2_btn"-->
-
-                    <!--                    android:layout_weight="1"-->
-
-                    <!--                    android:layout_width="wrap_content"-->
-                    <!--                    android:layout_height="wrap_content"-->
-                    <!--                    android:layout_marginBottom="20dp"-->
-                    <!--                    android:text="test 2" />-->
-
-                    <TextView
-                        android:id="@+id/robot_xy_value"
-                        android:textStyle="bold"
-                        android:textAlignment="center"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="X:   Y:   " />
+                        android:padding="3dp"
+                        android:gravity="center_horizontal"
+                        android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/robotDirText"
+                        <Button
+                            android:id="@+id/temp_btnFW10"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="1dp"
+                            android:text="FW10" />
+
+                        <Button
+                            android:id="@+id/temp_btnBW10"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="1dp"
+                            android:text="BW10" />
+
+                        <Button
+                            android:id="@+id/temp_btnFL00"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="1dp"
+                            android:text="FL00" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:padding="3dp"
+                        android:gravity="center_horizontal"
+                        android:orientation="horizontal">
 
-                        android:layout_below="@id/robotStatusText"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginBottom="20dp"
+                        <Button
+                            android:id="@+id/temp_btnFR00"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="1dp"
+                            android:text="FR00" />
 
-                        android:text="Facing"
-                        android:textAlignment="center" />
+                        <Button
+                            android:id="@+id/temp_btnBL00"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="1dp"
+                            android:text="BL00" />
+
+                        <Button
+                            android:id="@+id/temp_btnBR00"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="1dp"
+                            android:text="BR00" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="130dp"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <ImageButton
+                            android:id="@+id/upArrowBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_centerHorizontal="true"
+                            android:src="@drawable/ic_arrow_up" />
+
+                        <ImageButton
+                            android:id="@+id/leftArrowBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toLeftOf="@id/upArrowBtn"
+                            android:src="@drawable/ic_arrow_left" />
+
+                        <ImageButton
+                            android:id="@+id/rightArrowBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@id/upArrowBtn"
+                            android:src="@drawable/ic_arrow_right" />
+
+                        <ImageButton
+                            android:id="@+id/downArrowBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_centerHorizontal="true"
+                            android:src="@drawable/ic_arrow_down" />
+
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:weightSum="3">
+
+                        <TextView
+                            android:id="@+id/robot_x_value"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="left"
+                            android:layout_weight="1"
+                            android:text="X:"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/robot_y_value"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="left"
+                            android:layout_weight="1"
+                            android:text="Y:"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/robotDirText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/robotStatusText"
+                            android:layout_gravity="left"
+                            android:layout_marginBottom="20dp"
+                            android:layout_weight="1"
+
+                            android:text="Facing" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:weightSum="2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="2dp"
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/btnToggleRobotMode"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_margin="1dp"
+                        android:text="Mode: Manual" />
+
+                    <Button
+                        android:id="@+id/btnSendInfo"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="1dp"
+                        android:layout_weight="1"
+                        android:text="Send Arena Info" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:weightSum="2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="2dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnStartImageRec"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_margin="1dp"
+                        android:text="Start Image Rec" />
+
+                    <Button
+                        android:id="@+id/btnStartFastestCar"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_margin="1dp"
+                        android:text="Start Fastest Car" />
                 </LinearLayout>
 
             </LinearLayout>
