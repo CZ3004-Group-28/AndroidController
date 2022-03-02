@@ -11,11 +11,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.WebHistoryItem;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,38 +42,24 @@ public class GridMap extends View {
         initMap();
     }
 
-    SharedPreferences sharedPreferences;
-
     private Paint blackPaint = new Paint();
+    private Paint whitePaint = new Paint();
+    private Paint gridNoText =  new Paint();
     private Paint obstacleColor = new Paint();
     private Paint robotColor = new Paint();
     private Paint endColor = new Paint();
     private Paint startColor = new Paint();
-    private Paint waypointColor = new Paint();
     private Paint unexploredColor = new Paint();
-    private Paint exploredColor = new Paint();
-    private Paint arrowColor = new Paint();
-    //private Paint fastestPathColor = new Paint();
     private Paint imageLine = new Paint();
     private Paint imageLineConfirm = new Paint();
 
     private static Direction robotDirection = Direction.NONE;
-    private static int[] startCoord = new int[]{-1, -1};
     private static int[] curCoord = new int[]{-1, -1};
-    private static int[] oldCoord = new int[]{-1, -1};
-    private static int[] waypointCoord = new int[]{-1, -1};
     private static ArrayList<int[]> obstacleCoords = new ArrayList<>();
     private static boolean autoUpdate = false;
     private static boolean canDrawRobot = false;
-    private static boolean setWaypointStatus = false;
     private static boolean startCoordStatus = false;
     private static boolean setObstacleStatus = false;
-    private static boolean unSetCellStatus = false;
-    private static boolean setExploredStatus = false;
-    private static boolean validPosition = false;
-    private static boolean waypointNew = false;
-    private boolean newEndCoord = false;
-    private Bitmap arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_error);
     private static boolean setObstacleDirection = false;
 
     private static final String TAG = "GridMap";
@@ -81,7 +67,6 @@ public class GridMap extends View {
     private static final int ROW = 20;
     private static float cellSize;
     private static Cell[][] cells;
-    private Canvas can;
 
     private boolean mapDrawn = false;
 
@@ -89,40 +74,31 @@ public class GridMap extends View {
     private static boolean obsSelected = false;
     private static ArrayList<Cell> oCellArr = new ArrayList<Cell>();
 
-    int newDirection = -1; // 0:None 1: Up, 2: Down, 3: Left, 4:Right
     int switchDirection = -1; // 0:None 1: Up, 2: Down, 3: Left, 4:Right
     String[] directionList = new String[]{"NONE", "UP", "DOWN", "LEFT", "RIGHT"};
-    private static Direction obsSelectedFacing = null; // <-- newly added
-    private static String obsTargetImageID = null; // <-- newly added
     private static int[] obstacleNoArray = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-
-    //For RPI message
-    String rpiRobot = "";
-    String rpiObstacle;
 
     public GridMap(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initMap();
         blackPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        whitePaint.setColor(Color.WHITE);
         obstacleColor.setColor(Color.BLACK);
         robotColor.setColor(Color.CYAN);
-        endColor.setColor(Color.GREEN);
+        endColor.setColor(Color.GRAY);
         startColor.setColor(Color.CYAN);
-        waypointColor.setColor(Color.parseColor("#fefdca"));
         unexploredColor.setColor(Color.LTGRAY);
-        exploredColor.setColor(Color.WHITE);
-        arrowColor.setColor(Color.BLACK);
+        gridNoText.setColor(Color.WHITE);
+        gridNoText.setTextSize(15);
+        gridNoText.setFakeBoldText(true);
 
         imageLine.setStyle(Paint.Style.STROKE);
         imageLine.setColor(Color.YELLOW);
-        imageLine.setStrokeWidth(2); // <-- line thickness
+        imageLine.setStrokeWidth(2);
 
         imageLineConfirm.setStyle(Paint.Style.STROKE);
         imageLineConfirm.setColor(Color.YELLOW);
-        imageLineConfirm.setStrokeWidth(5); // <-- line thickness
-
-        // get shared preferences
-        sharedPreferences = getContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
+        imageLineConfirm.setStrokeWidth(5);
     }
 
     private void initMap() {
@@ -168,7 +144,7 @@ public class GridMap extends View {
                 if (cell.type == CellType.OBSTACLE) {
                     //Draw the number for the obstacle
                     if (cell.targetID == null) {
-                        canvas.drawText(Integer.toString(cell.obstacleNo), cell.startX + (cellSize / 3.2f), cell.startY + (cellSize / 1.5f), exploredColor);
+                        canvas.drawText(Integer.toString(cell.obstacleNo), cell.startX + (cellSize / 3.2f), cell.startY + (cellSize / 1.5f), whitePaint);
                     } else {
                         Paint targetPaint = new Paint();
                         targetPaint.setTextSize(20);
@@ -237,9 +213,9 @@ public class GridMap extends View {
             Cell cell = cells[x][COL + 1];
             String num = "" + (x - 1);
             if (x > 9)
-                canvas.drawText(num, cell.startX + (cellSize / 5), cell.startY + (cellSize / 3), blackPaint);
+                canvas.drawText(num, cell.startX + (cellSize / 5), cell.startY + (cellSize / 2), gridNoText);
             else
-                canvas.drawText(num, cell.startX + (cellSize / 3), cell.startY + (cellSize / 3), blackPaint);
+                canvas.drawText(num, cell.startX + (cellSize / 3), cell.startY + (cellSize / 2), gridNoText);
         }
         //Y-AXIS numbers
         for (int y = 1; y <= ROW; y++) {
@@ -247,9 +223,9 @@ public class GridMap extends View {
             int adjustedY = ROW - y;
             String num = "" + adjustedY;
             if (adjustedY > 9)
-                canvas.drawText(num, cell.startX + (cellSize / 2), cell.startY + (cellSize / 1.5f), blackPaint);
+                canvas.drawText(num, cell.startX + (cellSize / 3), cell.startY + (cellSize / 1.5f), gridNoText);
             else
-                canvas.drawText(num, cell.startX + (cellSize / 2), cell.startY + (cellSize / 1.5f), blackPaint);
+                canvas.drawText(num, cell.startX + (cellSize / 2), cell.startY + (cellSize / 1.5f), gridNoText);
         }
         showLog("Exiting drawGridNumber");
     }
@@ -264,13 +240,6 @@ public class GridMap extends View {
         int[] cellIndexes = convertMapCoordToCellsIndexes(curCoord[0],curCoord[1]);
         int indexX = cellIndexes[0];
         int indexY = cellIndexes[1];
-
-        for (int y = indexY; y <= indexY + 1; y++) {
-            canvas.drawLine(cells[indexX][y].startX, cells[indexX][y].startY, cells[indexX][y].endX, cells[indexX][y].startY, robotColor);
-        }
-        for (int x = indexX - 1; x < indexX + 1; x++) {
-            canvas.drawLine(cells[x][indexY-1].startX + cellSize, cells[x][indexY - 1].startY, cells[x][indexY + 1].startX, cells[x][indexY + 1].endY, robotColor);
-        }
 
         switch (robotDirection) {
             case UP:
@@ -381,13 +350,7 @@ public class GridMap extends View {
     }
 
     public void setRobotDirection(Direction direction) {
-        Toast.makeText(getContext(), "SET robotDirection", Toast.LENGTH_SHORT).show();
-
-        sharedPreferences = getContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
         robotDirection = direction;
-        editor.putString("direction", direction.toString());
-        editor.commit();
         this.invalidate();
     }
 
@@ -568,8 +531,6 @@ public class GridMap extends View {
         int mapX = (int) (event.getX() / cellSize) - 1;
         int mapY = ROW - ((int) (event.getY() / cellSize));
 
-        Toast.makeText((Activity) this.getContext(), "Tapped on Map: X:" + mapX + " Y: " + mapY, Toast.LENGTH_SHORT).show();
-
         Cell selectedCell = null;
         if ((mapX >= 0 && mapY >= 0 && mapX <= COL - 1 && mapY <= ROW - 1)) {
             selectedCell = getCellAtMapCoord(mapX, mapY);
@@ -711,21 +672,13 @@ public class GridMap extends View {
         TextView robotStatusTextView = ((Activity) this.getContext()).findViewById(R.id.robotStatusText);
         updateRobotStatusTextView(1, 1, Direction.NONE);
         robotStatusTextView.setText("Not Available");
-        SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        startCoord = new int[]{-1, -1};
         curCoord = new int[]{-1, -1};
-        oldCoord = new int[]{-1, -1};
         robotDirection = Direction.NONE;
-        autoUpdate = false;
         obstacleCoords = new ArrayList<>();
-        waypointCoord = new int[]{-1, -1};
         mapDrawn = false;
         canDrawRobot = false;
-        validPosition = false;
         oCellArr = new ArrayList<>();
-        rpiObstacle = "";
-        rpiRobot = "";
 
         // newly added
         obstacleNoArray = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
@@ -734,32 +687,15 @@ public class GridMap extends View {
         this.invalidate();
     }
 
-    private int facingStringToInt(String direction) {
-        if (direction == null || direction.isEmpty()) {
-            return -1;
-        }
-
-        switch (direction.toUpperCase()) {
-            case "N":
-            case "NORTH":
-            case "UP":
-            case "U":
+    private int directionEnumToInt(Direction direction) {
+        switch (direction) {
+            case UP:
                 return 0;
-            case "E":
-            case "EAST":
-            case "RIGHT":
-            case "R":
-
+            case RIGHT:
                 return 2;
-            case "S":
-            case "SOUTH":
-            case "DOWN":
-            case "D":
+            case DOWN:
                 return 4;
-            case "W":
-            case "WEST":
-            case "LEFT":
-            case "L":
+            case LEFT:
                 return 6;
             default:
                 return -1;
@@ -774,11 +710,11 @@ public class GridMap extends View {
                 JSONObject obstacle = new JSONObject();
                 int obstacleX = obstacleCoords.get(i)[0];
                 int obstacleY = obstacleCoords.get(i)[1];
-                Cell obstacleCell = cells[obstacleX][20 - obstacleY];
-                obstacle.put("x", obstacleX - 1);
-                obstacle.put("y", obstacleY - 1);
+                Cell obstacleCell = getCellAtMapCoord(obstacleX, obstacleY);
+                obstacle.put("x", obstacleX);
+                obstacle.put("y", obstacleY);
                 obstacle.put("id", obstacleCell.obstacleNo);
-                obstacle.put("d", facingStringToInt(obstacleCell.obstacleFacing.toString()));
+                obstacle.put("d", directionEnumToInt(obstacleCell.obstacleFacing));
 
                 obstaclesList.put(obstacle);
             }
