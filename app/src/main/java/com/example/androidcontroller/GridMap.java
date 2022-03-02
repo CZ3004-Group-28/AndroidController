@@ -766,6 +766,7 @@ public class GridMap extends View {
                 }
             }
         }
+        this.invalidate();
         showLog("Exiting setObstacleCoord");
 //         UNCOMMENT LINE BELOW FOR C6/7
 //        sendUpdatedObstacleInformation();
