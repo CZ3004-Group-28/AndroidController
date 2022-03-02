@@ -1102,8 +1102,6 @@ public class GridMap extends View {
         robotStatusTextView.setText("Not Available");
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        receivedJsonObject = null;
-        backupMapInformation = null;
         startCoord = new int[]{-1, -1};
         curCoord = new int[]{-1, -1};
         oldCoord = new int[]{-1, -1};
