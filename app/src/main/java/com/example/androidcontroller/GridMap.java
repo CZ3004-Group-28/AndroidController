@@ -1,9 +1,7 @@
 package com.example.androidcontroller;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -12,31 +10,21 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.List;
 
 import static java.lang.String.valueOf;
 
@@ -150,6 +138,7 @@ public class GridMap extends View {
 
         if (!mapDrawn) {
             this.createCell();
+            mapDrawn = true;
         }
 
         drawIndividualCell(canvas);
@@ -205,14 +194,14 @@ public class GridMap extends View {
         showLog("Exiting drawIndividualCell");
     }
 
-    private Cell getCellAtCoordinates(int x, int y){
-        return cells[x][COL-y];
+    private Cell getCellAtMapCoords(int x, int y){
+        return cells[x+1][COL-y];
     }
 
     public void updateImageNumberCell(int obstacleNo, String targetID){
         // find the obstacle no which has the same id
         for (int x = 1; x <= COL; x++)
-            for (int y = 0; y < ROW; y++)
+            for (int y = 1; y <= ROW; y++)
                     if (cells[x][y].obstacleNo == obstacleNo) {
                         cells[x][y].targetID = targetID;
                     }
@@ -534,21 +523,22 @@ public class GridMap extends View {
         }
     }
 
-    protected void setObstacleCoord(int col, int row) {
+    protected void setObstacleCoord(int mapX, int mapY) {
         showLog("Entering setObstacleCoord");
         //Check if obstacle has been previously set there
-        if(getCellAtCoordinates(col,row).type == CellType.OBSTACLE){
+        if(getCellAtMapCoords(mapX,mapY).type == CellType.OBSTACLE){
             return;
         }
-        int[] obstacleCoord = new int[]{col, row};
+        int[] obstacleCoord = new int[]{mapX, mapY};
         GridMap.obstacleCoord.add(obstacleCoord);
-        row = this.convertRow(row);
-        cells[col][row].setType(CellType.OBSTACLE);
-        // set obstacle No
+
+        Cell newObsCell = getCellAtMapCoords(mapX,mapY);
+        newObsCell.setType(CellType.OBSTACLE);
+        // Assign obstacle no
         for(int i = 0; i<obstacleNoArray.length; i++){
             if(obstacleNoArray[i] != -1){
-                if(cells[col][row].obstacleNo == -1){
-                    cells[col][row].obstacleNo = obstacleNoArray[i]; // assign obstacle no
+                if(newObsCell.obstacleNo == -1){
+                    newObsCell.obstacleNo = obstacleNoArray[i]; // assign obstacle no
                     obstacleNoArray[i] = -1; // set index to marked as used
                     break;
                 }
@@ -663,262 +653,293 @@ public class GridMap extends View {
     public boolean onTouchEvent(MotionEvent event) {
 
         showLog("Entering onTouchEvent");
-        int column = (int) (event.getX() / cellSize);
-        int row = this.convertRow((int) (event.getY() / cellSize));
+        int mapX = (int) (event.getX() / cellSize)-1;
+        int mapY = this.convertRow((int) (event.getY() / cellSize));
 
-        if (event.getAction() == MotionEvent.ACTION_DOWN && this.getAutoUpdate() == false && column<=20 && row<=20 && column>=1 && row>=1) {
+        Toast.makeText((Activity) this.getContext(), "Tapped on Map: X:"+mapX+" Y: "+mapY, Toast.LENGTH_SHORT).show();
+        
+        if(!(mapX >= 0  && mapY >= 0 && mapX <= COL-1 && mapY <= ROW-1)){
+            Log.i(TAG, "onTouchEvent: Tapped out of arena bounds");
+            return true;
+        }
 
-            if (startCoordStatus) {
-                if (canDrawRobot) {
-                    int[] startCoord = this.getStartCoord();
-                    if (startCoord[0] >= 2 && startCoord[1] >= 2) {
-                        startCoord[1] = this.convertRow(startCoord[1]);
-                        for (int x = startCoord[0] - 1; x <= startCoord[0] + 1; x++) {
-                            for (int y = startCoord[1] - 1; y <= startCoord[1] + 1; y++) {
-                                if (!cells[x][y].type.equals("obstacle")) {
-                                    cells[x][y].setType(CellType.UNEXPLORED);
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                    canDrawRobot = true;
-                this.setStartCoord(column, row);
-                startCoordStatus = false;
-                String direction = getRobotDirection();
-                if(direction.equals("None")) {
-                    direction = "up";
-                }
-                try {
-                    int directionInt = 0;
-                    if(direction.equals("up")){
-                        directionInt = 0;
-                    } else if(direction.equals("left")) {
-                        directionInt = 3;
-                    } else if(direction.equals("right")) {
-                        directionInt = 1;
-                    } else if(direction.equals("down")) {
-                        directionInt = 2;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                //update robot axis
-                updateRobotAxis(column, row, direction);
-
-                this.invalidate();
+        Cell selectedCell = getCellAtMapCoord(mapX, mapY);
+        
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            if(startCoordStatus){
+                //TODO: Draw Robot
+                //Move to a new function setRobotPosition(int x, int y)
+                //Current code base violates DRY
+            }
+            if(setObstacleStatus){
+                Log.i(TAG, "onTouchEvent: Adding Obstacle at X: "+mapX+" Y: "+mapY);
+                this.setObstacleCoord(mapX, mapY);
                 return true;
             }
-            if (setObstacleStatus) { // setting the position of the obstacle
-
-                // TODO: New direction
-                cells[column][20-row].setobstacleFacing(getObstacleDirectionText(newDirection));
-
-                this.setObstacleCoord(column, row);
-
-                this.invalidate();
-                return true;
-
-            }
-            if (unSetCellStatus) { // TODO: remove obstacle not yet use (ontouch on the map to remove)
-                ArrayList<int[]> obstacleCoord = this.getObstacleCoord();
-                cells[column][20-row].setType(CellType.UNEXPLORED);
-                for (int i=0; i<obstacleCoord.size(); i++) {
-                    if (obstacleCoord.get(i)[0] == column && obstacleCoord.get(i)[1] == row){
-                        obstacleNoArray[cells[column][20-row].obstacleNo - 1] = cells[column][20-row].obstacleNo; // unset obstacle no by assigning number back to array
-                        cells[column][20-row].obstacleNo = -1;
-                        obstacleCoord.remove(i);
-                        if(oCellArr.get(oCellArr.size()-1) == cells[column][20-row]){
-                            oCellArr.remove(oCellArr.size()-1);
-                            //oCellArrDirection.remove(oCellArrDirection.size()-1);
-                        }
-                    }
-                }
-                this.invalidate();
-                return true;
-            }
-
-            if(setObstacleDirection)
-            {
+            if (setObstacleDirection) {
                 boolean isSetRobot;
-                isSetRobot = cells[column][20 - row].type.equals("robot");
+                isSetRobot = (selectedCell.type == CellType.ROBOT);
 
-                if((setObstacleDirection && isSetRobot)){
-                    Toast.makeText((Activity) this.getContext(), "SETTING ROBOT DIR", Toast.LENGTH_SHORT).show();
-                }
-                showLog("Enter set obstacle direction");
-
-                AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
-                mBuilder.setTitle("Select Obstacle Direction");
-                mBuilder.setSingleChoiceItems(directionList, switchDirection, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        switchDirection = i;
-                    }
-                });
-                mBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                        switch (switchDirection)
-                        {
-                            case 0:
-                                if(isSetRobot){
-                                    setRobotDirection("up");
-                                }
-                                else {
-                                    cells[column][20 - row].setobstacleFacing("NONE");
-                                }
-                                break;
-                            case 1:
-                                if(isSetRobot){
-                                    setRobotDirection("up");
-                                }
-                                else{
-                                    cells[column][20 - row].setobstacleFacing("UP");
-                                }
-                                break;
-                            case 2:
-                                if(isSetRobot){
-                                    setRobotDirection("down");
-                                }
-                                else{
-                                    cells[column][20 - row].setobstacleFacing("DOWN");
-                                }
-                                break;
-                            case 3:
-                                if(isSetRobot){
-                                    setRobotDirection("left");
-                                }
-                                else{
-                                    cells[column][20 - row].setobstacleFacing("LEFT");
-                                }
-                                break;
-                            case 4:
-                                if(isSetRobot){
-                                    setRobotDirection("right");
-                                }
-                                else{
-                                cells[column][20 - row].setobstacleFacing("RIGHT");
-                                }
-                                break;
-                        }
-                        // UNCOMMENT BELOW FOR C6/7
-//                        if(!isSetRobot){
-//                            sendUpdatedObstacleInformation();
+            }
+        }
+        //=============OLD CODE======================
+//        if (event.getAction() == MotionEvent.ACTION_DOWN && this.getAutoUpdate() == false && mapX<=20 && mapY<=20 && mapX>=1 && mapY>=1) {
+//
+//            if (startCoordStatus) {
+//                if (canDrawRobot) {
+//                    int[] startCoord = this.getStartCoord();
+//                    if (startCoord[0] >= 2 && startCoord[1] >= 2) {
+//                        startCoord[1] = this.convertRow(startCoord[1]);
+//                        for (int x = startCoord[0] - 1; x <= startCoord[0] + 1; x++) {
+//                            for (int y = startCoord[1] - 1; y <= startCoord[1] + 1; y++) {
+//                                if (!cells[x][y].type.equals("obstacle")) {
+//                                    cells[x][y].setType(CellType.UNEXPLORED);
+//                                }
+//                            }
 //                        }
-                        invalidate();
-
-                        dialogInterface.dismiss();
-                    }
-                });
-
-                // check if the cell selected is obstacle or not
-                if(cells[column][20 - row].type.equals("obstacle") || isSetRobot) {
-
-                    AlertDialog dialog = mBuilder.create();
-                    dialog.show();
-                }
-
-                this.invalidate();
-                showLog("Exit set obstacle direction");
-                return true;
-            }
-            // selection of obstacle in the map
-            if (obsSelected == false){
-                ArrayList<int[]> obstacleCoord = this.getObstacleCoord();
-                for (int i=0; i<obstacleCoord.size(); i++)
-                    if (obstacleCoord.get(i)[0] == column && obstacleCoord.get(i)[1] == row){
-                        selectedObsCoord[0] = column;
-                        selectedObsCoord[1] = row;
-                        for (int x = 0; x < oCellArr.size(); x++) {
-                            if (oCellArr.get(x) == cells[column][20-row]) {
-                                selectedObsCoord[2] = x;
-                            }
-                        }
-                        obsSelected = true;
-                        return true;
-                    }
-            }
-        }
-        // when touch event is release from the map
-        else if (event.getAction() == MotionEvent.ACTION_UP && this.getAutoUpdate() == false) {
-            if(obsSelected) {
-                obsSelected = false;
-                Log.d("obsSelected", Boolean.toString(obsSelected));
-                return true;
-            }
-        }
-        // moving obstacle around or out of the map
-        else if (event.getAction() == MotionEvent.ACTION_MOVE && this.getAutoUpdate() == false) {
-            if (obsSelected) {
-                boolean occupied = false;
-                ArrayList<int[]> obstacleCoord = this.getObstacleCoord();
-                for (int i = 0; i < obstacleCoord.size(); i++) {
-                    if (obstacleCoord.get(i)[0] == column && obstacleCoord.get(i)[1] == row) {
-                        occupied = true;
-                    }
-                }
-                if (occupied == false) {
-
-                    // TODO: NEW obstacle
-                    //BluetoothFragment.printMessage("RemovedObstacle, " + "<" + valueOf(selectedObsCoord[0] - 1) + ">, <" + valueOf(Math.abs(selectedObsCoord[1]) - 1) + ">, <" + cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo + ">");
-                    obstacleNoArray[cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo - 1] = cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo; // unset obstacle no by assigning number back to array
-                    cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo = -1;
-                    cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].setType(CellType.UNEXPLORED);
-                    // Remove obstacle facing direction
-                    obsSelectedFacing = cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].getobstacleFacing(); // <-- newly added
-                    cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].setobstacleFacing(null); // <-- newly added
-                    // Remove target ID
-                    obsTargetImageID = cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].targetID; // <-- newly added
-                    cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].targetID = null; // <-- newly added
-
-                    //Remove from obstacles coord arraylist
-                    for (int i = 0; i < obstacleCoord.size(); i++) {
-                        if (obstacleCoord.get(i)[0] == selectedObsCoord[0] && obstacleCoord.get(i)[1] == selectedObsCoord[1]) {
-                            obstacleCoord.remove(i);
-                            //UNCOMMENT BELOW FOR C6/7
-//                            sendUpdatedObstacleInformation();
-                        }
-                    }
-                    //If selection is within the grid
-                    if (column <= 20 && row <= 20 && column >= 1 && row >= 1) {
-                        //Create the new cell
-                        oCellArr.set(selectedObsCoord[2], cells[column][20 - row]);
-
-                        selectedObsCoord[0] = column;
-                        selectedObsCoord[1] = row;
-                        // Add obstacle facing direction
-                        cells[column][20-row].setobstacleFacing(obsSelectedFacing); // <-- newly added
-                        // Add target ID
-                        cells[column][20-row].targetID = obsTargetImageID;  // <-- newly added
-
-                        this.setObstacleCoord(column, row);
-                    }
-                    //If selection is outside the grid
-                    else if (column < 1 || row < 1 || column > 20 || row > 20) {
-                        obsSelected = false;
-                        //Remove from oCellArr
-                        if (oCellArr.get(oCellArr.size() - 1) == cells[selectedObsCoord[0]][20 - selectedObsCoord[1]]) {
-                            oCellArr.remove(oCellArr.size() - 1);
-                            //oCellArrDirection.remove(oCellArrDirection.size() - 1);
-
-                            // Remove obstacle facing direction
-                            cells[selectedObsCoord[0]][20-selectedObsCoord[1]].setobstacleFacing(null); //<-- newly added
-                            // Remove target ID
-                            cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].targetID = null; // <-- newly added
-                        }
-                    }
-                    this.invalidate();
-                    return true;
-                }
-
-            }
-        }
+//                    }
+//                }
+//                else
+//                    canDrawRobot = true;
+//                this.setStartCoord(mapX, mapY);
+//                startCoordStatus = false;
+//                String direction = getRobotDirection();
+//                if(direction.equals("None")) {
+//                    direction = "up";
+//                }
+//                try {
+//                    int directionInt = 0;
+//                    if(direction.equals("up")){
+//                        directionInt = 0;
+//                    } else if(direction.equals("left")) {
+//                        directionInt = 3;
+//                    } else if(direction.equals("right")) {
+//                        directionInt = 1;
+//                    } else if(direction.equals("down")) {
+//                        directionInt = 2;
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//                //update robot axis
+//                updateRobotAxis(mapX, mapY, direction);
+//
+//                this.invalidate();
+//                return true;
+//            }
+//            if (setObstacleStatus) { // setting the position of the obstacle
+//
+//                // TODO: New direction
+//                cells[mapX][20-mapY].setobstacleFacing(getObstacleDirectionText(newDirection));
+//
+//                this.setObstacleCoord(mapX, mapY);
+//
+//                this.invalidate();
+//                return true;
+//
+//            }
+//            if (unSetCellStatus) { // TODO: remove obstacle not yet use (ontouch on the map to remove)
+//                ArrayList<int[]> obstacleCoord = this.getObstacleCoord();
+//                cells[mapX][20-mapY].setType(CellType.UNEXPLORED);
+//                for (int i=0; i<obstacleCoord.size(); i++) {
+//                    if (obstacleCoord.get(i)[0] == mapX && obstacleCoord.get(i)[1] == mapY){
+//                        obstacleNoArray[cells[mapX][20-mapY].obstacleNo - 1] = cells[mapX][20-mapY].obstacleNo; // unset obstacle no by assigning number back to array
+//                        cells[mapX][20-mapY].obstacleNo = -1;
+//                        obstacleCoord.remove(i);
+//                        if(oCellArr.get(oCellArr.size()-1) == cells[mapX][20-mapY]){
+//                            oCellArr.remove(oCellArr.size()-1);
+//                            //oCellArrDirection.remove(oCellArrDirection.size()-1);
+//                        }
+//                    }
+//                }
+//                this.invalidate();
+//                return true;
+//            }
+//
+//            if(setObstacleDirection)
+//            {
+//                boolean isSetRobot;
+//                isSetRobot = cells[mapX][20 - mapY].type.equals("robot");
+//
+//                if((setObstacleDirection && isSetRobot)){
+//                    Toast.makeText((Activity) this.getContext(), "SETTING ROBOT DIR", Toast.LENGTH_SHORT).show();
+//                }
+//                showLog("Enter set obstacle direction");
+//
+//                AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
+//                mBuilder.setTitle("Select Obstacle Direction");
+//                mBuilder.setSingleChoiceItems(directionList, switchDirection, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        switchDirection = i;
+//                    }
+//                });
+//                mBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                        switch (switchDirection)
+//                        {
+//                            case 0:
+//                                if(isSetRobot){
+//                                    setRobotDirection("up");
+//                                }
+//                                else {
+//                                    cells[mapX][20 - mapY].setobstacleFacing("NONE");
+//                                }
+//                                break;
+//                            case 1:
+//                                if(isSetRobot){
+//                                    setRobotDirection("up");
+//                                }
+//                                else{
+//                                    cells[mapX][20 - mapY].setobstacleFacing("UP");
+//                                }
+//                                break;
+//                            case 2:
+//                                if(isSetRobot){
+//                                    setRobotDirection("down");
+//                                }
+//                                else{
+//                                    cells[mapX][20 - mapY].setobstacleFacing("DOWN");
+//                                }
+//                                break;
+//                            case 3:
+//                                if(isSetRobot){
+//                                    setRobotDirection("left");
+//                                }
+//                                else{
+//                                    cells[mapX][20 - mapY].setobstacleFacing("LEFT");
+//                                }
+//                                break;
+//                            case 4:
+//                                if(isSetRobot){
+//                                    setRobotDirection("right");
+//                                }
+//                                else{
+//                                cells[mapX][20 - mapY].setobstacleFacing("RIGHT");
+//                                }
+//                                break;
+//                        }
+//                        // UNCOMMENT BELOW FOR C6/7
+////                        if(!isSetRobot){
+////                            sendUpdatedObstacleInformation();
+////                        }
+//                        invalidate();
+//
+//                        dialogInterface.dismiss();
+//                    }
+//                });
+//
+//                // check if the cell selected is obstacle or not
+//                if(cells[mapX][20 - mapY].type.equals("obstacle") || isSetRobot) {
+//
+//                    AlertDialog dialog = mBuilder.create();
+//                    dialog.show();
+//                }
+//
+//                this.invalidate();
+//                showLog("Exit set obstacle direction");
+//                return true;
+//            }
+//            // selection of obstacle in the map
+//            if (obsSelected == false){
+//                ArrayList<int[]> obstacleCoord = this.getObstacleCoord();
+//                for (int i=0; i<obstacleCoord.size(); i++)
+//                    if (obstacleCoord.get(i)[0] == mapX && obstacleCoord.get(i)[1] == mapY){
+//                        selectedObsCoord[0] = mapX;
+//                        selectedObsCoord[1] = mapY;
+//                        for (int x = 0; x < oCellArr.size(); x++) {
+//                            if (oCellArr.get(x) == cells[mapX][20-mapY]) {
+//                                selectedObsCoord[2] = x;
+//                            }
+//                        }
+//                        obsSelected = true;
+//                        return true;
+//                    }
+//            }
+//        }
+//        // when touch event is release from the map
+//        else if (event.getAction() == MotionEvent.ACTION_UP && this.getAutoUpdate() == false) {
+//            if(obsSelected) {
+//                obsSelected = false;
+//                Log.d("obsSelected", Boolean.toString(obsSelected));
+//                return true;
+//            }
+//        }
+//        // moving obstacle around or out of the map
+//        else if (event.getAction() == MotionEvent.ACTION_MOVE && this.getAutoUpdate() == false) {
+//            if (obsSelected) {
+//                boolean occupied = false;
+//                ArrayList<int[]> obstacleCoord = this.getObstacleCoord();
+//                for (int i = 0; i < obstacleCoord.size(); i++) {
+//                    if (obstacleCoord.get(i)[0] == mapX && obstacleCoord.get(i)[1] == mapY) {
+//                        occupied = true;
+//                    }
+//                }
+//                if (occupied == false) {
+//
+//                    // TODO: NEW obstacle
+//                    //BluetoothFragment.printMessage("RemovedObstacle, " + "<" + valueOf(selectedObsCoord[0] - 1) + ">, <" + valueOf(Math.abs(selectedObsCoord[1]) - 1) + ">, <" + cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo + ">");
+//                    obstacleNoArray[cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo - 1] = cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo; // unset obstacle no by assigning number back to array
+//                    cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo = -1;
+//                    cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].setType(CellType.UNEXPLORED);
+//                    // Remove obstacle facing direction
+//                    obsSelectedFacing = cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].getobstacleFacing(); // <-- newly added
+//                    cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].setobstacleFacing(null); // <-- newly added
+//                    // Remove target ID
+//                    obsTargetImageID = cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].targetID; // <-- newly added
+//                    cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].targetID = null; // <-- newly added
+//
+//                    //Remove from obstacles coord arraylist
+//                    for (int i = 0; i < obstacleCoord.size(); i++) {
+//                        if (obstacleCoord.get(i)[0] == selectedObsCoord[0] && obstacleCoord.get(i)[1] == selectedObsCoord[1]) {
+//                            obstacleCoord.remove(i);
+//                            //UNCOMMENT BELOW FOR C6/7
+////                            sendUpdatedObstacleInformation();
+//                        }
+//                    }
+//                    //If selection is within the grid
+//                    if (mapX <= 20 && mapY <= 20 && mapX >= 1 && mapY >= 1) {
+//                        //Create the new cell
+//                        oCellArr.set(selectedObsCoord[2], cells[mapX][20 - mapY]);
+//
+//                        selectedObsCoord[0] = mapX;
+//                        selectedObsCoord[1] = mapY;
+//                        // Add obstacle facing direction
+//                        cells[mapX][20-mapY].setobstacleFacing(obsSelectedFacing); // <-- newly added
+//                        // Add target ID
+//                        cells[mapX][20-mapY].targetID = obsTargetImageID;  // <-- newly added
+//
+//                        this.setObstacleCoord(mapX, mapY);
+//                    }
+//                    //If selection is outside the grid
+//                    else if (mapX < 1 || mapY < 1 || mapX > 20 || mapY > 20) {
+//                        obsSelected = false;
+//                        //Remove from oCellArr
+//                        if (oCellArr.get(oCellArr.size() - 1) == cells[selectedObsCoord[0]][20 - selectedObsCoord[1]]) {
+//                            oCellArr.remove(oCellArr.size() - 1);
+//                            //oCellArrDirection.remove(oCellArrDirection.size() - 1);
+//
+//                            // Remove obstacle facing direction
+//                            cells[selectedObsCoord[0]][20-selectedObsCoord[1]].setobstacleFacing(null); //<-- newly added
+//                            // Remove target ID
+//                            cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].targetID = null; // <-- newly added
+//                        }
+//                    }
+//                    this.invalidate();
+//                    return true;
+//                }
+//
+//            }
+//        }
         showLog("Exiting onTouchEvent");
         return false;
+    }
+
+    private void startFacingSelection(){
+
     }
 
     public void turnOffRobotPlacementButton(){
@@ -1023,13 +1044,8 @@ public class GridMap extends View {
 
     }
 
-    private Cell getCellAtCoord(int x, int y){
-        if(x < 1 || y < 1 || x > COL || y > ROW){
-            Log.e(TAG, "getCellAtCoord: INCORRECT COORDS");
-            throw new IndexOutOfBoundsException("Invalid coordinate");
-        }
-        y = convertRow(y);
-        return cells[x][y];
+    private Cell getCellAtMapCoord(int x, int y){
+        return cells[x+1][ROW-y];
     }
 
 
