@@ -6,27 +6,30 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.os.Handler;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -48,6 +51,10 @@ public class HomeFragment extends Fragment{
 
     //For robot
     private boolean isManual = false;
+
+    //For Obstalce listview
+    private ObstaclesListViewAdapter obstaclesListViewAdapter;
+    private List<ObstacleListItem> obstacleListItemList;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -84,6 +91,8 @@ public class HomeFragment extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        obstacleListItemList = new ArrayList<>();
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -91,6 +100,7 @@ public class HomeFragment extends Fragment{
 
         if(!initializedIntentListeners){
             LocalBroadcastManager.getInstance(getContext()).registerReceiver(roboStatusUpdateReceiver, new IntentFilter("updateRobocarStatus"));
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(updateObstalceListReceiver, new IntentFilter("newObstacleList"));
             LocalBroadcastManager.getInstance(getContext()).registerReceiver(imageRecResultReceiver, new IntentFilter("imageResult"));
             LocalBroadcastManager.getInstance(getContext()).registerReceiver(robotLocationUpdateReceiver, new IntentFilter("updateRobocarLocation"));
 
@@ -108,6 +118,11 @@ public class HomeFragment extends Fragment{
             gridMap = new GridMap(getContext());
             gridMap = rootview.findViewById(R.id.mapView);
         }
+
+        ListView obstacleListView = (ListView)  rootview.findViewById(R.id.home_obstacles_listview);
+        obstaclesListViewAdapter = new ObstaclesListViewAdapter(getContext(), R.layout.home_obstacle_list_layout, obstacleListItemList);
+        obstacleListView.setAdapter(obstaclesListViewAdapter);
+
 
         //Initialize Flags
         placingRobot = false;
@@ -361,6 +376,24 @@ public class HomeFragment extends Fragment{
         }
     };
 
+    private BroadcastReceiver updateObstalceListReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            obstacleListItemList.clear();
+            try{
+                JSONArray msgInfo = new JSONArray(intent.getStringExtra("msg"));
+                for(int i=0; i<msgInfo.length();i++){
+                    JSONObject obj = msgInfo.getJSONObject(i);
+                    obstacleListItemList.add(new ObstacleListItem(obj.getInt("no"), obj.getInt("x"),obj.getInt("y"),obj.getString("facing")));
+                }
+                obstaclesListViewAdapter.updateList(obstacleListItemList);
+            }catch (Exception ex){
+                Log.e(TAG, "onReceive: An error occured while updating obstacle list view");
+                ex.printStackTrace();
+            }
+        }
+    };
+
     private BroadcastReceiver robotLocationUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -472,5 +505,51 @@ public class HomeFragment extends Fragment{
         Intent sendBTIntent = new Intent("sendBTMessage");
         sendBTIntent.putExtra("msg",msg);
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(sendBTIntent);
+    }
+
+    private class ObstaclesListViewAdapter extends ArrayAdapter<ObstacleListItem>{
+        private List<ObstacleListItem> items;
+
+        public ObstaclesListViewAdapter(@NonNull Context context, int resource, @NonNull List<ObstacleListItem> objects) {
+            super(context, resource, objects);
+            items=objects;
+        }
+
+        public void updateList(List<ObstacleListItem> list) {
+            this.items = list;
+            this.notifyDataSetChanged();
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.home_obstacle_list_layout, parent, false);
+            }
+            ObstacleListItem item = items.get(position);
+            TextView xPosTxt = (TextView) convertView.findViewById(R.id.txtObsListItem_x);
+            TextView yPosTxt = (TextView) convertView.findViewById(R.id.txtObsListItem_y);
+            TextView facingTxt = (TextView) convertView.findViewById(R.id.txtObsListItem_dir);
+
+            xPosTxt.setText(Integer.toString(item.x));
+            yPosTxt.setText(Integer.toString(item.y));
+            facingTxt.setText(item.facing);
+
+            return convertView;
+        }
+    }
+
+    private class ObstacleListItem {
+        int obsNo;
+        int x;
+        int y;
+        String facing;
+
+        public ObstacleListItem(int obsNo,int x, int y, String facing){
+            this.obsNo = obsNo;
+            this.x=x;
+            this.y=y;
+            this.facing=facing;
+        }
     }
 }

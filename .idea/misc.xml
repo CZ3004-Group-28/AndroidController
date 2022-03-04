@@ -13,10 +13,11 @@
         <entry key="..\:/Users/QixyQ/Documents/Projects/AndroidController/app/src/main/res/drawable/round_rec.xml" value="0.22944444444444445" />
         <entry key="..\:/Users/QixyQ/Documents/Projects/AndroidController/app/src/main/res/layout/activity_main.xml" value="0.2115036231884058" />
         <entry key="..\:/Users/QixyQ/Documents/Projects/AndroidController/app/src/main/res/layout/arena_setup.xml" value="0.2056159420289855" />
-        <entry key="..\:/Users/QixyQ/Documents/Projects/AndroidController/app/src/main/res/layout/bt_device_list_layout.xml" value="0.18115942028985507" />
+        <entry key="..\:/Users/QixyQ/Documents/Projects/AndroidController/app/src/main/res/layout/bt_device_list_layout.xml" value="0.1" />
         <entry key="..\:/Users/QixyQ/Documents/Projects/AndroidController/app/src/main/res/layout/bt_paired_device_list_layout.xml" value="0.2056159420289855" />
         <entry key="..\:/Users/QixyQ/Documents/Projects/AndroidController/app/src/main/res/layout/fragment_bluetooth.xml" value="0.17572463768115942" />
         <entry key="..\:/Users/QixyQ/Documents/Projects/AndroidController/app/src/main/res/layout/fragment_home.xml" value="0.45" />
+        <entry key="..\:/Users/QixyQ/Documents/Projects/AndroidController/app/src/main/res/layout/home_obstacle_list_layout.xml" value="0.42566510172143973" />
         <entry key="..\:/Users/QixyQ/Documents/Projects/AndroidController/app/src/main/res/menu/bottom_nav_menu.xml" value="0.32135416666666666" />
         <entry key="..\:/Users/zoemi/Documents/GitHub/AndroidController/app/src/main/res/layout/activity_main.xml" value="0.13333333333333333" />
         <entry key="..\:/Users/zoemi/Documents/GitHub/AndroidController/app/src/main/res/layout/arena_setup.xml" value="0.6666666666666666" />

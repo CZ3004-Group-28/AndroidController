@@ -392,6 +392,7 @@ public class GridMap extends View {
         }
         this.invalidate();
         showLog("Exiting setObstacleCoord");
+        updateHomeObstacleListView();
 //         UNCOMMENT LINE BELOW FOR C6/7
 //        sendUpdatedObstacleInformation();
     }
@@ -416,6 +417,7 @@ public class GridMap extends View {
         obstacleCoords.remove(oldCoords);
         this.invalidate();
         showLog("Exiting removeObstacleCoord");
+        updateHomeObstacleListView();
     }
 
     private ArrayList<int[]> getObstacleCoord() {
@@ -645,6 +647,7 @@ public class GridMap extends View {
                     setRobotDirection(selectedDirection);
                 }else{
                     selectedCell.setobstacleFacing(selectedDirection);
+                    updateHomeObstacleListView();
                 }
                 // UNCOMMENT BELOW FOR C6/7
 //                        if(!isSetRobot){
@@ -683,6 +686,7 @@ public class GridMap extends View {
         // newly added
         obstacleNoArray = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
+        updateHomeObstacleListView();
         showLog("Exiting resetMap");
         this.invalidate();
     }
@@ -743,6 +747,28 @@ public class GridMap extends View {
     private int[] convertMapCoordToCellsIndexes(int mapX, int mapY){
         int[] convertedCoords = {mapX+1,ROW-mapY};
         return convertedCoords;
+    }
+
+    private void updateHomeObstacleListView(){
+        try{
+            JSONArray obstacleInfo = new JSONArray();
+            for(int[] obsCoord : obstacleCoords){
+                JSONObject obstalceObj = new JSONObject();
+                Cell cell = getCellAtMapCoords(obsCoord[0],obsCoord[1]);
+                obstalceObj.put("no",cell.obstacleNo);
+                obstalceObj.put("x",obsCoord[0]);
+                obstalceObj.put("y",obsCoord[1]);
+                obstalceObj.put("facing",cell.obstacleFacing.toString());
+
+                obstacleInfo.put(obstalceObj);
+            }
+
+            Intent obstacleListIntent = new Intent("newObstacleList");
+            obstacleListIntent.putExtra("msg", obstacleInfo.toString());
+            LocalBroadcastManager.getInstance(getContext()).sendBroadcast(obstacleListIntent);
+        }catch (Exception e){
+            Log.e(TAG, "updateFrontEndListView: Error adding obstalce to JSON");
+        }
     }
 
 
