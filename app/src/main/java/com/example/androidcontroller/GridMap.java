@@ -68,6 +68,8 @@ public class GridMap extends View {
     private static float cellSize;
     private static Cell[][] cells;
 
+    private static boolean isOutdoorArena = false;
+
     private boolean mapDrawn = false;
 
     private static int[] selectedObsCoord = new int[3];
@@ -273,6 +275,14 @@ public class GridMap extends View {
 
     public boolean getAutoUpdate() {
         return autoUpdate;
+    }
+
+    public boolean getIsOutdoorArena(){
+        return isOutdoorArena;
+    }
+
+    public void setIsOutdoorArena(boolean isOutdoor){
+        isOutdoorArena=isOutdoor;
     }
 
     public void setSetObstacleDirection(boolean status) {
@@ -729,6 +739,11 @@ public class GridMap extends View {
             }
             JSONObject valueObj = new JSONObject();
             valueObj.put("obstacles", obstaclesList);
+            if(isOutdoorArena){
+                valueObj.put("mode","1");
+            }else{
+                valueObj.put("mode","0");
+            }
 
             JSONObject msgJSON = new JSONObject();
             msgJSON.put("cat", "obstacles");

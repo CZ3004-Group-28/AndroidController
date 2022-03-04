@@ -19,9 +19,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +32,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -38,6 +41,9 @@ public class HomeFragment extends Fragment{
 
     private boolean initializedIntentListeners = false;
     private TextView txtRoboStatus;
+
+    private Switch manualModeSwitch;
+    private Switch outdoorArenaSwitch;
 
     private View rootview;
 
@@ -100,6 +106,7 @@ public class HomeFragment extends Fragment{
 
         if(!initializedIntentListeners){
             LocalBroadcastManager.getInstance(getContext()).registerReceiver(roboStatusUpdateReceiver, new IntentFilter("updateRobocarStatus"));
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(roboModeUpdateReceiver, new IntentFilter("updateRobocarMode"));
             LocalBroadcastManager.getInstance(getContext()).registerReceiver(updateObstalceListReceiver, new IntentFilter("newObstacleList"));
             LocalBroadcastManager.getInstance(getContext()).registerReceiver(imageRecResultReceiver, new IntentFilter("imageResult"));
             LocalBroadcastManager.getInstance(getContext()).registerReceiver(robotLocationUpdateReceiver, new IntentFilter("updateRobocarLocation"));
@@ -119,10 +126,32 @@ public class HomeFragment extends Fragment{
             gridMap = rootview.findViewById(R.id.mapView);
         }
 
+        //For obstacle list view
         ListView obstacleListView = (ListView)  rootview.findViewById(R.id.home_obstacles_listview);
         obstaclesListViewAdapter = new ObstaclesListViewAdapter(getContext(), R.layout.home_obstacle_list_layout, obstacleListItemList);
         obstacleListView.setAdapter(obstaclesListViewAdapter);
 
+        //Switches
+        manualModeSwitch = (Switch) rootview.findViewById(R.id.switch_manualMode);
+        outdoorArenaSwitch = (Switch) rootview.findViewById(R.id.switch_outdoor);
+
+        manualModeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    sendModeCmdIntent("manual");
+                }else{
+                    sendModeCmdIntent("path");
+                }
+            }
+        });
+
+        outdoorArenaSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                gridMap.setIsOutdoorArena(isChecked);
+            }
+        });
 
         //Initialize Flags
         placingRobot = false;
@@ -135,15 +164,6 @@ public class HomeFragment extends Fragment{
         ImageButton controlBtnDown = rootview.findViewById(R.id.downArrowBtn);
         ImageButton controlBtnLeft = rootview.findViewById(R.id.leftArrowBtn);
         ImageButton controlBtnRight = rootview.findViewById(R.id.rightArrowBtn);
-
-        //CONTROL BUTTON: Forward
-//        controlBtnUp.setOnClickListener(v -> {
-//            try{
-//                sendDirectionCmdIntent("FW01");
-//            }catch (Exception e){
-//                Log.e(TAG, "onCreateView: An error occured while making message intent");
-//            }
-//        });
 
         controlBtnUp.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -205,21 +225,9 @@ public class HomeFragment extends Fragment{
         });
 
         //ROBOT RELATED
-        Button btnToggleRobotMode = rootview.findViewById(R.id.btnToggleRobotMode);
         Button btnSendArenaInfo = rootview.findViewById(R.id.btnSendInfo);
         Button btnSendStartImageRec = rootview.findViewById(R.id.btnStartImageRec);
         Button btnSendStartFastestCar = rootview.findViewById(R.id.btnStartFastestCar);
-
-        btnToggleRobotMode.setOnClickListener(v -> {
-            isManual = !isManual;
-            if(isManual){
-                btnToggleRobotMode.setText("Mode: Manual");
-                sendModeCmdIntent("manual");
-            }else{
-                btnToggleRobotMode.setText("Mode: Path");
-                sendModeCmdIntent("path");
-            }
-        });
 
         btnSendArenaInfo.setOnClickListener(v->{
             gridMap.sendUpdatedObstacleInformation();
@@ -372,6 +380,26 @@ public class HomeFragment extends Fragment{
                 showShortToast("Error updating robocar status");
                 Log.e(TAG, "onReceive: An error occured while updating the robocar status");
                 e.printStackTrace();
+            }
+        }
+    };
+
+    private BroadcastReceiver roboModeUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try{
+                String mode = intent.getStringExtra("msg");
+                switch (mode.toUpperCase()){
+                    case "PATH":
+                        manualModeSwitch.setChecked(false);
+                        break;
+                    case "MANUAL":
+                        manualModeSwitch.setChecked(true);
+                        break;
+                }
+            }catch (Exception ex){
+                Log.e(TAG, "onReceive: An error occured on receiving robocar mode");
+                ex.printStackTrace();
             }
         }
     };
