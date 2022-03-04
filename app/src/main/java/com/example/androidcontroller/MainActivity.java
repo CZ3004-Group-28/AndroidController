@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager2.setUserInputEnabled(false);
 
         //commented to change tab to icon
-        //TAB_TITLE = adapter.getTabTitles();
+        TAB_TITLE = adapter.getTabTitles();
         //tabLayout.setSelectedTabIndicator(R.color.black);
 
         //commented to change tab to icon
@@ -52,9 +52,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
                 //tab.setText(TAB_TITLE[position]);
-                tab.setIcon(ICONS[position]);
+                //tab.setIcon(ICONS[position]);
             }
+
         }).attach();
+
+
 
 //        binding = ActivityMainBinding.inflate(getLayoutInflater());
 //        setContentView(binding.getRoot());
