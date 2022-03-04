@@ -413,11 +413,16 @@ public class GridMap extends View {
         removeObstacleCell.obstacleFacing = Direction.NONE;
         removeObstacleCell.setType(CellType.UNEXPLORED);
         //Remove from arraylist
-        int[] oldCoords = {mapX,mapY};
-        obstacleCoords.remove(oldCoords);
+        for(int i = 0; i<obstacleCoords.size(); i++){
+            int[] coord = obstacleCoords.get(i);
+            if(coord[0] == mapX && coord[1]==mapY){
+                obstacleCoords.remove(i);
+                break;
+            }
+        }
         this.invalidate();
-        showLog("Exiting removeObstacleCoord");
         updateHomeObstacleListView();
+        showLog("Exiting removeObstacleCoord");
     }
 
     private ArrayList<int[]> getObstacleCoord() {
