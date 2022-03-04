@@ -269,9 +269,21 @@ public class HomeFragment extends Fragment{
                 placingRobot = !placingRobot;
                 if(placingRobot){
                     gridMap.setStartCoordStatus(placingRobot);
-                    btnPlaceRobot.setText("Cancel");
+                    btnPlaceRobot.setText("Stop Set Robot");
+
+                    //Disable other buttons
+                    btnSetObstacle.setEnabled(false);
+                    btnSetFacing.setEnabled(false);
+                    btnResetArena.setEnabled(false);
+                    btnSendStartFastestCar.setEnabled(false);
+                    btnSendStartImageRec.setEnabled(false);
                 }else{
                     gridMap.setStartCoordStatus(placingRobot);
+                    btnSetObstacle.setEnabled(true);
+                    btnSetFacing.setEnabled(true);
+                    btnResetArena.setEnabled(true);
+                    btnSendStartFastestCar.setEnabled(true);
+                    btnSendStartImageRec.setEnabled(true);
                     btnPlaceRobot.setText("Place Robot");
                 }
             }catch (Exception e){
@@ -285,10 +297,24 @@ public class HomeFragment extends Fragment{
                 settingObstacle = !settingObstacle;
                 if(settingObstacle){
                     gridMap.setSetObstacleStatus(settingObstacle);
-                    btnSetObstacle.setText("Stop Add Obstacle");
+                    btnSetObstacle.setText("Stop Set Obstacle");
+
+                    //Disable other buttons
+                    btnSetFacing.setEnabled(false);
+                    btnPlaceRobot.setEnabled(false);
+                    btnResetArena.setEnabled(false);
+                    btnSendStartFastestCar.setEnabled(false);
+                    btnSendStartImageRec.setEnabled(false);
                 }else{
                     gridMap.setSetObstacleStatus(settingObstacle);
-                    btnSetObstacle.setText("Add Obstacle");
+                    btnSetObstacle.setText("Set Obstacle");
+
+                    //Re-enable other buttons
+                    btnSetFacing.setEnabled(true);
+                    btnPlaceRobot.setEnabled(true);
+                    btnResetArena.setEnabled(true);
+                    btnSendStartFastestCar.setEnabled(true);
+                    btnSendStartImageRec.setEnabled(true);
                 }
             }catch (Exception e){
                 Log.e(TAG, "onCreateView: An error occurred while setting obstacle");
@@ -303,9 +329,23 @@ public class HomeFragment extends Fragment{
                 if(settingDir){
                     gridMap.setSetObstacleDirection(settingDir);
                     btnSetFacing.setText("Stop Set Facing");
+
+                    //Disable Other Buttons
+                    btnSetObstacle.setEnabled(false);
+                    btnPlaceRobot.setEnabled(false);
+                    btnResetArena.setEnabled(false);
+                    btnSendStartFastestCar.setEnabled(false);
+                    btnSendStartImageRec.setEnabled(false);
                 }else{
                     gridMap.setSetObstacleDirection(settingDir);
                     btnSetFacing.setText("Set Facing");
+
+                    //Reenable other buttons
+                    btnSetObstacle.setEnabled(true);
+                    btnPlaceRobot.setEnabled(true);
+                    btnResetArena.setEnabled(true);
+                    btnSendStartFastestCar.setEnabled(true);
+                    btnSendStartImageRec.setEnabled(true);
                 }
             }catch (Exception e){
                 Log.e(TAG, "onCreateView: An error occurred while setting obstacle direction");

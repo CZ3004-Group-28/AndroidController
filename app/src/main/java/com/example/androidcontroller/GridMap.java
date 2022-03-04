@@ -680,8 +680,24 @@ public class GridMap extends View {
     }
 
     public void turnOffRobotPlacementButton() {
-        Button placeRobotBtn = ((Activity) this.getContext()).findViewById(R.id.btnPlaceRobot);
+        if(!startCoordStatus){
+            return;
+        }
         setStartCoordStatus(false);
+
+        //Re-enable other buttons
+        Button placeRobotBtn = ((Activity) this.getContext()).findViewById(R.id.btnPlaceRobot);
+        Button btnSetObstacle  = ((Activity) this.getContext()).findViewById(R.id.btnSetObstacle);
+        Button btnSetFacing = ((Activity) this.getContext()).findViewById(R.id.btnDirectionFacing);
+        Button btnResetArena = ((Activity) this.getContext()).findViewById(R.id.btnResetArena);
+        Button btnSendStartFastestCar = ((Activity) this.getContext()).findViewById(R.id.btnStartFastestCar);
+        Button btnSendStartImageRec = ((Activity) this.getContext()).findViewById(R.id.btnStartImageRec);
+
+        btnSetObstacle.setEnabled(true);
+        btnSetFacing.setEnabled(true);
+        btnResetArena.setEnabled(true);
+        btnSendStartFastestCar.setEnabled(true);
+        btnSendStartImageRec.setEnabled(true);
         placeRobotBtn.setText("Place Robot");
     }
 
