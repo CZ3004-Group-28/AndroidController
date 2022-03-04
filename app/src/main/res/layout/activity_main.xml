@@ -47,16 +47,12 @@
                             android:icon="@drawable/ic_baseline_home_24"
                             android:layout_height="wrap_content"
                             android:layout_width="match_parent"
-                            android:text="Home"
-                            app:tabInlineLabel="true"
-                            />
+                            android:layout_gravity="center"/>
 
                         <com.google.android.material.tabs.TabItem
                             android:icon="@drawable/ic_baseline_bluetooth_24"
                             android:layout_height="wrap_content"
-                            android:layout_width="match_parent"
-                            android:text="Bluetooth"
-                            app:tabInlineLabel="true"/>
+                            android:layout_width="match_parent"/>
 
                     </com.google.android.material.tabs.TabLayout>
 
