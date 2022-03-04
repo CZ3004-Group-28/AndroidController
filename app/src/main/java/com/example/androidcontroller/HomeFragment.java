@@ -309,7 +309,7 @@ public class HomeFragment extends Fragment{
                     int y_value_int = Integer.parseInt(y_value);
 
                     if( x_value_int < 20 && x_value_int >=0 && y_value_int < 20 && y_value_int >=0){
-                        gridMap.setObstacleCoord(x_value_int+1, y_value_int+1);
+                        gridMap.setObstacleCoord(x_value_int, y_value_int);
                         showShortToast("Added obstacle");
                         addObs_x.setText("");
                         addObs_y.setText("");
