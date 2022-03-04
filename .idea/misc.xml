@@ -4,6 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/QixyQ/Documents/Projects/AndroidController/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.22944444444444445" />
+        <entry key="..\:/Users/QixyQ/Documents/Projects/AndroidController/app/src/main/res/drawable/android_round_btn.xml" value="0.50625" />
+        <entry key="..\:/Users/QixyQ/Documents/Projects/AndroidController/app/src/main/res/drawable/divider.xml" value="0.50625" />
         <entry key="..\:/Users/QixyQ/Documents/Projects/AndroidController/app/src/main/res/drawable/ic_baseline_bluetooth_24.xml" value="0.5" />
         <entry key="..\:/Users/QixyQ/Documents/Projects/AndroidController/app/src/main/res/drawable/ic_baseline_gps_fixed_24.xml" value="0.22944444444444445" />
         <entry key="..\:/Users/QixyQ/Documents/Projects/AndroidController/app/src/main/res/drawable/ic_baseline_home_24.xml" value="0.22944444444444445" />

@@ -39,25 +39,41 @@
                     android:id="@+id/btnResetArena"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Reset" />
+                    android:text="Reset Arena"
+                    android:textAlignment="viewStart"
+                    android:textSize="12sp"
+                    android:padding="5dp"
+                    app:icon="@drawable/ic_baseline_refresh_24" />
 
                 <Button
                     android:id="@+id/btnSetObstacle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Add Obstacle" />
+                    android:padding="5dp"
+                    android:text="Set Obstacle"
+                    android:textAlignment="viewStart"
+                    android:textSize="12sp"
+                    app:icon="@drawable/ic_baseline_gps_fixed_24" />
 
                 <Button
                     android:id="@+id/btnDirectionFacing"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Set Facing" />
+                    android:text="Set Facing"
+                    android:textAlignment="viewStart"
+                    android:textSize="12sp"
+                    android:padding="5dp"
+                    app:icon="@drawable/ic_baseline_text_rotation_angleup_24" />
 
                 <Button
                     android:id="@+id/btnPlaceRobot"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Place Robot" />
+                    android:padding="5dp"
+                    android:text="Place Robot"
+                    android:textAlignment="viewStart"
+                    android:textSize="12sp"
+                    app:icon="@drawable/ic_baseline_directions_car_24" />
             </LinearLayout>
 
         </LinearLayout>
@@ -73,6 +89,7 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginRight="5dp"
                 android:layout_weight="1">
 
                 <TextView
@@ -182,6 +199,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:layout_marginLeft="5dp"
                 android:orientation="vertical">
 
                 <TextView
