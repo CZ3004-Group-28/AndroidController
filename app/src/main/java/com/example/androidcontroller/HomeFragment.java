@@ -290,6 +290,17 @@ public class HomeFragment extends Fragment{
             }, 360000);
         });
 
+        btnSendStartFastestCar.setOnClickListener(v->{
+            txtTimeTaken.setVisibility(View.INVISIBLE);
+            timeStarted = System.nanoTime();
+            if(turningModeSwitch.isChecked()){
+                //Big turn
+                sendTurningModeCmdIntent("WN02");
+            }else{
+                sendTurningModeCmdIntent("WN01");
+            }
+        });
+
         btnResetArena.setOnClickListener(v->{
             try{
                 gridMap.resetMap();
