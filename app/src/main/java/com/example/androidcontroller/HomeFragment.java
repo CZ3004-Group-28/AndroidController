@@ -293,11 +293,22 @@ public class HomeFragment extends Fragment{
         btnSendStartFastestCar.setOnClickListener(v->{
             txtTimeTaken.setVisibility(View.INVISIBLE);
             timeStarted = System.nanoTime();
-            if(turningModeSwitch.isChecked()){
-                //Big turn
-                sendTurningModeCmdIntent("WN02");
+
+            boolean isBigTurn = turningModeSwitch.isChecked();
+            boolean isOutdoor = outdoorArenaSwitch.isChecked();
+
+            if(isBigTurn){
+                if(isOutdoor){
+                    sendTurningModeCmdIntent("WN04");
+                }else{
+                    sendTurningModeCmdIntent("WN02");
+                }
             }else{
-                sendTurningModeCmdIntent("WN01");
+                if(isOutdoor){
+                    sendTurningModeCmdIntent("WN03");
+                }else{
+                    sendTurningModeCmdIntent("WN01");
+                }
             }
         });
 
@@ -471,7 +482,7 @@ public class HomeFragment extends Fragment{
 
                         double timeTakenInSeconds = (double) timeTakenInNanoSeconds/1000000000;
                         int timeTakenMin = (int) timeTakenInSeconds/60;
-                        int timeTakenSec = (int) timeTakenInSeconds%60;
+                        double timeTakenSec = (double) timeTakenInSeconds%60;
                         DecimalFormat df = new DecimalFormat("0.00");
 
                         txtTimeTaken.setText("Run completed in: "+Integer.toString(timeTakenMin)+"min "+df.format(timeTakenSec)+"secs");
