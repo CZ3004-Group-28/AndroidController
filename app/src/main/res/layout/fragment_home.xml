@@ -106,14 +106,22 @@
 
                     android:layout_alignParentTop="true"
                     android:layout_alignParentRight="true"
-                    android:layout_marginBottom="20dp"
 
                     android:text="Not Available" />
+
+                <TextView
+                    android:id="@+id/txt_timeTaken"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
+                    android:textStyle="bold"
+                    android:visibility="invisible"/>
 
                 <TextView
                     android:id="@+id/obstacleListTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
                     android:text="Obstacles"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
@@ -352,6 +360,12 @@
                     android:textAlignment="viewStart"
                     android:textSize="16sp" />
 
+                <Switch
+                    android:id="@+id/switch_turnmode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Big Turn" />
+
                 <LinearLayout
                     android:weightSum="2"
                     android:layout_width="match_parent"
@@ -367,16 +381,6 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/btnStartImageRec"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="1dp"
-                        android:layout_weight="1"
-                        android:text="Start Image Rec"
-                        android:textAlignment="viewStart"
-                        android:textSize="12sp" />
-
-                    <Button
                         android:id="@+id/btnStartFastestCar"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -384,7 +388,19 @@
                         android:layout_weight="1"
                         android:text="Start Fastest Car"
                         android:textAlignment="viewStart"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        app:icon="@drawable/ic_baseline_timer_24" />
+
+                    <Button
+                        android:id="@+id/btnStartImageRec"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="1dp"
+                        android:layout_weight="1"
+                        android:text="Start Image Rec"
+                        android:textAlignment="viewStart"
+                        android:textSize="12sp"
+                        app:icon="@drawable/ic_baseline_image_search_24" />
                 </LinearLayout>
 
             </LinearLayout>

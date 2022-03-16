@@ -29,7 +29,9 @@ import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -44,6 +46,7 @@ public class HomeFragment extends Fragment{
 
     private Switch manualModeSwitch;
     private Switch outdoorArenaSwitch;
+    private Switch turningModeSwitch;
 
     private View rootview;
 
@@ -61,6 +64,31 @@ public class HomeFragment extends Fragment{
     //For Obstalce listview
     private ObstaclesListViewAdapter obstaclesListViewAdapter;
     private List<ObstacleListItem> obstacleListItemList;
+
+    //Auxiliary
+    private long timeStarted;
+    private long timeEnded;
+    private long timeTakenInNanoSeconds;
+
+    //Android widgets for UI
+    //ROBOT RELATED
+    Button btnSendArenaInfo;
+    Button btnSendStartImageRec;
+    Button btnSendStartFastestCar;
+
+    //ARENA RELATED
+    Button btnResetArena;
+    Button btnSetObstacle;
+    Button btnSetFacing;
+    Button btnPlaceRobot;
+
+    //Adding obstacles using buttons
+    Button btnAddObsManual;
+    EditText addObs_x;
+    EditText addObs_y;
+
+    //Bot Status
+    TextView txtTimeTaken;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -106,6 +134,7 @@ public class HomeFragment extends Fragment{
 
         if(!initializedIntentListeners){
             LocalBroadcastManager.getInstance(getContext()).registerReceiver(roboStatusUpdateReceiver, new IntentFilter("updateRobocarStatus"));
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(roboStateReceiver, new IntentFilter("updateRoboCarState"));
             LocalBroadcastManager.getInstance(getContext()).registerReceiver(roboModeUpdateReceiver, new IntentFilter("updateRobocarMode"));
             LocalBroadcastManager.getInstance(getContext()).registerReceiver(updateObstalceListReceiver, new IntentFilter("newObstacleList"));
             LocalBroadcastManager.getInstance(getContext()).registerReceiver(imageRecResultReceiver, new IntentFilter("imageResult"));
@@ -134,6 +163,7 @@ public class HomeFragment extends Fragment{
         //Switches
         manualModeSwitch = (Switch) rootview.findViewById(R.id.switch_manualMode);
         outdoorArenaSwitch = (Switch) rootview.findViewById(R.id.switch_outdoor);
+        turningModeSwitch = (Switch) rootview.findViewById(R.id.switch_turnmode);
 
         manualModeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -219,40 +249,46 @@ public class HomeFragment extends Fragment{
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     sendDirectionCmdIntent("STOP");
                 }
-
                 return true;
             }
         });
 
-        //ROBOT RELATED
-        Button btnSendArenaInfo = rootview.findViewById(R.id.btnSendInfo);
-        Button btnSendStartImageRec = rootview.findViewById(R.id.btnStartImageRec);
-        Button btnSendStartFastestCar = rootview.findViewById(R.id.btnStartFastestCar);
+        //TIME TAKEN TEXTVIEW
+        txtTimeTaken = rootview.findViewById(R.id.txt_timeTaken);
 
+        //ROBOT RELATED
+        btnSendArenaInfo = rootview.findViewById(R.id.btnSendInfo);
+        btnSendStartImageRec = rootview.findViewById(R.id.btnStartImageRec);
+        btnSendStartFastestCar = rootview.findViewById(R.id.btnStartFastestCar);
+
+        //ARENA RELATED
+        btnResetArena = rootview.findViewById(R.id.btnResetArena);
+        btnSetObstacle = rootview.findViewById(R.id.btnSetObstacle);
+        btnSetFacing = rootview.findViewById(R.id.btnDirectionFacing);
+        btnPlaceRobot = rootview.findViewById(R.id.btnPlaceRobot);
+
+        //Adding obstacles using buttons
+        btnAddObsManual = rootview.findViewById(R.id.add_obs_btn);
+        addObs_x = rootview.findViewById(R.id.add_obs_x_value);
+        addObs_y = rootview.findViewById(R.id.add_obs_y_value);
+
+        // OnClickListeners for sending arena info to RPI
         btnSendArenaInfo.setOnClickListener(v->{
             gridMap.sendUpdatedObstacleInformation();
         });
 
         btnSendStartImageRec.setOnClickListener(v->{
-
+            gridMap.removeAllTargetIDs();
+            txtTimeTaken.setVisibility(View.INVISIBLE);
             sendControlCmdIntent("start");
-
+            timeStarted = System.nanoTime();
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
                     sendControlCmdIntent("stop");
                 }
             }, 360000);
-
-
         });
-
-
-        //ARENA RELATED
-        Button btnResetArena = rootview.findViewById(R.id.btnResetArena);
-        Button btnSetObstacle = rootview.findViewById(R.id.btnSetObstacle);
-        Button btnSetFacing = rootview.findViewById(R.id.btnDirectionFacing);
-        Button btnPlaceRobot = rootview.findViewById(R.id.btnPlaceRobot);
 
         btnResetArena.setOnClickListener(v->{
             try{
@@ -263,6 +299,7 @@ public class HomeFragment extends Fragment{
             }
         });
 
+        // OnClickListeners for the arena related buttons
         btnPlaceRobot.setOnClickListener(v -> {
             try{
                 //New status
@@ -323,7 +360,6 @@ public class HomeFragment extends Fragment{
         });
 
         btnSetFacing.setOnClickListener(v -> {
-
             try{
                 settingDir = !settingDir;
                 if(settingDir){
@@ -351,21 +387,12 @@ public class HomeFragment extends Fragment{
                 Log.e(TAG, "onCreateView: An error occurred while setting obstacle direction");
                 e.printStackTrace();
             }
-
         });
 
-        //Adding obstacles using buttons
-        Button addObsManual = rootview.findViewById(R.id.add_obs_btn);
-        EditText addObs_x = rootview.findViewById(R.id.add_obs_x_value);
-        EditText addObs_y = rootview.findViewById(R.id.add_obs_y_value);
-
-        addObsManual.setOnClickListener(v -> {
-
+        btnAddObsManual.setOnClickListener(v -> {
             try{
-
                 String x_value = addObs_x.getText().toString();
                 String y_value = addObs_y.getText().toString();
-
                 try
                 {
                     int x_value_int = Integer.parseInt(x_value);
@@ -382,13 +409,10 @@ public class HomeFragment extends Fragment{
                 }catch (Exception e){
                     showShortToast("Incorrect values!");
                 }
-
-
             }catch (Exception e){
                 Log.e(TAG, "onCreateView: An error occurred while adding obstacle manually");
                 e.printStackTrace();
             }
-
         });
 
         // DEBUGGING BUTTONS
@@ -420,6 +444,50 @@ public class HomeFragment extends Fragment{
                 showShortToast("Error updating robocar status");
                 Log.e(TAG, "onReceive: An error occured while updating the robocar status");
                 e.printStackTrace();
+            }
+        }
+    };
+
+    private BroadcastReceiver roboStateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try{
+                String state = intent.getStringExtra("msg");
+                switch(state.toUpperCase()){
+                    case "FINISHED":
+                        timeEnded = System.nanoTime();
+                        timeTakenInNanoSeconds = timeEnded - timeStarted;
+
+                        double timeTakenInSeconds = (double) timeTakenInNanoSeconds/1000000000;
+                        int timeTakenMin = (int) timeTakenInSeconds/60;
+                        int timeTakenSec = (int) timeTakenInSeconds%60;
+                        DecimalFormat df = new DecimalFormat("0.00");
+
+                        txtTimeTaken.setText("Run completed in: "+Integer.toString(timeTakenMin)+"min "+df.format(timeTakenSec)+"secs");
+                        txtTimeTaken.setVisibility(View.VISIBLE);
+
+                        btnSetObstacle.setEnabled(true);
+                        btnPlaceRobot.setEnabled(true);
+                        btnResetArena.setEnabled(true);
+                        btnSetFacing.setEnabled(true);
+                        btnSendStartFastestCar.setEnabled(true);
+                        btnSendStartImageRec.setEnabled(true);
+                        btnSendArenaInfo.setEnabled(true);
+                        btnAddObsManual.setEnabled(true);
+                        break;
+                    case "RUNNING":
+                        btnSetObstacle.setEnabled(false);
+                        btnPlaceRobot.setEnabled(false);
+                        btnResetArena.setEnabled(false);
+                        btnSetFacing.setEnabled(false);
+                        btnSendStartFastestCar.setEnabled(false);
+                        btnSendStartImageRec.setEnabled(false);
+                        btnSendArenaInfo.setEnabled(false);
+                        btnAddObsManual.setEnabled(false);
+                        break;
+                }
+            }catch (Exception ex){
+                Log.e(TAG, "onReceive: Error receiving robot completion status");
             }
         }
     };
@@ -556,6 +624,19 @@ public class HomeFragment extends Fragment{
         }
     }
 
+    private void sendTurningModeCmdIntent(String mode){
+        try{
+            JSONObject modeJSONObj = new JSONObject();
+            modeJSONObj.put("cat","manual");
+            modeJSONObj.put("value",mode);
+
+            broadcastSendBTIntent(modeJSONObj.toString());
+        }catch (Exception e){
+            Log.e(TAG, "sendModeIntent: An error occured while sending mode command intent");
+            e.printStackTrace();
+        }
+    }
+
     private void sendControlCmdIntent(String control){
         try{
             JSONObject ctrlJSONObj = new JSONObject();
@@ -595,10 +676,12 @@ public class HomeFragment extends Fragment{
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.home_obstacle_list_layout, parent, false);
             }
             ObstacleListItem item = items.get(position);
+            TextView obsNoTxt = (TextView) convertView.findViewById(R.id.txtObsListItem_obsNo);
             TextView xPosTxt = (TextView) convertView.findViewById(R.id.txtObsListItem_x);
             TextView yPosTxt = (TextView) convertView.findViewById(R.id.txtObsListItem_y);
             TextView facingTxt = (TextView) convertView.findViewById(R.id.txtObsListItem_dir);
 
+            obsNoTxt.setText("#"+item.obsNo);
             xPosTxt.setText(Integer.toString(item.x));
             yPosTxt.setText(Integer.toString(item.y));
             facingTxt.setText(item.facing);

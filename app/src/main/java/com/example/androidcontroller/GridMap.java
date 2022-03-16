@@ -807,5 +807,19 @@ public class GridMap extends View {
         }
     }
 
+    public void removeAllTargetIDs(){
+        try{
+            for (int i = 0; i < obstacleCoords.size(); i++) {
+                int obstacleX = obstacleCoords.get(i)[0];
+                int obstacleY = obstacleCoords.get(i)[1];
+                Cell obstacleCell = getCellAtMapCoord(obstacleX, obstacleY);
+                obstacleCell.targetID = null;
+            }
+            invalidate();
+        }catch (Exception ex){
+            Log.e(TAG, "removeAllObstacleIDs: An error occured while removing confirmed target IDs");
+        }
+    }
+
 
 }

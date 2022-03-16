@@ -319,6 +319,9 @@ public class BluetoothConnectionService {
                     String mode = msgJSON.getString("value");
                     sendIntent("updateRobotcarMode",mode);
                     return;
+                case "STATUS":
+                    String status = msgJSON.getString("value");
+                    sendIntent("updateRoboCarState", status);
             }
         }catch (Exception e){
             //NOT a JSON Obj
