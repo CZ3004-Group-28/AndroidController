@@ -474,6 +474,8 @@ public class BluetoothFragment extends Fragment {
                 if(btnConnect.getText().equals("Disconnect")){
                     retryConnection = false;
                     disconnectBluetooth();
+                    btnConnect.setText("Connect");
+                    sendIntent("updateRoboCarState","finished");
                     return;
                 }
                 boolean connectSuccess = connectBluetooth(items.get(position));
@@ -572,5 +574,11 @@ public class BluetoothFragment extends Fragment {
 
     private void showLongToast(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+    }
+
+    private void sendIntent(String intentAction, String content){
+        Intent sendingIntent = new Intent(intentAction);
+        sendingIntent.putExtra("msg", content);
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(sendingIntent);
     }
 }

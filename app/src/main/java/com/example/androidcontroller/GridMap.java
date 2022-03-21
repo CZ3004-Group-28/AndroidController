@@ -68,6 +68,8 @@ public class GridMap extends View {
     private static float cellSize;
     private static Cell[][] cells;
 
+    private static boolean isOutdoorArena = false;
+
     private boolean mapDrawn = false;
 
     private static int[] selectedObsCoord = new int[3];
@@ -275,6 +277,14 @@ public class GridMap extends View {
         return autoUpdate;
     }
 
+    public boolean getIsOutdoorArena(){
+        return isOutdoorArena;
+    }
+
+    public void setIsOutdoorArena(boolean isOutdoor){
+        isOutdoorArena=isOutdoor;
+    }
+
     public void setSetObstacleDirection(boolean status) {
         setObstacleDirection = status;
     }
@@ -392,6 +402,7 @@ public class GridMap extends View {
         }
         this.invalidate();
         showLog("Exiting setObstacleCoord");
+        updateHomeObstacleListView();
 //         UNCOMMENT LINE BELOW FOR C6/7
 //        sendUpdatedObstacleInformation();
     }
@@ -412,9 +423,15 @@ public class GridMap extends View {
         removeObstacleCell.obstacleFacing = Direction.NONE;
         removeObstacleCell.setType(CellType.UNEXPLORED);
         //Remove from arraylist
-        int[] oldCoords = {mapX,mapY};
-        obstacleCoords.remove(oldCoords);
+        for(int i = 0; i<obstacleCoords.size(); i++){
+            int[] coord = obstacleCoords.get(i);
+            if(coord[0] == mapX && coord[1]==mapY){
+                obstacleCoords.remove(i);
+                break;
+            }
+        }
         this.invalidate();
+        updateHomeObstacleListView();
         showLog("Exiting removeObstacleCoord");
     }
 
@@ -645,6 +662,7 @@ public class GridMap extends View {
                     setRobotDirection(selectedDirection);
                 }else{
                     selectedCell.setobstacleFacing(selectedDirection);
+                    updateHomeObstacleListView();
                 }
                 // UNCOMMENT BELOW FOR C6/7
 //                        if(!isSetRobot){
@@ -662,8 +680,24 @@ public class GridMap extends View {
     }
 
     public void turnOffRobotPlacementButton() {
-        Button placeRobotBtn = ((Activity) this.getContext()).findViewById(R.id.btnPlaceRobot);
+        if(!startCoordStatus){
+            return;
+        }
         setStartCoordStatus(false);
+
+        //Re-enable other buttons
+        Button placeRobotBtn = ((Activity) this.getContext()).findViewById(R.id.btnPlaceRobot);
+        Button btnSetObstacle  = ((Activity) this.getContext()).findViewById(R.id.btnSetObstacle);
+        Button btnSetFacing = ((Activity) this.getContext()).findViewById(R.id.btnDirectionFacing);
+        Button btnResetArena = ((Activity) this.getContext()).findViewById(R.id.btnResetArena);
+        Button btnSendStartFastestCar = ((Activity) this.getContext()).findViewById(R.id.btnStartFastestCar);
+        Button btnSendStartImageRec = ((Activity) this.getContext()).findViewById(R.id.btnStartImageRec);
+
+        btnSetObstacle.setEnabled(true);
+        btnSetFacing.setEnabled(true);
+        btnResetArena.setEnabled(true);
+        btnSendStartFastestCar.setEnabled(true);
+        btnSendStartImageRec.setEnabled(true);
         placeRobotBtn.setText("Place Robot");
     }
 
@@ -683,6 +717,7 @@ public class GridMap extends View {
         // newly added
         obstacleNoArray = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
+        updateHomeObstacleListView();
         showLog("Exiting resetMap");
         this.invalidate();
     }
@@ -720,6 +755,11 @@ public class GridMap extends View {
             }
             JSONObject valueObj = new JSONObject();
             valueObj.put("obstacles", obstaclesList);
+            if(isOutdoorArena){
+                valueObj.put("mode","1");
+            }else{
+                valueObj.put("mode","0");
+            }
 
             JSONObject msgJSON = new JSONObject();
             msgJSON.put("cat", "obstacles");
@@ -743,6 +783,42 @@ public class GridMap extends View {
     private int[] convertMapCoordToCellsIndexes(int mapX, int mapY){
         int[] convertedCoords = {mapX+1,ROW-mapY};
         return convertedCoords;
+    }
+
+    private void updateHomeObstacleListView(){
+        try{
+            JSONArray obstacleInfo = new JSONArray();
+            for(int[] obsCoord : obstacleCoords){
+                JSONObject obstalceObj = new JSONObject();
+                Cell cell = getCellAtMapCoords(obsCoord[0],obsCoord[1]);
+                obstalceObj.put("no",cell.obstacleNo);
+                obstalceObj.put("x",obsCoord[0]);
+                obstalceObj.put("y",obsCoord[1]);
+                obstalceObj.put("facing",cell.obstacleFacing.toString());
+
+                obstacleInfo.put(obstalceObj);
+            }
+
+            Intent obstacleListIntent = new Intent("newObstacleList");
+            obstacleListIntent.putExtra("msg", obstacleInfo.toString());
+            LocalBroadcastManager.getInstance(getContext()).sendBroadcast(obstacleListIntent);
+        }catch (Exception e){
+            Log.e(TAG, "updateFrontEndListView: Error adding obstalce to JSON");
+        }
+    }
+
+    public void removeAllTargetIDs(){
+        try{
+            for (int i = 0; i < obstacleCoords.size(); i++) {
+                int obstacleX = obstacleCoords.get(i)[0];
+                int obstacleY = obstacleCoords.get(i)[1];
+                Cell obstacleCell = getCellAtMapCoord(obstacleX, obstacleY);
+                obstacleCell.targetID = null;
+            }
+            invalidate();
+        }catch (Exception ex){
+            Log.e(TAG, "removeAllObstacleIDs: An error occured while removing confirmed target IDs");
+        }
     }
 
 

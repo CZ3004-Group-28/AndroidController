@@ -315,6 +315,13 @@ public class BluetoothConnectionService {
                     JSONObject locationObj = msgJSON.getJSONObject("value");
                     sendIntent("updateRobocarLocation",locationObj.toString());
                     return;
+                case "MODE":
+                    String mode = msgJSON.getString("value");
+                    sendIntent("updateRobotcarMode",mode);
+                    return;
+                case "STATUS":
+                    String status = msgJSON.getString("value");
+                    sendIntent("updateRoboCarState", status);
             }
         }catch (Exception e){
             //NOT a JSON Obj
